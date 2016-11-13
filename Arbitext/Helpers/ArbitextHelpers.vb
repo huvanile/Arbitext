@@ -5,6 +5,30 @@ Imports Arbitext.StringHelpers
 
 Public Class ArbitextHelpers
 
+    Public Shared Function bookCountFromString(theStr As String) As Integer
+        Dim tmpCount As Integer = 0
+        Dim tmp1 As Integer
+        Dim tmp2 As Integer
+        Dim tmp3 As Integer
+        tmp1 = UBound(Split(LCase(theStr), "isbn"))
+        tmp2 = UBound(Split(LCase(theStr), "978"))
+        tmp3 = UBound(Split(LCase(theStr), "$"))
+        tmpCount = tmp1
+        If tmp2 > tmpCount Then tmpCount = tmp2
+        If tmp3 > tmpCount Then tmpCount = tmp3
+        Return tmpCount
+    End Function
+
+    Public Shared Function randomUID() As String
+        randomUID = ""
+        Dim rgch As String
+        rgch = "abcdefgh"
+        rgch = rgch & "0123456789"
+        Do Until Len(randomUID) = 16
+            randomUID = randomUID & Mid$(rgch, Int(Rnd() * Len(rgch) + 1), 1)
+        Loop
+    End Function
+
     Public Shared Sub deleteBlankAutomatedResults()
         With ThisAddIn.AppExcel
             .ScreenUpdating = False
@@ -88,7 +112,7 @@ Public Class ArbitextHelpers
                         .Range("g" & matchR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("i" & theRow).Value 'profit
                         .Range("h" & matchR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("j" & theRow).Value 'profit margin
                         .Range("i" & matchR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("k" & theRow).Value 'min. asking price for desired profit margin
-                        .Range("j" & matchR) = ThisAddIn.PostCity 'city
+                        .Range("j" & matchR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("l" & theRow).Value
                         .Range("k" & matchR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("m" & theRow).Value 'date updated
                         .Range("l" & matchR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("n" & theRow).Value 'price delta
 
@@ -115,7 +139,7 @@ Public Class ArbitextHelpers
                         .Range("g" & tR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("i" & theRow).Value 'profit
                         .Range("h" & tR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("j" & theRow).Value 'profit margin
                         .Range("i" & tR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("k" & theRow).Value 'min. asking price for desired profit margin
-                        .Range("j" & tR) = ThisAddIn.PostCity 'city
+                        .Range("j" & tR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("l" & theRow).Value
                         .Range("k" & tR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("m" & theRow).Value 'date updated
                         .Range("l" & tR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("n" & theRow).Value 'price delta
 
@@ -143,7 +167,7 @@ Public Class ArbitextHelpers
                     .Range("g" & tR).value2 = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("i" & theRow).Value 'profit
                     .Range("h" & tR).value2 = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("j" & theRow).Value 'profit margin
                     .Range("i" & tR).value2 = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("k" & theRow).Value 'min. asking price for desired profit margin
-                    .Range("j" & tR).value2 = ThisAddIn.PostCity 'city
+                    .Range("j" & tR).value2 = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("l" & theRow).Value
                     .Range("k" & tR).value2 = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("m" & theRow).Value 'date updated
                     .Range("l" & tR).value2 = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("n" & theRow).Value 'price delta
 
@@ -187,7 +211,7 @@ Public Class ArbitextHelpers
         On Error GoTo 0
     End Sub
 
-    Public Shared Function wasCategorized(Optional theISBN As String = "", Optional theAskingPrice As String = "", Optional theCat As String = "Trash") As Boolean
+    Public Shared Function wasCategorized(post As Post, Optional theISBN As String = "", Optional theAskingPrice As String = "", Optional theCat As String = "Trash") As Boolean
         wasCategorized = False
         If Not doesWSExist(theCat) Then
             Select Case theCat
@@ -201,14 +225,14 @@ Public Class ArbitextHelpers
             ThisAddIn.AppExcel.Sheets("Automated Checks").Activate
         End If
         With ThisAddIn.AppExcel.Sheets(theCat)
-            If isMulti(ThisAddIn.PostTitle) Or isMulti(ThisAddIn.PostBody) Then
+            If post.isMulti Then
 
                 'to check for parsed multipost results
                 If Not theISBN = "" And Not theISBN Like "*(*" Then
                     If canFind(theISBN, theCat) Then
                         If Trim(.Range("e" & .Range(canFind(theISBN, theCat, , True, False)).Row).Value) = theAskingPrice _
-                        And .Range("c" & .Range(canFind(theISBN, theCat, , True, False)).Row).Value = ThisAddIn.PostTitle _
-                        And .Range("j" & .Range(canFind(theISBN, theCat, , True, False)).Row).Value = ThisAddIn.PostCity Then
+                        And .Range("c" & .Range(canFind(theISBN, theCat, , True, False)).Row).Value = post.Title _
+                        And .Range("j" & .Range(canFind(theISBN, theCat, , True, False)).Row).Value = post.City Then
                             wasCategorized = True
                             Exit Function
                         End If
@@ -216,11 +240,11 @@ Public Class ArbitextHelpers
                 End If
 
                 'to check for unparsable multipost results
-                If canFind(ThisAddIn.PostTitle, theCat) Then
-                    If canFind(ThisAddIn.PostTitle, theCat) Then
-                        If Trim(.Range("e" & .Range(canFind(ThisAddIn.PostTitle, theCat, , True, False)).Row).Value) = ThisAddIn.PostAskingPrice _
-                        And LCase(.Range("d" & .Range(canFind(ThisAddIn.PostTitle, theCat, , True, False)).Row).Value) Like "*multi*" _
-                        And .Range("j" & .Range(canFind(ThisAddIn.PostTitle, theCat, , True, False)).Row).Value = ThisAddIn.PostCity Then
+                If canFind(post.Title, theCat) Then
+                    If canFind(post.Title, theCat) Then
+                        If Trim(.Range("e" & .Range(canFind(post.Title, theCat, , True, False)).Row).Value) = post.AskingPrice _
+                        And LCase(.Range("d" & .Range(canFind(post.Title, theCat, , True, False)).Row).Value) Like "*multi*" _
+                        And .Range("j" & .Range(canFind(post.Title, theCat, , True, False)).Row).Value = post.City Then
                             wasCategorized = True
                         End If
                     End If
@@ -228,9 +252,9 @@ Public Class ArbitextHelpers
 
             Else 'not multi
 
-                If canFind(ThisAddIn.PostTitle, theCat) Then
-                    If Trim(.Range("e" & .Range(canFind(ThisAddIn.PostTitle, theCat, , True, False)).Row).Value) = ThisAddIn.PostAskingPrice _
-                    And .Range("j" & .Range(canFind(ThisAddIn.PostTitle, theCat, , True, False)).Row).Value = ThisAddIn.PostCity Then
+                If canFind(post.Title, theCat) Then
+                    If Trim(.Range("e" & .Range(canFind(post.Title, theCat, , True, False)).Row).Value) = post.AskingPrice _
+                    And .Range("j" & .Range(canFind(post.Title, theCat, , True, False)).Row).Value = post.City Then
                         wasCategorized = True
                     End If
                 End If

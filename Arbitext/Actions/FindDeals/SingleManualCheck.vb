@@ -1,18 +1,13 @@
-﻿Imports Arbitext.RegistryHelpers
-Imports Arbitext.ExcelHelpers
+﻿Imports Arbitext.ExcelHelpers
 Imports Arbitext.ArbitextHelpers
-Imports Arbitext.PushbulletHelpers
-Imports Arbitext.BookscouterHelpers
 Imports Arbitext.CraigslistHelpers
-Imports Arbitext.EmailHelpers
 Imports Arbitext.SoundHelpers
-Imports Arbitext.StringHelpers
-Imports Microsoft.Office.Interop.Excel
 
 Public Class SingleManualCheck
     Public Shared Sub SingleManualCheck()
         Dim ret As Boolean      'return value for downloading book cover to file
-        Dim wc As New System.Net.WebClient
+        Dim post As Post
+        Dim wc As New Net.WebClient
         resetSingleCheckWS()
         grabPHPicIfNeeded()
         IO.File.Delete(Environ("Temp") & "\cover.jpg")
@@ -23,30 +18,33 @@ Public Class SingleManualCheck
             If .Sheets("Single Check").Range("c3").Value = "" Then
                 MsgBox("Put a craigslist book sale posting URL in cell C3.  Flipping idiots!", vbCritical, ThisAddIn.Title)
             Else
-                ThisAddIn.PostURL = .Sheets("Single Check").Range("c3").Value
-                learnAboutPost(ThisAddIn.PostURL)
+                post = New Post(.Sheets("Single Check").Range("c3").Value)
 
-                If Not ThisAddIn.PostTitle Like "*Page Not Found*" Then
-                    If Not isMulti(ThisAddIn.PostBody) And Not isMulti(ThisAddIn.PostTitle) Then
+                If Not post.Title Like "*Page Not Found*" Then
+                    If Not post.isMulti Then
                         .Sheets("Single Check").Range("c15").value2 = "no"
-                        .Sheets("Single Check").Range("f1").value2 = ThisAddIn.PostDate
-                        .Sheets("Single Check").Range("c5").value2 = ThisAddIn.PostTitle
-                        doFlagChecks(ThisAddIn.PostBody)
-                        doFlagChecks(ThisAddIn.PostTitle)
+                        .Sheets("Single Check").Range("f1").value2 = post.PostDate
+                        .Sheets("Single Check").Range("c5").value2 = post.Title
+
+                        'do flag checks
+                        .Sheets("Single Check").Range("c16") = post.Book.aLaCarte
+                        .Sheets("Single Check").Range("c17") = post.Book.isWeirdEdition
+                        .Sheets("Single Check").Range("c18") = post.Book.isPDF
+                        .Sheets("Single Check").Range("c19") = post.Book.isOBO
 
                         'write data
-                        .Sheets("Single Check").Range("c6").value2 = getISBN(ThisAddIn.PostBody)
-                        .Sheets("Single Check").Range("c6").Hyperlinks.Add(anchor:= .Sheets("Single Check").Range("c6"), Address:="https://bookscouter.com/prices.php?isbn=" & ThisAddIn.PostISBN & "&all", TextToDisplay:="'" & .Sheets("Single Check").Range("c6").Value)
-                        .Sheets("Single Check").Range("c7").value2 = ThisAddIn.PostAskingPrice
-                        .Sheets("Single Check").Range("f2").value2 = ThisAddIn.PostUpdateDate
-                        .Sheets("Single Check").Range("c4").value2 = ThisAddIn.PostCity
-                        .Sheets("Single Check").Range("b23").value2 = ThisAddIn.PostBody
+                        .Sheets("Single Check").Range("c6").value2 = getISBN(post.Body, post.URL)
+                        .Sheets("Single Check").Range("c6").Hyperlinks.Add(anchor:= .Sheets("Single Check").Range("c6"), Address:="https://bookscouter.com/prices.php?isbn=" & post.Isbn & "&all", TextToDisplay:="'" & .Sheets("Single Check").Range("c6").Value)
+                        .Sheets("Single Check").Range("c7").value2 = post.AskingPrice
+                        .Sheets("Single Check").Range("f2").value2 = post.UpdateDate
+                        .Sheets("Single Check").Range("c4").value2 = post.City
+                        .Sheets("Single Check").Range("b23").value2 = post.Body
+
                         If Not .Sheets("Single Check").Range("c6").value2 Like "(*" Then
-                            askBSAboutBook(ThisAddIn.PostISBN)
-                            .Sheets("Single Check").Range("C8") = ThisAddIn.PostSellingPrice
-                            .Sheets("Single Check").Range("C8").Hyperlinks.Add(anchor:= .Sheets("Single Check").Range("C8"), Address:=ThisAddIn.BsBuybackLink, TextToDisplay:="'" & .Sheets("Single Check").Range("C8").Value)
-                            If ThisAddIn.ImageURL <> "" And ThisAddIn.ImageURL <> "(unknown)" Then
-                                wc.DownloadFile(ThisAddIn.ImageURL, Environ("Temp") & "\cover.jpg")
+                            .Sheets("Single Check").Range("C8") = post.Book.BuybackAmount
+                            .Sheets("Single Check").Range("C8").Hyperlinks.Add(anchor:= .Sheets("Single Check").Range("C8"), Address:=post.Book.BuybackLink, TextToDisplay:="'" & .Sheets("Single Check").Range("C8").Value)
+                            If post.Book.ImageURL <> "" And post.Book.ImageURL <> "(unknown)" Then
+                                wc.DownloadFile(post.Book.ImageURL, Environ("Temp") & "\cover.jpg")
                                 If IO.File.Exists(Environ("Temp") & "\cover.jpg") Then
                                     .Sheets("Single Check").Shapes.AddPicture(fileName:=Environ("Temp") & "\cover.jpg", LinkToFile:=0, SaveWithDocument:=-1, Left:=657, Top:=56, Width:=192, Height:=240)
                                 End If
@@ -60,8 +58,8 @@ Public Class SingleManualCheck
                         On Error Resume Next
                         System.IO.File.Delete(Environ("Temp") & "\cover.jpg")
                         On Error GoTo 0
-                        If ThisAddIn.PostCLImg <> "" Then
-                            wc.DownloadFile(ThisAddIn.PostCLImg, Environ("Temp") & "\cover.jpg")
+                        If post.Image <> "" Then
+                            wc.DownloadFile(post.Image, Environ("Temp") & "\cover.jpg")
                             If IO.File.Exists(Environ("Temp") & "\cover.jpg") Then
                                 '0 = msoFalse, -1 = msoTrue
                                 .Sheets("Single Check").Shapes.AddPicture(fileName:=Environ("Temp") & "\cover.jpg", LinkToFile:=0, SaveWithDocument:=-1, Left:=657, Top:=339, Width:=192, Height:=240)
@@ -93,7 +91,7 @@ Public Class SingleManualCheck
                                     BuildWSMultipostManualCheck.BuildWSMultipostManualCheck()
                                 End If
                                 With .Sheets("Multipost Manual Checks")
-                                    .Range("c3").value2 = ThisAddIn.PostURL
+                                    .Range("c3").value2 = post.URL
                                     .Activate
                                 End With
                                 MultipostManualCheck.MultipostManualCheck()
@@ -105,6 +103,7 @@ Public Class SingleManualCheck
             End If
         End With
         wc = Nothing
+        post = Nothing
     End Sub
 
     Private Shared Sub resetSingleCheckWS()
@@ -119,30 +118,6 @@ Public Class SingleManualCheck
         End With
     End Sub
 
-    Private Shared Sub doFlagChecks(ByVal theStr As String)
-        With ThisAddIn.AppExcel
-            'do flag checks
-            If aLaCarte(theStr) Then
-                .Sheets("Single Check").Range("c16") = "YES"
-            Else
-                .Sheets("Single Check").Range("c16") = "no"
-            End If
-            If isWeirdEdition(theStr) Then
-                .Sheets("Single Check").Range("c17") = "YES"
-            Else
-                .Sheets("Single Check").Range("c17") = "no"
-            End If
-            If isPDF(theStr) Then
-                .Sheets("Single Check").Range("c18") = "YES"
-            Else
-                .Sheets("Single Check").Range("c18") = "no"
-            End If
-            If isOBO(theStr) Then
-                .Sheets("Single Check").Range("c19") = "YES"
-            Else
-                .Sheets("Single Check").Range("c19") = "no"
-            End If
-        End With
-    End Sub
+
 
 End Class

@@ -5,6 +5,7 @@ Imports Arbitext.ArbitextHelpers
 Public Class Ribbon1
 
 #Region "Find Deals"
+
     Private Sub btnSearch_Click(sender As Object, e As RibbonControlEventArgs) Handles btnSearch.Click
         ThisAddIn.AppExcel.StatusBar = False
         If Not doesWSExist("Automated Checks") And Not doesWSExist("Single Check") And Not doesWSExist("Multipost Manual Check") Then

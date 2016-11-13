@@ -153,6 +153,9 @@
             Else
                 TrailingSlash = strFolder & "\"
             End If
+        Else
+            MsgBox("Error in trailingslash function!")
+            TrailingSlash = ""
         End If
     End Function
 
