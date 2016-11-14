@@ -21,7 +21,7 @@
     Public Shared NotifyViaPBOK As Boolean
     Public Shared KeepIEVisibleOK As Boolean
     Public Shared AutoTrashOK As Boolean
-    Public Shared MinTolerableProfit As Integer
+    Public Shared MinTolerableProfit As Decimal
     Public Shared PostTimingPref As String
     Public Shared SaveWBFilePath As String                 'saveFileAs: output filepath
     Public Shared SaveWBFileName As String

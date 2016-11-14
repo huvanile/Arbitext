@@ -89,7 +89,7 @@ Public Class CraigslistHelpers
         Return m
     End Function
 
-    Public Shared Function getAskingPrice(str As String) As Integer 'str is posting page html
+    Public Shared Function getAskingPrice(str As String) As Decimal 'str is posting page html
         Dim i As Integer : i = 0
         Dim m As String : m = ""
 

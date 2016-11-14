@@ -44,7 +44,7 @@ Public Class MultipostManualCheck
         Dim phPic As String : phPic = Environ("Temp") & "\placeholder.jpg"
         Dim theCol As String = ""
         Dim theRow As Long = 0
-        Dim highestValue As Integer = 0
+        Dim highestValue As Decimal = 0
         Dim book As Book : book = Nothing
 
         With ThisAddIn.AppExcel

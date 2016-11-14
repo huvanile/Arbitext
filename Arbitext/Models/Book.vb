@@ -11,12 +11,12 @@ Public Class Book
     Private _isOBO As Boolean
     Private _isWeirdEdition As Boolean
     Private _aLaCarte As Boolean
-    Private _buybackAmount As Int16
+    Private _buybackAmount As Decimal
     Private _buybackSite As String
     Private _buybackLink As String
     Private _bookscouterAPILink As String
     Private _bookscouterSiteLink As String
-    Private _askingPrice As Integer
+    Private _askingPrice As Decimal
     Private _aLaCarteFlag As Boolean      'flag for loose leaf editions when found in saleDescInPost
     Private _weirdEditionFlag As Boolean  'flag for weird editions like teacher's edition when found in saleDescInPost
     Private _pdfFlag As Boolean           'flag for pdf files being sold as books on saleDescInPost
@@ -25,12 +25,12 @@ Public Class Book
 
 #Region "Contructors"
 
-    ' Default constructor
-    Sub New(isbn As String)
+    Sub New(isbn As String, askingPrice As Decimal, theSaleDesc As String)
         If isbn.Length = 13 Then
             _isbn13 = isbn
             _bookscouterAPILink = "http://api.bookscouter.com/prices.php?isbn=" & isbn & "&uid=" & randomUID() & ""
             _bookscouterSiteLink = "https://bookscouter.com/prices.php?isbn=" & isbn & "&all"
+
         ElseIf isbn.Length = 10 Then
             _isbn10 = isbn
             _bookscouterAPILink = "http://api.bookscouter.com/prices.php?isbn=" & isbn & "&uid=" & randomUID() & ""
@@ -38,32 +38,20 @@ Public Class Book
         Else
 
         End If
-    End Sub
 
-    Sub New(isbn As String, askingPrice As Integer, theSaleDesc As String)
-        If isbn.Length = 13 Then
-            _isbn13 = isbn
-            _bookscouterAPILink = "http://api.bookscouter.com/prices.php?isbn=" & isbn & "&uid=" & randomUID() & ""
-            _bookscouterSiteLink = "https://bookscouter.com/prices.php?isbn=" & isbn & "&all"
-        ElseIf isbn.Length = 10 Then
-            _isbn10 = isbn
-            _bookscouterAPILink = "http://api.bookscouter.com/prices.php?isbn=" & isbn & "&uid=" & randomUID() & ""
-            _bookscouterSiteLink = "https://bookscouter.com/prices.php?isbn=" & isbn & "&all"
-        Else
-
-        End If
         _saleDescInPost = theSaleDesc
         _askingPrice = askingPrice
+        GetDataFromBookscouter()
     End Sub
 #End Region
 
 #Region "Read & Write Properties"
 
-    Property AskingPrice As Integer
+    Property AskingPrice As Decimal
         Get
             Return _askingPrice
         End Get
-        Set(value As Integer)
+        Set(value As Decimal)
             _askingPrice = value
         End Set
     End Property
@@ -126,7 +114,7 @@ Public Class Book
         End Get
     End Property
 
-    ReadOnly Property PriceDelta As Integer
+    ReadOnly Property PriceDelta As Decimal
         Get
             If _buybackAmount > 0 Then
                 Return 1 - (MinAskingPriceForDesiredProfit / _askingPrice)
@@ -136,7 +124,7 @@ Public Class Book
         End Get
     End Property
 
-    ReadOnly Property MinAskingPriceForDesiredProfit As Integer
+    ReadOnly Property MinAskingPriceForDesiredProfit As Decimal
         Get
             If _buybackAmount > 0 Then
                 If _buybackAmount - ThisAddIn.MinTolerableProfit > 0 Then
@@ -155,10 +143,12 @@ Public Class Book
         End Get
     End Property
 
-    ReadOnly Property Profit As Integer
+    ReadOnly Property Profit As Decimal
         Get
+            Dim tmp As Decimal = 0
             If _buybackAmount > 0 Then
-                Return ThisAddIn.AppExcel.Round(_buybackAmount - _askingPrice, 2)
+                tmp = ThisAddIn.AppExcel.Round(_buybackAmount - _askingPrice, 2)
+                If tmp > 0 Then Return tmp Else Return 0
             Else
                 Return 0
             End If
@@ -271,9 +261,10 @@ Public Class Book
         doc.LoadXml(sXML)
         wc = Nothing
         bXML = Nothing
-        If doc.ChildNodes.Count > 2 Then 'its 2 if its a bad isbn, and 0 if not response at all
+        If doc.ChildNodes.Count >= 2 Then 'its 2 if its a bad isbn, and 0 if not response at all
             nodes = doc.GetElementsByTagName("title") : _title = nodes(0).InnerText.Trim()
             nodes = doc.GetElementsByTagName("image") : _imageURL = nodes(0).InnerText.Trim()
+            _imageURL = Replace(ImageURL, "._SL75_.", "._SL400_.")
             nodes = doc.GetElementsByTagName("isbn10") : _isbn10 = nodes(0).InnerText.Trim()
             nodes = doc.GetElementsByTagName("isbn13") : _isbn13 = nodes(0).InnerText.Trim()
             nodes = doc.GetElementsByTagName("author") : _author = nodes(0).InnerText.Trim() & vbCrLf

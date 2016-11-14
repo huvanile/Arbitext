@@ -1,4 +1,5 @@
-﻿Imports mshtml
+﻿Imports HtmlAgilityPack
+Imports mshtml
 Imports Arbitext.CraigslistHelpers
 Imports Arbitext.ExcelHelpers
 Imports Arbitext.StringHelpers
@@ -8,7 +9,7 @@ Public Class Post
     Private _url As String                'CL post url
     Private _body As String               'body of the post
     Private _city As String               'CL post city (from parsing post page) 'public bc also used by wasCategorized function
-    Private _askingPrice As Integer       'CL asking price (from parsing post page) 'public bc also used by wasCategorized function
+    Private _askingPrice As Decimal       'CL asking price (from parsing post page) 'public bc also used by wasCategorized function
     Private _title As String              'CL post title (from parsing post page) 'public bc also used by wasCategorized function
     Private _updateDate As String         'CL post updated
     Private _postDate As String           'CL post date
@@ -70,7 +71,7 @@ Public Class Post
         End Get
     End Property
 
-    ReadOnly Property AskingPrice As Integer
+    ReadOnly Property AskingPrice As Decimal
         Get
             Return _askingPrice
         End Get
@@ -199,7 +200,7 @@ Public Class Post
 
     Sub LearnAboutMultipost()
         Dim tmpISBN As String
-        Dim tmpAskingPrice As String
+        Dim tmpAskingPrice As String 'should this be a decimal?
         Dim s As Long            'splitholder start position, increments as books are parsed
         Dim t As Integer         'to loop through the splitholder <BR> results
         Dim splitholder() As String
@@ -286,7 +287,9 @@ Public Class Post
         Dim wc As New Net.WebClient
         Dim bHTML() As Byte = wc.DownloadData(_url)
         Dim sHTML As String = New UTF8Encoding().GetString(bHTML)
-        Dim doc As IHTMLDocument2 = New HTMLDocument
+
+        'mshtml crap
+        Dim doc As IHTMLDocument = New mshtml.HTMLDocument
         doc.clear()
         doc.write(sHTML)
         Dim allElements As IHTMLElementCollection = doc.all
@@ -296,21 +299,18 @@ Public Class Post
         _title = doc.title
 
         'find price
-        Dim allSpans As IHTMLElementCollection = allElements.tags("span")
-        For Each element In allSpans
+        For Each element In allElements.tags("span")
             If element.className = "price" Then
                 _askingPrice = Trim(element.innerText)
                 Exit For
             End If
         Next
-        allSpans = Nothing
         If _askingPrice = -1 Then
             _askingPrice = getAskingPrice(_html)
         End If
 
-        'find location
-        Dim allSmalls As IHTMLElementCollection = allElements.tags("small")
-        For Each element In allSmalls
+        'find location (HAP)
+        For Each element In allElements.tags("small")
             Dim tmpLoc As String = Trim(element.innerText)
             tmpLoc = Replace(tmpLoc, ")", "")
             tmpLoc = Replace(tmpLoc, "(", "")
@@ -319,9 +319,8 @@ Public Class Post
             _city = tmpLoc
             Exit For
         Next
-        allSmalls = Nothing
 
-        'find og:image
+        ''find og:image
         Dim metaTag As HTMLMetaElement
         For Each element In allElements
             If element.tagName = "META" Then
@@ -339,7 +338,8 @@ Public Class Post
         'find date posted
         For Each element In allTimes
             If LCase(element.parentElement.innerText) Like "*posted:*" Then
-                _postDate = Trim(element.innerText)
+                _postDate = Trim(element.parentElement.innerText)
+                _postDate = Replace(_postDate, "posted:", "").Trim
                 Exit For
             End If
         Next
@@ -355,22 +355,24 @@ Public Class Post
         allTimes = Nothing
 
         'get posting body
-        Dim allSections As IHTMLElementCollection = allElements.tags("section")
-        For Each element In allSections
-            If element.id = "postingbody" Then
-                _body = Trim(element.innerText)
-                Exit For
-            End If
-        Next
-        allSections = Nothing
+        Dim z As Long : z = 0
+        Dim splitholder
+        Dim m As String : m = ""
+        z = Strings.InStr(1, sHTML, "<section id=""postingbody"">") 'start of section
+        m = Right(sHTML, Len(sHTML) - z)
+        splitholder = Split(m, "</section>") 'end boundary of section 
+        m = Trim(splitholder(0))
+        _body = m
+
+        'get isbn
+        _isbn = getISBN(_body, _url)
+        If Not _isbn.Length = 13 And Not _isbn.Length = 10 Then _isbn = getISBN(_title, _url)
 
         'clean up
-        doc.close()
         element = Nothing
         doc = Nothing
         wc = Nothing
         bHTML = Nothing
-        allElements = Nothing
 
     End Sub
 
