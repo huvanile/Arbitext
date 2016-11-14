@@ -296,7 +296,7 @@
     <ManifestKeyFile>Arbitext_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>DA83230A2DD0681C0FD8316BF8EB3215C8D5FFD2</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>A0AC214F976687C56E88D6F5B91228446656880E</ManifestCertificateThumbprint>
   </PropertyGroup>
   <!-- Include the build rules for a Visual Basic project. -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />

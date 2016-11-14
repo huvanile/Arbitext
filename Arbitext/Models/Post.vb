@@ -1,5 +1,4 @@
-﻿Imports HtmlAgilityPack
-Imports mshtml
+﻿Imports mshtml
 Imports Arbitext.CraigslistHelpers
 Imports Arbitext.ExcelHelpers
 Imports Arbitext.StringHelpers
@@ -360,15 +359,23 @@ Public Class Post
         Dim m As String : m = ""
         z = Strings.InStr(1, sHTML, "<section id=""postingbody"">") 'start of section
         m = Right(sHTML, Len(sHTML) - z)
+        z = Strings.InStr(1, m, "</div>")
+        m = Right(m, Len(m) - z)
+        z = Strings.InStr(1, m, "</div>")
+        m = Right(m, Len(m) - z - 5)
         splitholder = Split(m, "</section>") 'end boundary of section 
         m = Trim(splitholder(0))
         _body = m
 
         'get isbn
-        _isbn = getISBN(_body, _url)
-        If Not _isbn.Length = 13 And Not _isbn.Length = 10 Then _isbn = getISBN(_title, _url)
+        If Not isMulti Then
+            _isbn = getISBN(_body, _url)
+            If Not _isbn.Length = 13 And Not _isbn.Length = 10 Then _isbn = getISBN(_title, _url)
+        End If
 
         'clean up
+        doc.clear
+        allElements = Nothing
         element = Nothing
         doc = Nothing
         wc = Nothing
