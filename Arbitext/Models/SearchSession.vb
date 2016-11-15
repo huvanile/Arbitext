@@ -326,7 +326,7 @@ Public Class SearchSession
                         If Not wasCategorized(post, post.Books(b).Isbn13, post.Books(b).AskingPrice) Then
                             .Range("b" & theR & ":n" & theR).Interior.ColorIndex = 20
                             WriteTheEasyStuff(theR, post)
-                            .Range("e" & theR).Value2 = post.Books(b).Title
+                            '.Range("e" & theR).Value2 = post.Books(b).Title
                             .Range("f" & theR).Value2 = post.Books(b).Isbn13 'isbn
                             If Not post.Books(b).Isbn13 Like "*(*" And post.Books(b).Isbn13 <> "" Then
                                 .ActiveSheet.Hyperlinks.Add(anchor:= .Range("f" & theR), Address:=post.Books(b).BookscouterSiteLink, TextToDisplay:="'" & .Range("f" & theR).Value)

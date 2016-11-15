@@ -199,10 +199,6 @@ Public Class Post
 
 #Region "Methods"
 
-    Sub LearnAboutMultipost()
-
-    End Sub
-
     Sub tryMultiSplit(splitter As String)
         Dim tmpISBN As String = ""
         Dim tmpAskingPrice As Decimal = -1
@@ -235,11 +231,13 @@ Public Class Post
         Dim wc As New Net.WebClient
         Dim bHTML() As Byte = wc.DownloadData(_url)
         Dim sHTML As String = New UTF8Encoding().GetString(bHTML)
-        Dim doc As IHTMLDocument = New HTMLDocument
-        'doc.clear()
+        Dim doc As mshtml.IHTMLDocument2 = New mshtml.HTMLDocument
+        doc.clear()
         doc.write(sHTML)
-        Dim allElements As IHTMLElementCollection = doc.all
-        Dim element As IHTMLElement
+        Dim allElements As mshtml.IHTMLElementCollection
+        allElements = doc.all
+        doc.close()
+        Dim element As mshtml.IHTMLElement
 
         'find title
         _title = doc.title
@@ -267,22 +265,18 @@ Public Class Post
         Next
 
         ''find og:image
-        Dim metaTag As HTMLMetaElement
         For Each element In allElements
             If element.tagName = "META" Then
-                metaTag = element
+                Dim metaTag As HTMLMetaElement = element
                 If LCase(metaTag.content) Like "*images.craigslist*" Then
                     _image = metaTag.content
                     Exit For
                 End If
             End If
         Next
-        metaTag = Nothing
-
-        Dim allTimes As IHTMLElementCollection = allElements.tags("time")
 
         'find date posted
-        For Each element In allTimes
+        For Each element In allElements.tags("time")
             If LCase(element.parentElement.innerText) Like "*posted:*" Then
                 _postDate = Trim(element.parentElement.innerText)
                 _postDate = Replace(_postDate, "posted:", "").Trim
@@ -291,14 +285,12 @@ Public Class Post
         Next
 
         'find date updated
-        For Each element In allTimes
+        For Each element In allElements.tags("time")
             If LCase(element.parentElement.innerText) Like "*updated:*" Then
                 _updateDate = Trim(element.innerText)
                 Exit For
             End If
         Next
-
-        allTimes = Nothing
 
         'get posting body
         Dim z As Long : z = 0
@@ -321,9 +313,8 @@ Public Class Post
         End If
 
         'clean up
-        doc.close()
         element = Nothing
-        'doc = Nothing
+        doc = Nothing
         wc = Nothing
         bHTML = Nothing
         allElements = Nothing

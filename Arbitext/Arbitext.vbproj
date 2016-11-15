@@ -246,6 +246,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\Ribbon1.resx">
       <DependentUpon>Ribbon1.vb</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="Arbitext_TemporaryKey.pfx" />
     <None Include="ThisAddIn.Designer.xml">
@@ -275,6 +276,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

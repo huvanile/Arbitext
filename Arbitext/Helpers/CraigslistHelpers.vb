@@ -1,5 +1,4 @@
 ﻿Imports Arbitext.StringHelpers
-Imports mshtml
 
 Public Class CraigslistHelpers
 
