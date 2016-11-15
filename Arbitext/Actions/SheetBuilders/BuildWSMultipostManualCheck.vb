@@ -55,28 +55,28 @@ Public Class BuildWSMultipostManualCheck
             .ActiveWindow.FreezePanes = True
             .Range("g2:g7").HorizontalAlignment = XlHAlign.xlHAlignRight
             bookTile(.Range("b9"), 1)
-            bookTile(.Range("f9"), 2)
-            bookTile(.Range("b24"), 3)
-            bookTile(.Range("f24"), 4)
-            bookTile(.Range("b39"), 5)
-            bookTile(.Range("f39"), 6)
-            bookTile(.Range("b54"), 7)
-            bookTile(.Range("f54"), 8)
-            bookTile(.Range("b69"), 9)
-            bookTile(.Range("f69"), 10)
-            bookTile(.Range("b84"), 11)
-            bookTile(.Range("f84"), 12)
-            bookTile(.Range("b99"), 13)
-            bookTile(.Range("f99"), 14)
-            bookTile(.Range("b114"), 15)
-            bookTile(.Range("f114"), 16)
-            bookTile(.Range("b129"), 17)
-            bookTile(.Range("f129"), 18)
+            'bookTile(.Range("f9"), 2)
+            'bookTile(.Range("b24"), 3)
+            'bookTile(.Range("f24"), 4)
+            'bookTile(.Range("b39"), 5)
+            'bookTile(.Range("f39"), 6)
+            'bookTile(.Range("b54"), 7)
+            'bookTile(.Range("f54"), 8)
+            'bookTile(.Range("b69"), 9)
+            'bookTile(.Range("f69"), 10)
+            'bookTile(.Range("b84"), 11)
+            'bookTile(.Range("f84"), 12)
+            'bookTile(.Range("b99"), 13)
+            'bookTile(.Range("f99"), 14)
+            'bookTile(.Range("b114"), 15)
+            'bookTile(.Range("f114"), 16)
+            'bookTile(.Range("b129"), 17)
+            'bookTile(.Range("f129"), 18)
             .ActiveWindow.Zoom = 80
         End With
     End Sub
 
-    Private Shared Sub bookTile(topLeft As Excel.Range, theID As Integer)
+    Public Shared Sub bookTile(topLeft As Excel.Range, theID As Integer)
         With topLeft
             .Value = "Book " & theID
             .Font.ColorIndex = 2

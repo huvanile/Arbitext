@@ -65,9 +65,11 @@ Public Class SinglePostAnalysis
             .Range("c6") = post.UpdateDate
             .Range("c7") = post.City
 
-            For b As Short = 0 To post.Books.Count - 1 ''''' not sure about this
+            For b As Short = 0 To post.Books.Count - 1
                 Dim theRow As Long = bookStartRow(b)
-                If (b + 1) Mod 2 = 0 Then theCol = "g" Else theCol = "C" ''''' not sure about this
+                If (b + 1) Mod 2 = 0 Then theCol = "g" Else theCol = "C"
+                BuildWSMultipostManualCheck.bookTile(.range(theCol & theRow).offset(-1, -1), b + 1)
+                .range(theCol & theRow).offset(-1, -1).value2 = post.Books(b).Title
                 .range(theCol & theRow).value2 = post.Books(b).Isbn13
                 .range(theCol & theRow).hyperlinks.add(anchor:= .range(theCol & theRow), Address:=post.Books(b).BookscouterSiteLink, TextToDisplay:=post.Books(b).Isbn13)
                 .range(theCol & theRow).offset(1, 0).value2 = post.Books(b).AskingPrice
@@ -88,18 +90,16 @@ Public Class SinglePostAnalysis
                 End If
                 If post.Books(b).BuybackAmount > highestValue Then highestValue = post.Books(b).BuybackAmount
                 .range(theCol & theRow).Offset(11, 0).Value2 = post.Books(b).SaleDescInPost
-                'On Error Resume Next
-                'System.IO.File.Delete(tmpPic)
-                'On Error GoTo 0
-                'If post.Books(b).ImageURL <> "" And post.Books(b).ImageURL <> "(unknown)" Then
-                '    wc.DownloadFile(post.Books(b).ImageURL, tmpPic)
-                '    If IO.File.Exists(tmpPic) Then
-                '        ThisAddIn.AppExcel.ActiveSheet.Shapes.AddPicture(fileName:=tmpPic, Left:=ThisAddIn.AppExcel.Round(.Columns(.range(theCol & theRow).Offset(0, 1).Column).Left, 0) + 10, Top:=ThisAddIn.AppExcel.Round(.Rows(.range(theCol & theRow).Offset(-1, 0).Row).Top, 0) + 10, Width:=192, Height:=240)
-                '    End If
-                'Else
-                '    '0 = msoFalse, -1 = msoTrue
-                '    ThisAddIn.AppExcel.ActiveSheet.Shapes.AddPicture(fileName:=phPic, Left:=ThisAddIn.AppExcel.Round(.Columns(.range(theCol & theRow).Offset(0, 1).Column).Left, 0) + 10, Top:=ThisAddIn.AppExcel.Round(.Rows(.range(theCol & theRow).Offset(-1, 0).Row).Top, 0) + 10, Width:=192, Height:=240)
-                'End If
+                On Error Resume Next
+                System.IO.File.Delete(tmpPic)
+                On Error GoTo 0
+                If post.Books(b).ImageURL <> "" And post.Books(b).ImageURL <> "(unknown)" Then
+                    wc.DownloadFile(post.Books(b).ImageURL, tmpPic)
+                    If IO.File.Exists(tmpPic) Then tmpPic = phPic
+                    Dim tmpLeft As Integer = Math.Round(.Columns(.range(theCol & theRow).Offset(0, 1).Column).Left, 0) + 10
+                    Dim tmpTop As Integer = Math.Round(.Rows(.range(theCol & theRow).Offset(-1, 0).Row).Top, 0) + 10
+                    .Shapes.AddPicture(fileName:=tmpPic, LinkToFile:=0, SaveWithDocument:=-1, Left:=tmpLeft, Top:=tmpTop, Width:=192, Height:=240)
+                End If
             Next b
         End With
         wc = Nothing

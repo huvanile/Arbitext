@@ -42,6 +42,7 @@ Public Class CraigslistHelpers
         Dim match As Boolean = False
         If LCase(str) Like "*international*" _
         Or LCase(str) Like "*custom edition*" _
+        Or str Like "*CCCD*" _
         Or LCase(str) Like "*teacher's edition*" _
         Or LCase(str) Like "*teachers edition*" _
         Or LCase(str) Like "*teachers' edition*" _
