@@ -174,26 +174,17 @@ Public Class SearchSession
             With ThisAddIn.AppExcel
                 _multiCount = _multiCount + 1
 
-                If post.bookCount = 0 Then
+                If post.Books.Count = 0 Then
                     'doesn't look like we can parse it because bookcount didn't work
                     .Range("b" & r & ":n" & r).Interior.ColorIndex = 20
-                    writeTheEasyStuff(r, post)
-                    writeDummyValues(r)
+                    WriteTheEasyStuff(r, post)
+                    WriteDummyValues(r)
                     .Range("g" & r).Value2 = post.AskingPrice
                     .Range("f" & r).Value2 = "(multipost, unknown book count)"
                     _dunnoCount = _dunnoCount + 1
-                Else
-                    'bookcount worked, let's try to parse it
-                    If Not doAMultiAutoCheck(r, post) Then
-                        'doesn't look like we can parse it because something went wrong
-                        .Range("b" & r & ":n" & r).Interior.ColorIndex = 20
-                        WriteTheEasyStuff(r, post)
-                        WriteDummyValues(r)
-                        .Range("g" & r).Value = post.AskingPrice
-                        .Range("f" & r).Value2 = "(multipost, unparsable)"
-                        _dunnoCount = _dunnoCount + 1
-                    End If
-
+                Else 'bookcount worked, let's try to parse it
+                    writeMultipostBooks(r, post)
+                    'may need to do something right here to catch unparsable multiposts
                 End If
             End With
         Else 'not multi
@@ -325,7 +316,7 @@ Public Class SearchSession
         End With
     End Sub
 
-    Public Function doAMultiAutoCheck(ByVal theR As Integer, post As Post) As Boolean
+    Private Function writeMultipostBooks(ByVal theR As Integer, post As Post) As Boolean
         Try
             For b As Short = 0 To post.Books.Count
                 With ThisAddIn.AppExcel
@@ -335,6 +326,7 @@ Public Class SearchSession
                         If Not wasCategorized(post, post.Books(b).Isbn13, post.Books(b).AskingPrice) Then
                             .Range("b" & theR & ":n" & theR).Interior.ColorIndex = 20
                             WriteTheEasyStuff(theR, post)
+                            .Range("e" & theR).Value2 = post.Books(b).Title
                             .Range("f" & theR).Value2 = post.Books(b).Isbn13 'isbn
                             If Not post.Books(b).Isbn13 Like "*(*" And post.Books(b).Isbn13 <> "" Then
                                 .ActiveSheet.Hyperlinks.Add(anchor:= .Range("f" & theR), Address:=post.Books(b).BookscouterSiteLink, TextToDisplay:="'" & .Range("f" & theR).Value)

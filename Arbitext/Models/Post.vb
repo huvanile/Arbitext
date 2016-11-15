@@ -38,7 +38,9 @@ Public Class Post
 
         If isMulti Then
             _books = New List(Of Book)
-            LearnAboutMultipost()
+            tryMultiSplit("<br>")
+            tryMultiSplit("<br><br>")
+            tryMultiSplit("<p>")
         Else
             _book = New Book(_isbn, _askingPrice, _body)
         End If
@@ -198,87 +200,34 @@ Public Class Post
 #Region "Methods"
 
     Sub LearnAboutMultipost()
-        Dim tmpISBN As String
-        Dim tmpAskingPrice As String 'should this be a decimal?
-        Dim s As Long            'splitholder start position, increments as books are parsed
-        Dim t As Integer         'to loop through the splitholder <BR> results
+
+    End Sub
+
+    Sub tryMultiSplit(splitter As String)
+        Dim tmpISBN As String = ""
+        Dim tmpAskingPrice As Decimal = -1
+        Dim s As Long = 0                   'splitholder start position, increments as books are parsed
+        Dim t As Integer = 0                'to loop through the splitholder <BR> results
         Dim splitholder() As String
-        Dim tmpPostBody As String
-        Dim tmpBook As Book
-
-        'fist try the "1br" separator approach 
-        tmpISBN = ""
-        tmpAskingPrice = ""
-        s = 0
-        splitholder = Split(_body, "<br>")
-        t = 0
-        For t = s To UBound(splitholder)
-            tmpISBN = getISBN(splitholder(t), URL)
-            tmpAskingPrice = getAskingPrice(splitholder(t))
-            If Not tmpISBN Like "(*" And Not tmpAskingPrice Like "*(*" Then 'it's actually a book result!
-                tmpBook = New Book(tmpISBN, tmpAskingPrice, clean(splitholder(t), False, False, False, False, False, False))
-                _books.Add(tmpBook)
-                tmpBook = Nothing
-                Exit For 'this single book is found, go on to next splitholder result
-            End If
-        Next t
-
-        'then try the "p" separator approach, adding all new books found as we go
-        tmpISBN = ""
-        tmpAskingPrice = ""
-        s = 0
-        t = 0
-        splitholder = Split(_body, "<p>")
-        For t = s To UBound(splitholder)
-            tmpISBN = getISBN(splitholder(t), URL)
-            tmpAskingPrice = getAskingPrice(splitholder(t))
-            If Not tmpISBN Like "(*" And Not tmpAskingPrice Like "*(*" Then 'it's actually a book result!
-                If _books.Count > 0 Then
-                    For i As Short = 0 To _books.Count 'should this be a 1 base instead of a zero base?
-                        If _books(i).Isbn13 <> tmpISBN And _books(i).Isbn10 <> tmpISBN Then
-                            tmpBook = New Book(tmpISBN, tmpAskingPrice, clean(splitholder(t), False, False, False, False, False, False))
-                            _books.Add(tmpBook)
-                            tmpBook = Nothing
-                        End If
-                    Next i
-                Else
-                    tmpBook = New Book(tmpISBN, tmpAskingPrice, clean(splitholder(t), False, False, False, False, False, False))
-                    _books.Add(tmpBook)
-                    tmpBook = Nothing
-                End If
-                Exit For 'this single book is found, go on to next splitholder result
-            End If
-        Next t
-
-        'then try the "2br" separator approach, adding all new books found as we go
-        tmpISBN = ""
-        tmpAskingPrice = ""
-        s = 0
-        t = 0
-        tmpPostBody = Replace(_body, Chr(10), "")
+        Dim tmpPostBody As String = Replace(_body, Chr(10), "")
         tmpPostBody = Replace(tmpPostBody, Chr(13), "")
-        splitholder = Split(tmpPostBody, "<br><br>")
+        splitholder = Split(tmpPostBody, splitter)
         For t = s To UBound(splitholder)
             tmpISBN = getISBN(splitholder(t), URL)
             tmpAskingPrice = getAskingPrice(splitholder(t))
-            If Not tmpISBN Like "(*" And Not tmpAskingPrice Like "*(*" Then 'it's actually a book result!
-                If _books.Count > 0 Then
-                    For i As Short = 0 To _books.Count 'should this be a 1 base instead of a zero base?
-                        If _books(i).Isbn13 <> tmpISBN And _books(i).Isbn10 <> tmpISBN Then
-                            tmpBook = New Book(tmpISBN, tmpAskingPrice, clean(splitholder(t), False, False, False, False, False, False))
-                            _books.Add(tmpBook)
-                            tmpBook = Nothing
-                        End If
-                    Next i
-                Else
-                    tmpBook = New Book(tmpISBN, tmpAskingPrice, clean(splitholder(t), False, False, False, False, False, False))
-                    _books.Add(tmpBook)
-                    tmpBook = Nothing
-                End If
-                Exit For 'this single book is found, go on to next splitholder result
+            If Not tmpISBN Like "(*" And Not tmpAskingPrice = -1 Then 'it's actually a book result!
+                Dim tmpBook = New Book(tmpISBN, tmpAskingPrice, clean(splitholder(t), False, False, False, False, False, False))
+                Dim match As Boolean = False
+                For Each z As Book In _books
+                    If z.Equals(tmpBook) Then 'shouldn't ever be more than 3 really
+                        match = True
+                        Exit For
+                    End If
+                Next z
+                If Not match And bookCountFromString(tmpBook.SaleDescInPost) < 4 Then _books.Add(tmpBook)
+                tmpBook = Nothing
             End If
         Next t
-
     End Sub
 
     Sub LearnAboutPost()
@@ -286,10 +235,8 @@ Public Class Post
         Dim wc As New Net.WebClient
         Dim bHTML() As Byte = wc.DownloadData(_url)
         Dim sHTML As String = New UTF8Encoding().GetString(bHTML)
-
-        'mshtml crap
-        Dim doc As IHTMLDocument = New mshtml.HTMLDocument
-        doc.clear()
+        Dim doc As IHTMLDocument = New HTMLDocument
+        'doc.clear()
         doc.write(sHTML)
         Dim allElements As IHTMLElementCollection = doc.all
         Dim element As IHTMLElement
@@ -374,12 +321,12 @@ Public Class Post
         End If
 
         'clean up
-        doc.clear
-        allElements = Nothing
+        doc.close()
         element = Nothing
-        doc = Nothing
+        'doc = Nothing
         wc = Nothing
         bHTML = Nothing
+        allElements = Nothing
 
     End Sub
 

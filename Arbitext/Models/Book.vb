@@ -103,6 +103,7 @@ Public Class Book
     ReadOnly Property IsMaybe As Boolean
         Get
             If (Profit >= 1 Or PriceDelta <= 0.25) _
+            And Not _buybackAmount = 0 _
             And Not IsWinner _
             And Not aLaCarte _
             And Not isWeirdEdition _
