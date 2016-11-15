@@ -17,6 +17,7 @@ Public Class Post
     Private _html As String               'html of post
     Private _book As Book
     Private _books As List(Of Book)
+    Private _isParsable As Boolean        'is this post parseable?
 
 #Region "Constructors"
 
@@ -34,15 +35,18 @@ Public Class Post
         _book = Nothing
         _books = Nothing
 
-        LearnAboutPost()
-
-        If isMulti Then
-            _books = New List(Of Book)
-            tryMultiSplit("<br>")
-            tryMultiSplit("<br><br>")
-            tryMultiSplit("<p>")
+        If LearnAboutPost() Then
+            _isParsable = True
+            If isMulti Then
+                _books = New List(Of Book)
+                tryMultiSplit("<br>")
+                tryMultiSplit("<br><br>")
+                tryMultiSplit("<p>")
+            Else
+                _book = New Book(_isbn, _askingPrice, _body)
+            End If
         Else
-            _book = New Book(_isbn, _askingPrice, _body)
+            _isParsable = False
         End If
 
     End Sub
@@ -50,6 +54,11 @@ Public Class Post
 #End Region
 
 #Region "Easy Properties"
+    ReadOnly Property IsParsable As Boolean
+        Get
+            Return _isParsable
+        End Get
+    End Property
 
     ReadOnly Property PostDate As String
         Get
@@ -226,7 +235,7 @@ Public Class Post
         Next t
     End Sub
 
-    Sub LearnAboutPost()
+    Function LearnAboutPost() As Boolean
         Dim tmp As String = ""
         Dim wc As New Net.WebClient
         Dim bHTML() As Byte = wc.DownloadData(_url)
@@ -238,88 +247,99 @@ Public Class Post
         allElements = doc.all
         doc.close()
         Dim element As mshtml.IHTMLElement
+        Try
 
-        'find title
-        _title = doc.title
-
-        'find price
-        For Each element In allElements.tags("span")
-            If element.className = "price" Then
-                _askingPrice = Trim(element.innerText)
-                Exit For
-            End If
-        Next
-        If _askingPrice = -1 Then
-            _askingPrice = getAskingPrice(_html)
-        End If
-
-        'find location (HAP)
-        For Each element In allElements.tags("small")
-            Dim tmpLoc As String = Trim(element.innerText)
-            tmpLoc = Replace(tmpLoc, ")", "")
-            tmpLoc = Replace(tmpLoc, "(", "")
-            tmpLoc = Replace(tmpLoc, "\n", "")
-            tmpLoc = Replace(tmpLoc, "\r", "")
-            _city = tmpLoc
-            Exit For
-        Next
-
-        ''find og:image
-        For Each element In allElements
-            If element.tagName = "META" Then
-                Dim metaTag As HTMLMetaElement = element
-                If LCase(metaTag.content) Like "*images.craigslist*" Then
-                    _image = metaTag.content
-                    Exit For
+            'find title
+            _title = doc.title
+            If Not _title Like "*Page Not Found*" Then
+                'find price
+                For Each element In allElements.tags("span")
+                    If element.className = "price" Then
+                        _askingPrice = Trim(element.innerText)
+                        Exit For
+                    End If
+                Next
+                If _askingPrice = -1 Then
+                    _askingPrice = getAskingPrice(_html)
                 End If
+
+                'find location (HAP)
+                For Each element In allElements.tags("small")
+                    Dim tmpLoc As String = Trim(element.innerText)
+                    tmpLoc = Replace(tmpLoc, ")", "")
+                    tmpLoc = Replace(tmpLoc, "(", "")
+                    tmpLoc = Replace(tmpLoc, "\n", "")
+                    tmpLoc = Replace(tmpLoc, "\r", "")
+                    _city = tmpLoc
+                    Exit For
+                Next
+
+                ''find og:image
+                For Each element In allElements
+                    If element.tagName = "META" Then
+                        Dim metaTag As HTMLMetaElement = element
+                        If LCase(metaTag.content) Like "*images.craigslist*" Then
+                            _image = metaTag.content
+                            Exit For
+                        End If
+                    End If
+                Next
+
+                'find date posted
+                For Each element In allElements.tags("time")
+                    If LCase(element.parentElement.innerText) Like "*posted:*" Then
+                        _postDate = Trim(element.parentElement.innerText)
+                        _postDate = Replace(_postDate, "posted:", "").Trim
+                        Exit For
+                    End If
+                Next
+
+                'find date updated
+                For Each element In allElements.tags("time")
+                    If LCase(element.parentElement.innerText) Like "*updated:*" Then
+                        _updateDate = Trim(element.innerText)
+                        Exit For
+                    End If
+                Next
+
+                'get posting body
+                Dim z As Long : z = 0
+                Dim splitholder
+                Dim m As String : m = ""
+                z = Strings.InStr(1, sHTML, "<section id=""postingbody"">") 'start of section
+                m = Right(sHTML, Len(sHTML) - z)
+                z = Strings.InStr(1, m, "</div>")
+                m = Right(m, Len(m) - z)
+                z = Strings.InStr(1, m, "</div>")
+                m = Right(m, Len(m) - z - 5)
+                splitholder = Split(m, "</section>") 'end boundary of section 
+                m = Trim(splitholder(0))
+                _body = m
+
+                'get isbn
+                If Not isMulti Then
+                    _isbn = getISBN(_body, _url)
+                    If Not _isbn.Length = 13 And Not _isbn.Length = 10 Then _isbn = getISBN(_title, _url)
+                End If
+
+                'clean up
+                element = Nothing
+                doc = Nothing
+                wc = Nothing
+                bHTML = Nothing
+                allElements = Nothing
+
+                If _isbn Like "*(*" Then Return False Else Return True
+
+            Else
+                'page not found title
+                Return False
             End If
-        Next
 
-        'find date posted
-        For Each element In allElements.tags("time")
-            If LCase(element.parentElement.innerText) Like "*posted:*" Then
-                _postDate = Trim(element.parentElement.innerText)
-                _postDate = Replace(_postDate, "posted:", "").Trim
-                Exit For
-            End If
-        Next
-
-        'find date updated
-        For Each element In allElements.tags("time")
-            If LCase(element.parentElement.innerText) Like "*updated:*" Then
-                _updateDate = Trim(element.innerText)
-                Exit For
-            End If
-        Next
-
-        'get posting body
-        Dim z As Long : z = 0
-        Dim splitholder
-        Dim m As String : m = ""
-        z = Strings.InStr(1, sHTML, "<section id=""postingbody"">") 'start of section
-        m = Right(sHTML, Len(sHTML) - z)
-        z = Strings.InStr(1, m, "</div>")
-        m = Right(m, Len(m) - z)
-        z = Strings.InStr(1, m, "</div>")
-        m = Right(m, Len(m) - z - 5)
-        splitholder = Split(m, "</section>") 'end boundary of section 
-        m = Trim(splitholder(0))
-        _body = m
-
-        'get isbn
-        If Not isMulti Then
-            _isbn = getISBN(_body, _url)
-            If Not _isbn.Length = 13 And Not _isbn.Length = 10 Then _isbn = getISBN(_title, _url)
-        End If
-
-        'clean up
-        element = Nothing
-        doc = Nothing
-        wc = Nothing
-        bHTML = Nothing
-        allElements = Nothing
-
-    End Sub
+        Catch ex As Exception
+            Return False
+        End Try
+    End Function
 
 #End Region
 

@@ -8,28 +8,18 @@ Public Class Ribbon1
 
     Private Sub btnSearch_Click(sender As Object, e As RibbonControlEventArgs) Handles btnSearch.Click
         ThisAddIn.AppExcel.StatusBar = False
-        If Not doesWSExist("Automated Checks") And Not doesWSExist("Single Check") And Not doesWSExist("Multipost Manual Check") Then
+        If Not doesWSExist("Automated Checks") Then
             If Not isAnyWBOpen() Then ThisAddIn.AppExcel.Workbooks.Add()
             BuildWSAutomatedChecks.BuildWSAutomatedChecks()
         End If
         If Not ThisAddIn.AppExcel.ActiveSheet.Name Like "*Check*" Then ThisAddIn.AppExcel.Sheets("Automated Checks").Activate
-        Select Case ThisAddIn.AppExcel.ActiveSheet.Name
-            Case "Automated Checks"
-                AutomatedChecks.AutomatedChecks()
-            Case "Multipost Manual Checks"
-                MultipostManualCheck.MultipostManualCheck()
-            Case "Single Check"
-                SingleManualCheck.SingleManualCheck()
-            Case Else
-                MsgBox("This tool can only be run within the following sheets: Automated Checks, Multipost Manual Checks, Single Check.", vbCritical, ThisAddIn.Title)
-        End Select
+        AutomatedChecks.AutomatedChecks()
     End Sub
 
     Private Sub btnAnalyze_Click(sender As Object, e As RibbonControlEventArgs) Handles btnAnalyze.Click
         ThisAddIn.AppExcel.StatusBar = False
-        ThisAddIn.Proceed = True
-        singleCheckPageCheck()
-        If ThisAddIn.Proceed Then SingleManualCheck.SingleManualCheck()
+        Dim singlePostAnalysis As New SinglePostAnalysis
+        singlePostAnalysis = Nothing
     End Sub
 
 #End Region

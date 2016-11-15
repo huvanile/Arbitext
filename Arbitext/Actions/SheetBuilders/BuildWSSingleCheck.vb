@@ -4,6 +4,7 @@ Imports Microsoft.Office.Interop.Excel
 
 Public Class BuildWSSingleCheck
     Public Shared Sub BuildWSSingleCheck()
+        'DeleteWS("Single Check")
         createWS("Single Check")
         standardPageTitle("Analyze Single Posting")
         With ThisAddIn.AppExcel

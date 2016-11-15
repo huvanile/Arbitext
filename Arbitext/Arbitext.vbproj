@@ -204,8 +204,6 @@
   <ItemGroup>
     <AppDesigner Include="My Project\" />
     <Compile Include="Actions\FindDeals\AutomatedChecks.vb" />
-    <Compile Include="Actions\FindDeals\MultipostManualCheck.vb" />
-    <Compile Include="Actions\FindDeals\SingleManualCheck.vb" />
     <Compile Include="Actions\SheetBuilders\BuildWSActivityLog.vb" />
     <Compile Include="Actions\SheetBuilders\BuildWSAutomatedChecks.vb" />
     <Compile Include="Actions\SheetBuilders\BuildWSColorLegend.vb" />
@@ -238,6 +236,7 @@
     <Compile Include="Models\Book.vb" />
     <Compile Include="Models\Post.vb" />
     <Compile Include="Models\SearchSession.vb" />
+    <Compile Include="Models\SinglePostAnalysis.vb" />
     <Compile Include="ThisAddIn.vb">
       <SubType>Code</SubType>
     </Compile>

@@ -5,6 +5,7 @@ Imports Arbitext.ArbitextHelpers
 
 Public Class BuildWSMultipostManualCheck
     Public Shared Sub BuildWSMultipostManualCheck()
+        DeleteWS("Multipost Manual Checks")
         createWS("Multipost Manual Checks")
         standardPageTitle("Multipost Checks")
         With ThisAddIn.AppExcel

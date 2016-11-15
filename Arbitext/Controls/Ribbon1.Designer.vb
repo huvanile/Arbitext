@@ -59,11 +59,11 @@
         Me.btnSingleCheck = Me.Factory.CreateRibbonButton
         Me.btnMultipostManual = Me.Factory.CreateRibbonButton
         Me.btnKeepers = Me.Factory.CreateRibbonButton
+        Me.btnBuildTrash = Me.Factory.CreateRibbonButton
+        Me.btnBuildWSMaybes = Me.Factory.CreateRibbonButton
         Me.btnColorLegend = Me.Factory.CreateRibbonButton
         Me.btnActivityLog = Me.Factory.CreateRibbonButton
-        Me.btnBuildTrash = Me.Factory.CreateRibbonButton
         Me.btnSetPrefs = Me.Factory.CreateRibbonButton
-        Me.btnBuildWSMaybes = Me.Factory.CreateRibbonButton
         Me.tabBooks.SuspendLayout()
         Me.grpFinders.SuspendLayout()
         Me.grpFind.SuspendLayout()
@@ -99,7 +99,7 @@
         '
         Me.btnAnalyze.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge
         Me.btnAnalyze.Image = CType(resources.GetObject("btnAnalyze.Image"), System.Drawing.Image)
-        Me.btnAnalyze.Label = "Analyze Deal"
+        Me.btnAnalyze.Label = "Analyze Single Post"
         Me.btnAnalyze.Name = "btnAnalyze"
         Me.btnAnalyze.ShowImage = True
         '
@@ -218,6 +218,24 @@
         Me.btnKeepers.Name = "btnKeepers"
         Me.btnKeepers.ShowImage = True
         '
+        'btnBuildTrash
+        '
+        Me.btnBuildTrash.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge
+        Me.btnBuildTrash.Description = "Build the 'Trash' worksheet"
+        Me.btnBuildTrash.Image = CType(resources.GetObject("btnBuildTrash.Image"), System.Drawing.Image)
+        Me.btnBuildTrash.Label = "Trash"
+        Me.btnBuildTrash.Name = "btnBuildTrash"
+        Me.btnBuildTrash.ShowImage = True
+        '
+        'btnBuildWSMaybes
+        '
+        Me.btnBuildWSMaybes.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge
+        Me.btnBuildWSMaybes.Description = "Build the 'Maybes' worksheet"
+        Me.btnBuildWSMaybes.Image = CType(resources.GetObject("btnBuildWSMaybes.Image"), System.Drawing.Image)
+        Me.btnBuildWSMaybes.Label = "Maybes"
+        Me.btnBuildWSMaybes.Name = "btnBuildWSMaybes"
+        Me.btnBuildWSMaybes.ShowImage = True
+        '
         'btnColorLegend
         '
         Me.btnColorLegend.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge
@@ -236,15 +254,6 @@
         Me.btnActivityLog.Name = "btnActivityLog"
         Me.btnActivityLog.ShowImage = True
         '
-        'btnBuildTrash
-        '
-        Me.btnBuildTrash.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge
-        Me.btnBuildTrash.Description = "Build the 'Trash' worksheet"
-        Me.btnBuildTrash.Image = CType(resources.GetObject("btnBuildTrash.Image"), System.Drawing.Image)
-        Me.btnBuildTrash.Label = "Trash"
-        Me.btnBuildTrash.Name = "btnBuildTrash"
-        Me.btnBuildTrash.ShowImage = True
-        '
         'btnSetPrefs
         '
         Me.btnSetPrefs.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge
@@ -252,15 +261,6 @@
         Me.btnSetPrefs.Label = "Set Prefs"
         Me.btnSetPrefs.Name = "btnSetPrefs"
         Me.btnSetPrefs.ShowImage = True
-        '
-        'btnBuildWSMaybes
-        '
-        Me.btnBuildWSMaybes.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge
-        Me.btnBuildWSMaybes.Description = "Build the 'Maybes' worksheet"
-        Me.btnBuildWSMaybes.Image = CType(resources.GetObject("btnBuildWSMaybes.Image"), System.Drawing.Image)
-        Me.btnBuildWSMaybes.Label = "Maybes"
-        Me.btnBuildWSMaybes.Name = "btnBuildWSMaybes"
-        Me.btnBuildWSMaybes.ShowImage = True
         '
         'Ribbon1
         '

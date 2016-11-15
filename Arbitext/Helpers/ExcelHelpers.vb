@@ -9,6 +9,14 @@ Public Class ExcelHelpers
         End If
     End Sub
 
+    Public Shared Sub DeleteWS(theWS As String)
+        ThisAddIn.AppExcel.DisplayAlerts = False
+        On Error Resume Next
+        ThisAddIn.AppExcel.Worksheets(theWS).delete
+        On Error GoTo 0
+        ThisAddIn.AppExcel.DisplayAlerts = True
+    End Sub
+
     Public Shared Sub deleteAllPics(Optional theWS As String = "")
         If theWS = "" Then theWS = ThisAddIn.AppExcel.ActiveSheet.Name
         Dim shp As Excel.Shape
