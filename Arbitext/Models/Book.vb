@@ -1,26 +1,21 @@
 ﻿Imports Arbitext.ArbitextHelpers
+Imports Arbitext.ExcelHelpers
+Imports Arbitext.StringHelpers
 Imports System.Xml
 
 Public Class Book
     Private _title As String
     Private _imageURL As String
+    Private _isParsable As Boolean
     Private _isbn10 As String
     Private _isbn13 As String
     Private _author As String
-    Private _isPDF As Boolean
-    Private _isOBO As Boolean
-    Private _isWeirdEdition As Boolean
-    Private _aLaCarte As Boolean
     Private _buybackAmount As Decimal
     Private _buybackSite As String
     Private _buybackLink As String
     Private _bookscouterAPILink As String
     Private _bookscouterSiteLink As String
     Private _askingPrice As Decimal
-    Private _aLaCarteFlag As Boolean      'flag for loose leaf editions when found in saleDescInPost
-    Private _weirdEditionFlag As Boolean  'flag for weird editions like teacher's edition when found in saleDescInPost
-    Private _pdfFlag As Boolean           'flag for pdf files being sold as books on saleDescInPost
-    Private _oboFlag As Boolean           'flag for when OBO (or best offer) is present in saleDescInPost
     Private _saleDescInPost As String     'the part of the post used to describe this book. for single-book posts, this is teh whole post body.
 
 #Region "Contructors"
@@ -41,7 +36,7 @@ Public Class Book
 
         _saleDescInPost = theSaleDesc
         _askingPrice = askingPrice
-        GetDataFromBookscouter()
+        If GetDataFromBookscouter() Then _isParsable = True Else _isParsable = False
     End Sub
 #End Region
 
@@ -87,30 +82,44 @@ Public Class Book
 
 #Region "Readonly Properties"
 
-    ReadOnly Property IsWinner As Boolean
+    ReadOnly Property AmazonSearchURL As String
         Get
-            If Profit > ThisAddIn.MinTolerableProfit _
-            And Not aLaCarte _
-            And Not isWeirdEdition _
-            And Not isPDF Then
-                Return True
-            Else
-                Return False
+            Return "http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=" & replacePlusWithSpace(_title)
+        End Get
+    End Property
+
+    ReadOnly Property IsParsable As Boolean
+        Get
+            If Isbn13 = "" Or Isbn13 Like "*(*" Then Return False Else Return True
+        End Get
+    End Property
+
+    ReadOnly Property IsTrash(post As Post) As Boolean
+        Get
+            IsTrash = False
+            If IsParsable Then
+                If isPDF(post) Then IsTrash = True
+                If isWeirdEdition(post) Then IsTrash = True
+                If aLaCarte(post) Then IsTrash = True
+                If Profit <= 0 Then IsTrash = True
             End If
         End Get
     End Property
 
-    ReadOnly Property IsMaybe As Boolean
+    ReadOnly Property IsWinner(post As Post) As Boolean
         Get
-            If (Profit >= 1 Or PriceDelta <= 0.25) _
-            And Not _buybackAmount = 0 _
-            And Not IsWinner _
-            And Not aLaCarte _
-            And Not isWeirdEdition _
-            And Not isPDF Then
-                Return True
-            Else
-                Return False
+            IsWinner = False
+            If IsParsable Then
+                If Profit > ThisAddIn.MinTolerableProfit And Not IsTrash(post) Then IsWinner = True
+            End If
+        End Get
+    End Property
+
+    ReadOnly Property IsMaybe(post As Post) As Boolean
+        Get
+            IsMaybe = False
+            If IsParsable Then
+                If Not IsWinner(post) And Not IsTrash(post) Then IsMaybe = True
             End If
         End Get
     End Property
@@ -212,78 +221,131 @@ Public Class Book
 
 #Region "FLAG Properties"
 
-    Property isPDF() As Boolean
+    ReadOnly Property isPDF(post As Post) As Boolean
         Get
-            If CraigslistHelpers.isPDF(_saleDescInPost) Then Return True Else Return False
+            If post.Books.Count > 1 Then
+                If CraigslistHelpers.isPDF(_saleDescInPost) Then Return True Else Return False
+            Else
+                If CraigslistHelpers.isPDF(post.Title) Or CraigslistHelpers.isPDF(post.Body) Then Return True Else Return False
+            End If
         End Get
-        Set(value As Boolean)
-            _isPDF = value
-        End Set
     End Property
 
-    Property isOBO() As Boolean
+    ReadOnly Property isOBO(post As Post) As Boolean
         Get
-            If CraigslistHelpers.isOBO(_saleDescInPost) Then Return True Else Return False
+            If post.Books.Count > 1 Then
+                If CraigslistHelpers.isOBO(_saleDescInPost) Then Return True Else Return False
+            Else
+                If CraigslistHelpers.isOBO(post.Title) Or CraigslistHelpers.isOBO(post.Body) Then Return True Else Return False
+            End If
         End Get
-        Set(value As Boolean)
-            _isOBO = value
-        End Set
     End Property
 
-    Property isWeirdEdition() As Boolean
+    ReadOnly Property isWeirdEdition(post As Post) As Boolean
         Get
-            If CraigslistHelpers.isWeirdEdition(_saleDescInPost) Then Return True Else Return False
+            If post.Books.Count > 1 Then
+                If CraigslistHelpers.isWeirdEdition(_saleDescInPost) Then Return True Else Return False
+            Else
+                If CraigslistHelpers.isWeirdEdition(post.Title) Or CraigslistHelpers.isWeirdEdition(post.Body) Then Return True Else Return False
+            End If
         End Get
-        Set(value As Boolean)
-            _isWeirdEdition = value
-        End Set
     End Property
 
-    Property aLaCarte() As Boolean
+    ReadOnly Property aLaCarte(post As Post) As Boolean
         Get
-            If CraigslistHelpers.aLaCarte(_saleDescInPost) Then Return True Else Return False
+            If post.Books.Count > 1 Then
+                If CraigslistHelpers.aLaCarte(_saleDescInPost) Then Return True Else Return False
+            Else
+                If CraigslistHelpers.aLaCarte(post.Title) Or CraigslistHelpers.aLaCarte(post.Body) Then Return True Else Return False
+            End If
         End Get
-        Set(value As Boolean)
-            _aLaCarte = value
-        End Set
     End Property
 
+    ReadOnly Property WasAlreadyChecked() As Boolean
+        Get
+            WasAlreadyChecked = False
+            WasAlreadyChecked = findInResultSheet("Unparsable")
+            If Not WasAlreadyChecked Then WasAlreadyChecked = findInResultSheet("Winners")
+            If Not WasAlreadyChecked Then WasAlreadyChecked = findInResultSheet("Maybes")
+            If Not WasAlreadyChecked Then WasAlreadyChecked = findInResultSheet("Trash")
+            If Not WasAlreadyChecked Then WasAlreadyChecked = findInResultSheet("Automated Checks")
+        End Get
+    End Property
+
+    Private Function findInResultSheet(sheet As String)
+        If doesWSExist(sheet) Then
+            If canFind(_title, sheet,, False, False) Then
+                With ThisAddIn.AppExcel.Sheets(sheet)
+                    Dim theRow As Int16 : theRow = .range(canFind(_title, sheet,, True, False)).row
+                    If .range("d" & theRow).value2 = _title _
+                        AndAlso .range("e" & theRow).value2 = _isbn13 _
+                        AndAlso .range("f" & theRow).value2 = _askingPrice Then
+                        Return True
+                    Else
+                        Return False
+                    End If
+                End With
+            Else
+                Return False
+            End If
+        Else
+            Return False
+        End If
+    End Function
 #End Region
 
 #Region "Methods"
 
     Public Function GetDataFromBookscouter() As Boolean
-        Dim wc As New Net.WebClient
-        Dim isbn As String : If _isbn13 = "" Then isbn = _isbn10 Else isbn = _isbn13
-        Dim bXML() As Byte = wc.DownloadData(_bookscouterAPILink)
-        Dim sXML As String = New UTF8Encoding().GetString(bXML)
-        Dim doc As XmlDocument = New XmlDocument
-        Dim nodes As XmlNodeList
-        doc.LoadXml(sXML)
-        wc = Nothing
-        bXML = Nothing
-        If doc.ChildNodes.Count >= 2 Then 'its 2 if its a bad isbn, and 0 if not response at all
-            nodes = doc.GetElementsByTagName("title") : _title = nodes(0).InnerText.Trim()
-            nodes = doc.GetElementsByTagName("image") : _imageURL = nodes(0).InnerText.Trim()
-            _imageURL = Replace(ImageURL, "._SL75_.", "._SL400_.")
-            nodes = doc.GetElementsByTagName("isbn10") : _isbn10 = nodes(0).InnerText.Trim()
-            nodes = doc.GetElementsByTagName("isbn13") : _isbn13 = nodes(0).InnerText.Trim()
-            nodes = doc.GetElementsByTagName("author") : _author = nodes(0).InnerText.Trim() & vbCrLf
-            nodes = doc.GetElementsByTagName("amount") : _buybackAmount = nodes(0).InnerText.Trim
-            nodes = doc.GetElementsByTagName("vendor") : _buybackSite = nodes(0).InnerText.Trim()
-            nodes = doc.GetElementsByTagName("link") : _buybackLink = nodes(0).InnerText.Trim()
-            Return True
-        Else
+        Try
+
+            Dim wc As New Net.WebClient
+            Dim isbn As String : If _isbn13 = "" Then isbn = _isbn10 Else isbn = _isbn13
+            ThisAddIn.AppExcel.DisplayStatusBar = True
+            ThisAddIn.AppExcel.StatusBar = "Learning about book: " & isbn
+            Dim bXML() As Byte = wc.DownloadData(_bookscouterAPILink)
+            Dim sXML As String = New UTF8Encoding().GetString(bXML)
+            Dim doc As XmlDocument = New XmlDocument
+            Dim nodes As XmlNodeList
+            doc.LoadXml(sXML)
+            wc = Nothing
+            bXML = Nothing
+            If doc.ChildNodes.Count >= 2 Then 'its 2 if its a bad isbn, and 0 if not response at all
+                nodes = doc.GetElementsByTagName("title") : _title = nodes(0).InnerText.Trim()
+                nodes = doc.GetElementsByTagName("image") : _imageURL = nodes(0).InnerText.Trim()
+                _imageURL = Replace(ImageURL, "._SL75_.", "._SL300_.")
+                nodes = doc.GetElementsByTagName("isbn10") : _isbn10 = nodes(0).InnerText.Trim()
+                nodes = doc.GetElementsByTagName("isbn13") : _isbn13 = nodes(0).InnerText.Trim()
+                nodes = doc.GetElementsByTagName("author") : _author = nodes(0).InnerText.Trim() & vbCrLf
+                nodes = doc.GetElementsByTagName("amount") : _buybackAmount = nodes(0).InnerText.Trim
+                nodes = doc.GetElementsByTagName("vendor") : _buybackSite = nodes(0).InnerText.Trim()
+                nodes = doc.GetElementsByTagName("link") : _buybackLink = nodes(0).InnerText.Trim()
+                Return True
+            Else
+                _isbn10 = "(unknown)"
+                _isbn13 = "(unknown)"
+                _title = "(unknown)"
+                _imageURL = "(unknown)"
+                _author = "(unknown)"
+                _buybackAmount = -1
+                _buybackSite = "(unknown)"
+                _buybackLink = "(unknown)"
+                Return False
+            End If
+            wc = Nothing
+            nodes = Nothing
+            doc = Nothing
+        Catch ex As Exception
+            _isbn10 = "(unknown)"
+            _isbn13 = "(unknown)"
             _title = "(unknown)"
             _imageURL = "(unknown)"
             _author = "(unknown)"
-            _buybackAmount = "(unknown)"
+            _buybackAmount = -1
             _buybackSite = "(unknown)"
             _buybackLink = "(unknown)"
             Return False
-        End If
-        nodes = Nothing
-        doc = Nothing
+        End Try
     End Function
 
 #End Region

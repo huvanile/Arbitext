@@ -55,13 +55,6 @@
         Me.btnEmptyTrash = Me.Factory.CreateRibbonButton
         Me.grpOther = Me.Factory.CreateRibbonGroup
         Me.mnuBuildSheets = Me.Factory.CreateRibbonMenu
-        Me.btnAutomatedChecks = Me.Factory.CreateRibbonButton
-        Me.btnSingleCheck = Me.Factory.CreateRibbonButton
-        Me.btnMultipostManual = Me.Factory.CreateRibbonButton
-        Me.btnKeepers = Me.Factory.CreateRibbonButton
-        Me.btnBuildTrash = Me.Factory.CreateRibbonButton
-        Me.btnBuildWSMaybes = Me.Factory.CreateRibbonButton
-        Me.btnColorLegend = Me.Factory.CreateRibbonButton
         Me.btnActivityLog = Me.Factory.CreateRibbonButton
         Me.btnSetPrefs = Me.Factory.CreateRibbonButton
         Me.tabBooks.SuspendLayout()
@@ -169,81 +162,11 @@
         '
         Me.mnuBuildSheets.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge
         Me.mnuBuildSheets.Image = CType(resources.GetObject("mnuBuildSheets.Image"), System.Drawing.Image)
-        Me.mnuBuildSheets.Items.Add(Me.btnAutomatedChecks)
-        Me.mnuBuildSheets.Items.Add(Me.btnSingleCheck)
-        Me.mnuBuildSheets.Items.Add(Me.btnMultipostManual)
-        Me.mnuBuildSheets.Items.Add(Me.btnKeepers)
-        Me.mnuBuildSheets.Items.Add(Me.btnBuildTrash)
-        Me.mnuBuildSheets.Items.Add(Me.btnBuildWSMaybes)
-        Me.mnuBuildSheets.Items.Add(Me.btnColorLegend)
         Me.mnuBuildSheets.Items.Add(Me.btnActivityLog)
         Me.mnuBuildSheets.ItemSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge
         Me.mnuBuildSheets.Label = "Build Sheets"
         Me.mnuBuildSheets.Name = "mnuBuildSheets"
         Me.mnuBuildSheets.ShowImage = True
-        '
-        'btnAutomatedChecks
-        '
-        Me.btnAutomatedChecks.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge
-        Me.btnAutomatedChecks.Description = "Build the 'Automated Checks' worksheet"
-        Me.btnAutomatedChecks.Image = CType(resources.GetObject("btnAutomatedChecks.Image"), System.Drawing.Image)
-        Me.btnAutomatedChecks.Label = "Automated Checks"
-        Me.btnAutomatedChecks.Name = "btnAutomatedChecks"
-        Me.btnAutomatedChecks.ShowImage = True
-        '
-        'btnSingleCheck
-        '
-        Me.btnSingleCheck.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge
-        Me.btnSingleCheck.Description = "Build the 'Single Check' worksheet"
-        Me.btnSingleCheck.Image = CType(resources.GetObject("btnSingleCheck.Image"), System.Drawing.Image)
-        Me.btnSingleCheck.Label = "Single Checks"
-        Me.btnSingleCheck.Name = "btnSingleCheck"
-        Me.btnSingleCheck.ShowImage = True
-        '
-        'btnMultipostManual
-        '
-        Me.btnMultipostManual.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge
-        Me.btnMultipostManual.Description = "Build the 'Multipost Manual Check' worksheet"
-        Me.btnMultipostManual.Image = CType(resources.GetObject("btnMultipostManual.Image"), System.Drawing.Image)
-        Me.btnMultipostManual.Label = "Multipost Manual Check"
-        Me.btnMultipostManual.Name = "btnMultipostManual"
-        Me.btnMultipostManual.ShowImage = True
-        '
-        'btnKeepers
-        '
-        Me.btnKeepers.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge
-        Me.btnKeepers.Description = "Build the 'Keepers' worksheet"
-        Me.btnKeepers.Image = CType(resources.GetObject("btnKeepers.Image"), System.Drawing.Image)
-        Me.btnKeepers.Label = "Keepers"
-        Me.btnKeepers.Name = "btnKeepers"
-        Me.btnKeepers.ShowImage = True
-        '
-        'btnBuildTrash
-        '
-        Me.btnBuildTrash.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge
-        Me.btnBuildTrash.Description = "Build the 'Trash' worksheet"
-        Me.btnBuildTrash.Image = CType(resources.GetObject("btnBuildTrash.Image"), System.Drawing.Image)
-        Me.btnBuildTrash.Label = "Trash"
-        Me.btnBuildTrash.Name = "btnBuildTrash"
-        Me.btnBuildTrash.ShowImage = True
-        '
-        'btnBuildWSMaybes
-        '
-        Me.btnBuildWSMaybes.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge
-        Me.btnBuildWSMaybes.Description = "Build the 'Maybes' worksheet"
-        Me.btnBuildWSMaybes.Image = CType(resources.GetObject("btnBuildWSMaybes.Image"), System.Drawing.Image)
-        Me.btnBuildWSMaybes.Label = "Maybes"
-        Me.btnBuildWSMaybes.Name = "btnBuildWSMaybes"
-        Me.btnBuildWSMaybes.ShowImage = True
-        '
-        'btnColorLegend
-        '
-        Me.btnColorLegend.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge
-        Me.btnColorLegend.Description = "Build the 'Color Legend' worksheet"
-        Me.btnColorLegend.Image = CType(resources.GetObject("btnColorLegend.Image"), System.Drawing.Image)
-        Me.btnColorLegend.Label = "Color Legend"
-        Me.btnColorLegend.Name = "btnColorLegend"
-        Me.btnColorLegend.ShowImage = True
         '
         'btnActivityLog
         '
@@ -293,16 +216,9 @@
     Friend WithEvents btnEmptyTrash As Microsoft.Office.Tools.Ribbon.RibbonButton
     Friend WithEvents grpOther As Microsoft.Office.Tools.Ribbon.RibbonGroup
     Friend WithEvents mnuBuildSheets As Microsoft.Office.Tools.Ribbon.RibbonMenu
-    Friend WithEvents btnAutomatedChecks As Microsoft.Office.Tools.Ribbon.RibbonButton
-    Friend WithEvents btnSingleCheck As Microsoft.Office.Tools.Ribbon.RibbonButton
-    Friend WithEvents btnMultipostManual As Microsoft.Office.Tools.Ribbon.RibbonButton
-    Friend WithEvents btnKeepers As Microsoft.Office.Tools.Ribbon.RibbonButton
-    Friend WithEvents btnColorLegend As Microsoft.Office.Tools.Ribbon.RibbonButton
     Friend WithEvents btnActivityLog As Microsoft.Office.Tools.Ribbon.RibbonButton
-    Friend WithEvents btnBuildTrash As Microsoft.Office.Tools.Ribbon.RibbonButton
     Friend WithEvents btnSetPrefs As Microsoft.Office.Tools.Ribbon.RibbonButton
     Friend WithEvents grpFinders As Microsoft.Office.Tools.Ribbon.RibbonGroup
-    Friend WithEvents btnBuildWSMaybes As Microsoft.Office.Tools.Ribbon.RibbonButton
 End Class
 
 Partial Class ThisRibbonCollection

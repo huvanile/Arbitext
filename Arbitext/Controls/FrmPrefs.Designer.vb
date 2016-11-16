@@ -26,40 +26,38 @@ Partial Class FrmPrefs
         Me.btnSave = New System.Windows.Forms.Button()
         Me.btnClose = New System.Windows.Forms.Button()
         Me.grpPB = New System.Windows.Forms.GroupBox()
-        Me.GroupBox2 = New System.Windows.Forms.GroupBox()
-        Me.grpGmail = New System.Windows.Forms.GroupBox()
-        Me.grpSorting = New System.Windows.Forms.GroupBox()
-        Me.grpOnlyShowPosts = New System.Windows.Forms.GroupBox()
-        Me.optPostedToday = New System.Windows.Forms.RadioButton()
-        Me.optUpdatedToday = New System.Windows.Forms.RadioButton()
-        Me.optUpdated7Days = New System.Windows.Forms.RadioButton()
-        Me.optUpdated14Days = New System.Windows.Forms.RadioButton()
-        Me.optShowAll = New System.Windows.Forms.RadioButton()
-        Me.Label1 = New System.Windows.Forms.Label()
-        Me.Label2 = New System.Windows.Forms.Label()
-        Me.Label3 = New System.Windows.Forms.Label()
-        Me.chkOnWinners = New System.Windows.Forms.CheckBox()
-        Me.chkOnMaybes = New System.Windows.Forms.CheckBox()
-        Me.btnGrabCoverArt = New System.Windows.Forms.Button()
-        Me.txtResultAmt = New System.Windows.Forms.TextBox()
-        Me.txtMinProfit = New System.Windows.Forms.TextBox()
-        Me.txtCity = New System.Windows.Forms.TextBox()
-        Me.chkAutoTrashEbooks = New System.Windows.Forms.CheckBox()
-        Me.chkAutoTrashBinders = New System.Windows.Forms.CheckBox()
-        Me.chkAutoTrash = New System.Windows.Forms.CheckBox()
-        Me.chkNotifyViaPB = New System.Windows.Forms.CheckBox()
-        Me.txtPBAPIKey = New System.Windows.Forms.TextBox()
-        Me.lblPB1 = New System.Windows.Forms.Label()
+        Me.btnFindDevices = New System.Windows.Forms.Button()
+        Me.btnTestPB = New System.Windows.Forms.Button()
         Me.txtPBDeviceID = New System.Windows.Forms.TextBox()
         Me.lblPB2 = New System.Windows.Forms.Label()
-        Me.btnTestPB = New System.Windows.Forms.Button()
-        Me.btnFindDevices = New System.Windows.Forms.Button()
+        Me.txtPBAPIKey = New System.Windows.Forms.TextBox()
+        Me.lblPB1 = New System.Windows.Forms.Label()
+        Me.chkNotifyViaPB = New System.Windows.Forms.CheckBox()
+        Me.GroupBox2 = New System.Windows.Forms.GroupBox()
+        Me.txtCity = New System.Windows.Forms.TextBox()
+        Me.txtMinProfit = New System.Windows.Forms.TextBox()
+        Me.txtResultAmt = New System.Windows.Forms.TextBox()
+        Me.btnGrabCoverArt = New System.Windows.Forms.Button()
+        Me.chkOnMaybes = New System.Windows.Forms.CheckBox()
+        Me.chkOnWinners = New System.Windows.Forms.CheckBox()
+        Me.Label3 = New System.Windows.Forms.Label()
+        Me.Label2 = New System.Windows.Forms.Label()
+        Me.Label1 = New System.Windows.Forms.Label()
+        Me.grpGmail = New System.Windows.Forms.GroupBox()
         Me.btnTestGmail = New System.Windows.Forms.Button()
         Me.txtEmailPassword = New System.Windows.Forms.TextBox()
         Me.lblEmail2 = New System.Windows.Forms.Label()
         Me.txtEmailAddress = New System.Windows.Forms.TextBox()
         Me.lblEmail1 = New System.Windows.Forms.Label()
         Me.chkNotifyViaGmail = New System.Windows.Forms.CheckBox()
+        Me.grpSorting = New System.Windows.Forms.GroupBox()
+        Me.chkAutoCategorize = New System.Windows.Forms.CheckBox()
+        Me.grpOnlyShowPosts = New System.Windows.Forms.GroupBox()
+        Me.optShowAll = New System.Windows.Forms.RadioButton()
+        Me.optUpdated14Days = New System.Windows.Forms.RadioButton()
+        Me.optUpdated7Days = New System.Windows.Forms.RadioButton()
+        Me.optUpdatedToday = New System.Windows.Forms.RadioButton()
+        Me.optPostedToday = New System.Windows.Forms.RadioButton()
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.Label4 = New System.Windows.Forms.Label()
         Me.grpPB.SuspendLayout()
@@ -107,6 +105,71 @@ Partial Class FrmPrefs
         Me.grpPB.TabStop = False
         Me.grpPB.Text = "Pushbullet Notification Settings"
         '
+        'btnFindDevices
+        '
+        Me.btnFindDevices.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btnFindDevices.Location = New System.Drawing.Point(242, 97)
+        Me.btnFindDevices.Name = "btnFindDevices"
+        Me.btnFindDevices.Size = New System.Drawing.Size(47, 21)
+        Me.btnFindDevices.TabIndex = 14
+        Me.btnFindDevices.Text = "Find"
+        Me.btnFindDevices.UseVisualStyleBackColor = True
+        '
+        'btnTestPB
+        '
+        Me.btnTestPB.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btnTestPB.Location = New System.Drawing.Point(242, 19)
+        Me.btnTestPB.Name = "btnTestPB"
+        Me.btnTestPB.Size = New System.Drawing.Size(47, 21)
+        Me.btnTestPB.TabIndex = 13
+        Me.btnTestPB.Text = "Test"
+        Me.btnTestPB.UseVisualStyleBackColor = True
+        '
+        'txtPBDeviceID
+        '
+        Me.txtPBDeviceID.Location = New System.Drawing.Point(16, 119)
+        Me.txtPBDeviceID.Name = "txtPBDeviceID"
+        Me.txtPBDeviceID.Size = New System.Drawing.Size(273, 21)
+        Me.txtPBDeviceID.TabIndex = 12
+        '
+        'lblPB2
+        '
+        Me.lblPB2.AutoSize = True
+        Me.lblPB2.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblPB2.Location = New System.Drawing.Point(13, 99)
+        Me.lblPB2.Name = "lblPB2"
+        Me.lblPB2.Size = New System.Drawing.Size(232, 15)
+        Me.lblPB2.TabIndex = 11
+        Me.lblPB2.Text = "Pushbullet device index, as found with -->"
+        '
+        'txtPBAPIKey
+        '
+        Me.txtPBAPIKey.Location = New System.Drawing.Point(16, 69)
+        Me.txtPBAPIKey.Name = "txtPBAPIKey"
+        Me.txtPBAPIKey.Size = New System.Drawing.Size(273, 21)
+        Me.txtPBAPIKey.TabIndex = 10
+        '
+        'lblPB1
+        '
+        Me.lblPB1.AutoSize = True
+        Me.lblPB1.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblPB1.Location = New System.Drawing.Point(13, 49)
+        Me.lblPB1.Name = "lblPB1"
+        Me.lblPB1.Size = New System.Drawing.Size(110, 15)
+        Me.lblPB1.TabIndex = 9
+        Me.lblPB1.Text = "Pushbullet API key:"
+        '
+        'chkNotifyViaPB
+        '
+        Me.chkNotifyViaPB.AutoSize = True
+        Me.chkNotifyViaPB.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.chkNotifyViaPB.Location = New System.Drawing.Point(16, 21)
+        Me.chkNotifyViaPB.Name = "chkNotifyViaPB"
+        Me.chkNotifyViaPB.Size = New System.Drawing.Size(195, 19)
+        Me.chkNotifyViaPB.TabIndex = 4
+        Me.chkNotifyViaPB.Text = "Enable PushBullet notifications"
+        Me.chkNotifyViaPB.UseVisualStyleBackColor = True
+        '
         'GroupBox2
         '
         Me.GroupBox2.Controls.Add(Me.txtCity)
@@ -126,6 +189,89 @@ Partial Class FrmPrefs
         Me.GroupBox2.TabStop = False
         Me.GroupBox2.Text = "General settings"
         '
+        'txtCity
+        '
+        Me.txtCity.Location = New System.Drawing.Point(13, 123)
+        Me.txtCity.Name = "txtCity"
+        Me.txtCity.Size = New System.Drawing.Size(237, 21)
+        Me.txtCity.TabIndex = 8
+        '
+        'txtMinProfit
+        '
+        Me.txtMinProfit.Location = New System.Drawing.Point(188, 62)
+        Me.txtMinProfit.Name = "txtMinProfit"
+        Me.txtMinProfit.Size = New System.Drawing.Size(62, 21)
+        Me.txtMinProfit.TabIndex = 7
+        '
+        'txtResultAmt
+        '
+        Me.txtResultAmt.Location = New System.Drawing.Point(188, 25)
+        Me.txtResultAmt.Name = "txtResultAmt"
+        Me.txtResultAmt.Size = New System.Drawing.Size(62, 21)
+        Me.txtResultAmt.TabIndex = 6
+        '
+        'btnGrabCoverArt
+        '
+        Me.btnGrabCoverArt.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btnGrabCoverArt.Location = New System.Drawing.Point(150, 162)
+        Me.btnGrabCoverArt.Name = "btnGrabCoverArt"
+        Me.btnGrabCoverArt.Size = New System.Drawing.Size(100, 39)
+        Me.btnGrabCoverArt.TabIndex = 5
+        Me.btnGrabCoverArt.Text = "Download cover art placeholder"
+        Me.btnGrabCoverArt.UseVisualStyleBackColor = True
+        '
+        'chkOnMaybes
+        '
+        Me.chkOnMaybes.AutoSize = True
+        Me.chkOnMaybes.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.chkOnMaybes.Location = New System.Drawing.Point(13, 182)
+        Me.chkOnMaybes.Name = "chkOnMaybes"
+        Me.chkOnMaybes.Size = New System.Drawing.Size(119, 19)
+        Me.chkOnMaybes.TabIndex = 4
+        Me.chkOnMaybes.Text = "Notify on maybes"
+        Me.chkOnMaybes.UseVisualStyleBackColor = True
+        '
+        'chkOnWinners
+        '
+        Me.chkOnWinners.AutoSize = True
+        Me.chkOnWinners.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.chkOnWinners.Location = New System.Drawing.Point(13, 157)
+        Me.chkOnWinners.Name = "chkOnWinners"
+        Me.chkOnWinners.Size = New System.Drawing.Size(119, 19)
+        Me.chkOnWinners.TabIndex = 3
+        Me.chkOnWinners.Text = "Notify on winners"
+        Me.chkOnWinners.UseVisualStyleBackColor = True
+        '
+        'Label3
+        '
+        Me.Label3.AutoSize = True
+        Me.Label3.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label3.Location = New System.Drawing.Point(13, 103)
+        Me.Label3.Name = "Label3"
+        Me.Label3.Size = New System.Drawing.Size(98, 15)
+        Me.Label3.TabIndex = 2
+        Me.Label3.Text = "City (e.g., Dallas)"
+        '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label2.Location = New System.Drawing.Point(13, 62)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(144, 30)
+        Me.Label2.TabIndex = 1
+        Me.Label2.Text = "Minimum tolerable profit:" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "(Enter 0 to disable)"
+        '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label1.Location = New System.Drawing.Point(13, 25)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(153, 30)
+        Me.Label1.TabIndex = 0
+        Me.Label1.Text = "Search result amount limit:" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "(Enter 0 for unlimited)"
+        '
         'grpGmail
         '
         Me.grpGmail.Controls.Add(Me.btnTestGmail)
@@ -141,274 +287,6 @@ Partial Class FrmPrefs
         Me.grpGmail.TabIndex = 4
         Me.grpGmail.TabStop = False
         Me.grpGmail.Text = "Gmail Notification Settings"
-        '
-        'grpSorting
-        '
-        Me.grpSorting.Controls.Add(Me.chkAutoTrash)
-        Me.grpSorting.Controls.Add(Me.chkAutoTrashBinders)
-        Me.grpSorting.Controls.Add(Me.chkAutoTrashEbooks)
-        Me.grpSorting.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.grpSorting.Location = New System.Drawing.Point(303, 347)
-        Me.grpSorting.Name = "grpSorting"
-        Me.grpSorting.Size = New System.Drawing.Size(304, 133)
-        Me.grpSorting.TabIndex = 5
-        Me.grpSorting.TabStop = False
-        Me.grpSorting.Text = "Auto-sorting Settings"
-        '
-        'grpOnlyShowPosts
-        '
-        Me.grpOnlyShowPosts.Controls.Add(Me.optShowAll)
-        Me.grpOnlyShowPosts.Controls.Add(Me.optUpdated14Days)
-        Me.grpOnlyShowPosts.Controls.Add(Me.optUpdated7Days)
-        Me.grpOnlyShowPosts.Controls.Add(Me.optUpdatedToday)
-        Me.grpOnlyShowPosts.Controls.Add(Me.optPostedToday)
-        Me.grpOnlyShowPosts.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.grpOnlyShowPosts.Location = New System.Drawing.Point(619, 250)
-        Me.grpOnlyShowPosts.Name = "grpOnlyShowPosts"
-        Me.grpOnlyShowPosts.Size = New System.Drawing.Size(276, 154)
-        Me.grpOnlyShowPosts.TabIndex = 6
-        Me.grpOnlyShowPosts.TabStop = False
-        Me.grpOnlyShowPosts.Text = "Only show posts"
-        '
-        'optPostedToday
-        '
-        Me.optPostedToday.AutoSize = True
-        Me.optPostedToday.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.optPostedToday.Location = New System.Drawing.Point(21, 21)
-        Me.optPostedToday.Name = "optPostedToday"
-        Me.optPostedToday.Size = New System.Drawing.Size(95, 19)
-        Me.optPostedToday.TabIndex = 0
-        Me.optPostedToday.TabStop = True
-        Me.optPostedToday.Text = "Posted today"
-        Me.optPostedToday.UseVisualStyleBackColor = True
-        '
-        'optUpdatedToday
-        '
-        Me.optUpdatedToday.AutoSize = True
-        Me.optUpdatedToday.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.optUpdatedToday.Location = New System.Drawing.Point(21, 46)
-        Me.optUpdatedToday.Name = "optUpdatedToday"
-        Me.optUpdatedToday.Size = New System.Drawing.Size(104, 19)
-        Me.optUpdatedToday.TabIndex = 1
-        Me.optUpdatedToday.TabStop = True
-        Me.optUpdatedToday.Text = "Updated today"
-        Me.optUpdatedToday.UseVisualStyleBackColor = True
-        '
-        'optUpdated7Days
-        '
-        Me.optUpdated7Days.AutoSize = True
-        Me.optUpdated7Days.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.optUpdated7Days.Location = New System.Drawing.Point(21, 71)
-        Me.optUpdated7Days.Name = "optUpdated7Days"
-        Me.optUpdated7Days.Size = New System.Drawing.Size(145, 19)
-        Me.optUpdated7Days.TabIndex = 2
-        Me.optUpdated7Days.TabStop = True
-        Me.optUpdated7Days.Text = "Updated in last 7 days"
-        Me.optUpdated7Days.UseVisualStyleBackColor = True
-        '
-        'optUpdated14Days
-        '
-        Me.optUpdated14Days.AutoSize = True
-        Me.optUpdated14Days.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.optUpdated14Days.Location = New System.Drawing.Point(21, 96)
-        Me.optUpdated14Days.Name = "optUpdated14Days"
-        Me.optUpdated14Days.Size = New System.Drawing.Size(152, 19)
-        Me.optUpdated14Days.TabIndex = 3
-        Me.optUpdated14Days.TabStop = True
-        Me.optUpdated14Days.Text = "Updated in last 14 days"
-        Me.optUpdated14Days.UseVisualStyleBackColor = True
-        '
-        'optShowAll
-        '
-        Me.optShowAll.AutoSize = True
-        Me.optShowAll.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.optShowAll.Location = New System.Drawing.Point(21, 121)
-        Me.optShowAll.Name = "optShowAll"
-        Me.optShowAll.Size = New System.Drawing.Size(185, 19)
-        Me.optShowAll.TabIndex = 4
-        Me.optShowAll.TabStop = True
-        Me.optShowAll.Text = "(Show all posts, no time filter)"
-        Me.optShowAll.UseVisualStyleBackColor = True
-        '
-        'Label1
-        '
-        Me.Label1.AutoSize = True
-        Me.Label1.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label1.Location = New System.Drawing.Point(13, 25)
-        Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(153, 30)
-        Me.Label1.TabIndex = 0
-        Me.Label1.Text = "Search result amount limit:" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "(Enter 0 for unlimited)"
-        '
-        'Label2
-        '
-        Me.Label2.AutoSize = True
-        Me.Label2.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label2.Location = New System.Drawing.Point(13, 62)
-        Me.Label2.Name = "Label2"
-        Me.Label2.Size = New System.Drawing.Size(144, 30)
-        Me.Label2.TabIndex = 1
-        Me.Label2.Text = "Minimum tolerable profit:" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "(Enter 0 to disable)"
-        '
-        'Label3
-        '
-        Me.Label3.AutoSize = True
-        Me.Label3.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label3.Location = New System.Drawing.Point(13, 103)
-        Me.Label3.Name = "Label3"
-        Me.Label3.Size = New System.Drawing.Size(98, 15)
-        Me.Label3.TabIndex = 2
-        Me.Label3.Text = "City (e.g., Dallas)"
-        '
-        'chkOnWinners
-        '
-        Me.chkOnWinners.AutoSize = True
-        Me.chkOnWinners.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.chkOnWinners.Location = New System.Drawing.Point(13, 157)
-        Me.chkOnWinners.Name = "chkOnWinners"
-        Me.chkOnWinners.Size = New System.Drawing.Size(119, 19)
-        Me.chkOnWinners.TabIndex = 3
-        Me.chkOnWinners.Text = "Notify on winners"
-        Me.chkOnWinners.UseVisualStyleBackColor = True
-        '
-        'chkOnMaybes
-        '
-        Me.chkOnMaybes.AutoSize = True
-        Me.chkOnMaybes.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.chkOnMaybes.Location = New System.Drawing.Point(13, 182)
-        Me.chkOnMaybes.Name = "chkOnMaybes"
-        Me.chkOnMaybes.Size = New System.Drawing.Size(119, 19)
-        Me.chkOnMaybes.TabIndex = 4
-        Me.chkOnMaybes.Text = "Notify on maybes"
-        Me.chkOnMaybes.UseVisualStyleBackColor = True
-        '
-        'btnGrabCoverArt
-        '
-        Me.btnGrabCoverArt.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnGrabCoverArt.Location = New System.Drawing.Point(150, 162)
-        Me.btnGrabCoverArt.Name = "btnGrabCoverArt"
-        Me.btnGrabCoverArt.Size = New System.Drawing.Size(100, 39)
-        Me.btnGrabCoverArt.TabIndex = 5
-        Me.btnGrabCoverArt.Text = "Download cover art placeholder"
-        Me.btnGrabCoverArt.UseVisualStyleBackColor = True
-        '
-        'txtResultAmt
-        '
-        Me.txtResultAmt.Location = New System.Drawing.Point(188, 25)
-        Me.txtResultAmt.Name = "txtResultAmt"
-        Me.txtResultAmt.Size = New System.Drawing.Size(62, 21)
-        Me.txtResultAmt.TabIndex = 6
-        '
-        'txtMinProfit
-        '
-        Me.txtMinProfit.Location = New System.Drawing.Point(188, 62)
-        Me.txtMinProfit.Name = "txtMinProfit"
-        Me.txtMinProfit.Size = New System.Drawing.Size(62, 21)
-        Me.txtMinProfit.TabIndex = 7
-        '
-        'txtCity
-        '
-        Me.txtCity.Location = New System.Drawing.Point(13, 123)
-        Me.txtCity.Name = "txtCity"
-        Me.txtCity.Size = New System.Drawing.Size(237, 21)
-        Me.txtCity.TabIndex = 8
-        '
-        'chkAutoTrashEbooks
-        '
-        Me.chkAutoTrashEbooks.AutoSize = True
-        Me.chkAutoTrashEbooks.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.chkAutoTrashEbooks.Location = New System.Drawing.Point(17, 67)
-        Me.chkAutoTrashEbooks.Name = "chkAutoTrashEbooks"
-        Me.chkAutoTrashEbooks.Size = New System.Drawing.Size(164, 19)
-        Me.chkAutoTrashEbooks.TabIndex = 4
-        Me.chkAutoTrashEbooks.Text = "Auto-sort eBooks as trash"
-        Me.chkAutoTrashEbooks.UseVisualStyleBackColor = True
-        '
-        'chkAutoTrashBinders
-        '
-        Me.chkAutoTrashBinders.AutoSize = True
-        Me.chkAutoTrashBinders.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.chkAutoTrashBinders.Location = New System.Drawing.Point(16, 96)
-        Me.chkAutoTrashBinders.Name = "chkAutoTrashBinders"
-        Me.chkAutoTrashBinders.Size = New System.Drawing.Size(272, 19)
-        Me.chkAutoTrashBinders.TabIndex = 5
-        Me.chkAutoTrashBinders.Text = "Auto-sort binders / loose leaf editions as trash"
-        Me.chkAutoTrashBinders.UseVisualStyleBackColor = True
-        '
-        'chkAutoTrash
-        '
-        Me.chkAutoTrash.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.chkAutoTrash.Location = New System.Drawing.Point(16, 20)
-        Me.chkAutoTrash.Name = "chkAutoTrash"
-        Me.chkAutoTrash.Size = New System.Drawing.Size(273, 37)
-        Me.chkAutoTrash.TabIndex = 6
-        Me.chkAutoTrash.Text = "Auto-sort results as winners, maybes and trash based on profitability"
-        Me.chkAutoTrash.UseVisualStyleBackColor = True
-        '
-        'chkNotifyViaPB
-        '
-        Me.chkNotifyViaPB.AutoSize = True
-        Me.chkNotifyViaPB.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.chkNotifyViaPB.Location = New System.Drawing.Point(16, 21)
-        Me.chkNotifyViaPB.Name = "chkNotifyViaPB"
-        Me.chkNotifyViaPB.Size = New System.Drawing.Size(195, 19)
-        Me.chkNotifyViaPB.TabIndex = 4
-        Me.chkNotifyViaPB.Text = "Enable PushBullet notifications"
-        Me.chkNotifyViaPB.UseVisualStyleBackColor = True
-        '
-        'txtPBAPIKey
-        '
-        Me.txtPBAPIKey.Location = New System.Drawing.Point(16, 69)
-        Me.txtPBAPIKey.Name = "txtPBAPIKey"
-        Me.txtPBAPIKey.Size = New System.Drawing.Size(273, 21)
-        Me.txtPBAPIKey.TabIndex = 10
-        '
-        'lblPB1
-        '
-        Me.lblPB1.AutoSize = True
-        Me.lblPB1.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblPB1.Location = New System.Drawing.Point(13, 49)
-        Me.lblPB1.Name = "lblPB1"
-        Me.lblPB1.Size = New System.Drawing.Size(110, 15)
-        Me.lblPB1.TabIndex = 9
-        Me.lblPB1.Text = "Pushbullet API key:"
-        '
-        'txtPBDeviceID
-        '
-        Me.txtPBDeviceID.Location = New System.Drawing.Point(16, 119)
-        Me.txtPBDeviceID.Name = "txtPBDeviceID"
-        Me.txtPBDeviceID.Size = New System.Drawing.Size(273, 21)
-        Me.txtPBDeviceID.TabIndex = 12
-        '
-        'lblPB2
-        '
-        Me.lblPB2.AutoSize = True
-        Me.lblPB2.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblPB2.Location = New System.Drawing.Point(13, 99)
-        Me.lblPB2.Name = "lblPB2"
-        Me.lblPB2.Size = New System.Drawing.Size(232, 15)
-        Me.lblPB2.TabIndex = 11
-        Me.lblPB2.Text = "Pushbullet device index, as found with -->"
-        '
-        'btnTestPB
-        '
-        Me.btnTestPB.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnTestPB.Location = New System.Drawing.Point(242, 19)
-        Me.btnTestPB.Name = "btnTestPB"
-        Me.btnTestPB.Size = New System.Drawing.Size(47, 21)
-        Me.btnTestPB.TabIndex = 13
-        Me.btnTestPB.Text = "Test"
-        Me.btnTestPB.UseVisualStyleBackColor = True
-        '
-        'btnFindDevices
-        '
-        Me.btnFindDevices.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnFindDevices.Location = New System.Drawing.Point(242, 97)
-        Me.btnFindDevices.Name = "btnFindDevices"
-        Me.btnFindDevices.Size = New System.Drawing.Size(47, 21)
-        Me.btnFindDevices.TabIndex = 14
-        Me.btnFindDevices.Text = "Find"
-        Me.btnFindDevices.UseVisualStyleBackColor = True
         '
         'btnTestGmail
         '
@@ -466,6 +344,104 @@ Partial Class FrmPrefs
         Me.chkNotifyViaGmail.Text = "Enable Gmail notifications"
         Me.chkNotifyViaGmail.UseVisualStyleBackColor = True
         '
+        'grpSorting
+        '
+        Me.grpSorting.Controls.Add(Me.chkAutoCategorize)
+        Me.grpSorting.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.grpSorting.Location = New System.Drawing.Point(303, 347)
+        Me.grpSorting.Name = "grpSorting"
+        Me.grpSorting.Size = New System.Drawing.Size(304, 133)
+        Me.grpSorting.TabIndex = 5
+        Me.grpSorting.TabStop = False
+        Me.grpSorting.Text = "Auto-sorting Settings"
+        '
+        'chkAutoCategorize
+        '
+        Me.chkAutoCategorize.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.chkAutoCategorize.Location = New System.Drawing.Point(16, 20)
+        Me.chkAutoCategorize.Name = "chkAutoCategorize"
+        Me.chkAutoCategorize.Size = New System.Drawing.Size(273, 95)
+        Me.chkAutoCategorize.TabIndex = 6
+        Me.chkAutoCategorize.Text = "Auto-sort results as winners, maybes and trash based on:" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "- Profitability" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "- If i" &
+    "t's an eBook (trash)" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "- If it's a binder (trash)" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "- If it's a weird edition (tra" &
+    "sh)"
+        Me.chkAutoCategorize.UseVisualStyleBackColor = True
+        '
+        'grpOnlyShowPosts
+        '
+        Me.grpOnlyShowPosts.Controls.Add(Me.optShowAll)
+        Me.grpOnlyShowPosts.Controls.Add(Me.optUpdated14Days)
+        Me.grpOnlyShowPosts.Controls.Add(Me.optUpdated7Days)
+        Me.grpOnlyShowPosts.Controls.Add(Me.optUpdatedToday)
+        Me.grpOnlyShowPosts.Controls.Add(Me.optPostedToday)
+        Me.grpOnlyShowPosts.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.grpOnlyShowPosts.Location = New System.Drawing.Point(619, 250)
+        Me.grpOnlyShowPosts.Name = "grpOnlyShowPosts"
+        Me.grpOnlyShowPosts.Size = New System.Drawing.Size(276, 154)
+        Me.grpOnlyShowPosts.TabIndex = 6
+        Me.grpOnlyShowPosts.TabStop = False
+        Me.grpOnlyShowPosts.Text = "Only show posts"
+        '
+        'optShowAll
+        '
+        Me.optShowAll.AutoSize = True
+        Me.optShowAll.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.optShowAll.Location = New System.Drawing.Point(21, 121)
+        Me.optShowAll.Name = "optShowAll"
+        Me.optShowAll.Size = New System.Drawing.Size(185, 19)
+        Me.optShowAll.TabIndex = 4
+        Me.optShowAll.TabStop = True
+        Me.optShowAll.Text = "(Show all posts, no time filter)"
+        Me.optShowAll.UseVisualStyleBackColor = True
+        '
+        'optUpdated14Days
+        '
+        Me.optUpdated14Days.AutoSize = True
+        Me.optUpdated14Days.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.optUpdated14Days.Location = New System.Drawing.Point(21, 96)
+        Me.optUpdated14Days.Name = "optUpdated14Days"
+        Me.optUpdated14Days.Size = New System.Drawing.Size(152, 19)
+        Me.optUpdated14Days.TabIndex = 3
+        Me.optUpdated14Days.TabStop = True
+        Me.optUpdated14Days.Text = "Updated in last 14 days"
+        Me.optUpdated14Days.UseVisualStyleBackColor = True
+        '
+        'optUpdated7Days
+        '
+        Me.optUpdated7Days.AutoSize = True
+        Me.optUpdated7Days.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.optUpdated7Days.Location = New System.Drawing.Point(21, 71)
+        Me.optUpdated7Days.Name = "optUpdated7Days"
+        Me.optUpdated7Days.Size = New System.Drawing.Size(145, 19)
+        Me.optUpdated7Days.TabIndex = 2
+        Me.optUpdated7Days.TabStop = True
+        Me.optUpdated7Days.Text = "Updated in last 7 days"
+        Me.optUpdated7Days.UseVisualStyleBackColor = True
+        '
+        'optUpdatedToday
+        '
+        Me.optUpdatedToday.AutoSize = True
+        Me.optUpdatedToday.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.optUpdatedToday.Location = New System.Drawing.Point(21, 46)
+        Me.optUpdatedToday.Name = "optUpdatedToday"
+        Me.optUpdatedToday.Size = New System.Drawing.Size(104, 19)
+        Me.optUpdatedToday.TabIndex = 1
+        Me.optUpdatedToday.TabStop = True
+        Me.optUpdatedToday.Text = "Updated today"
+        Me.optUpdatedToday.UseVisualStyleBackColor = True
+        '
+        'optPostedToday
+        '
+        Me.optPostedToday.AutoSize = True
+        Me.optPostedToday.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.optPostedToday.Location = New System.Drawing.Point(21, 21)
+        Me.optPostedToday.Name = "optPostedToday"
+        Me.optPostedToday.Size = New System.Drawing.Size(95, 19)
+        Me.optPostedToday.TabIndex = 0
+        Me.optPostedToday.TabStop = True
+        Me.optPostedToday.Text = "Posted today"
+        Me.optPostedToday.UseVisualStyleBackColor = True
+        '
         'PictureBox1
         '
         Me.PictureBox1.Image = CType(resources.GetObject("PictureBox1.Image"), System.Drawing.Image)
@@ -509,7 +485,6 @@ Partial Class FrmPrefs
         Me.grpGmail.ResumeLayout(False)
         Me.grpGmail.PerformLayout()
         Me.grpSorting.ResumeLayout(False)
-        Me.grpSorting.PerformLayout()
         Me.grpOnlyShowPosts.ResumeLayout(False)
         Me.grpOnlyShowPosts.PerformLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
@@ -540,9 +515,7 @@ Partial Class FrmPrefs
     Friend WithEvents Label1 As System.Windows.Forms.Label
     Friend WithEvents grpGmail As System.Windows.Forms.GroupBox
     Friend WithEvents grpSorting As System.Windows.Forms.GroupBox
-    Friend WithEvents chkAutoTrash As System.Windows.Forms.CheckBox
-    Friend WithEvents chkAutoTrashBinders As System.Windows.Forms.CheckBox
-    Friend WithEvents chkAutoTrashEbooks As System.Windows.Forms.CheckBox
+    Friend WithEvents chkAutoCategorize As System.Windows.Forms.CheckBox
     Friend WithEvents grpOnlyShowPosts As System.Windows.Forms.GroupBox
     Friend WithEvents optShowAll As System.Windows.Forms.RadioButton
     Friend WithEvents optUpdated14Days As System.Windows.Forms.RadioButton

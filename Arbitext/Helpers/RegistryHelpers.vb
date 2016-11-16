@@ -39,9 +39,7 @@ Public Class RegistryHelpers
             If My.Computer.Registry.GetValue(RegistryFolder, "EmailsOK", Nothing) Is Nothing Then My.Computer.Registry.SetValue(RegistryFolder, "EmailsOK", False)
             If My.Computer.Registry.GetValue(RegistryFolder, "NotifyViaPBOK", Nothing) Is Nothing Then My.Computer.Registry.SetValue(RegistryFolder, "NotifyViaPBOK", False)
             If My.Computer.Registry.GetValue(RegistryFolder, "KeepIEVisibleOK", Nothing) Is Nothing Then My.Computer.Registry.SetValue(RegistryFolder, "KeepIEVisibleOK", False)
-            If My.Computer.Registry.GetValue(RegistryFolder, "AutoTrashOK", Nothing) Is Nothing Then My.Computer.Registry.SetValue(RegistryFolder, "AutoTrashOK", True)
-            If My.Computer.Registry.GetValue(RegistryFolder, "AutoTrashBindersOK", Nothing) Is Nothing Then My.Computer.Registry.SetValue(RegistryFolder, "AutoTrashBindersOK", True)
-            If My.Computer.Registry.GetValue(RegistryFolder, "AutoTrashEBooksOK", Nothing) Is Nothing Then My.Computer.Registry.SetValue(RegistryFolder, "AutoTrashEBooksOK", True)
+            If My.Computer.Registry.GetValue(RegistryFolder, "AutoCategorizeOK", Nothing) Is Nothing Then My.Computer.Registry.SetValue(RegistryFolder, "AutoCategorizeOK", True)
             If My.Computer.Registry.GetValue(RegistryFolder, "OnWinnersOK", Nothing) Is Nothing Then My.Computer.Registry.SetValue(RegistryFolder, "OnWinnersOK", False)
             If My.Computer.Registry.GetValue(RegistryFolder, "OnMaybesOK", Nothing) Is Nothing Then My.Computer.Registry.SetValue(RegistryFolder, "OnMaybesOK", False)
 
@@ -87,9 +85,7 @@ Public Class RegistryHelpers
             ThisAddIn.EmailsOK = CBool(My.Computer.Registry.GetValue(RegistryFolder, "EmailsOK", Nothing))
             ThisAddIn.NotifyViaPBOK = CBool(My.Computer.Registry.GetValue(RegistryFolder, "NotifyViaPBOK", Nothing))
             ThisAddIn.KeepIEVisibleOK = CBool(My.Computer.Registry.GetValue(RegistryFolder, "KeepIEVisibleOK", Nothing))
-            ThisAddIn.AutoTrashOK = CBool(My.Computer.Registry.GetValue(RegistryFolder, "AutoTrashOK", Nothing))
-            ThisAddIn.AutoTrashBindersOK = CBool(My.Computer.Registry.GetValue(RegistryFolder, "AutoTrashBindersOK", Nothing))
-            ThisAddIn.AutoTrashEBooksOK = CBool(My.Computer.Registry.GetValue(RegistryFolder, "AutoTrashEBooksOK", Nothing))
+            ThisAddIn.AutoCategorizeOK = CBool(My.Computer.Registry.GetValue(RegistryFolder, "AutoCategorizeOK", Nothing))
             ThisAddIn.OnWinnersOK = CBool(My.Computer.Registry.GetValue(RegistryFolder, "OnWinnersOK", Nothing))
             ThisAddIn.OnMaybesOK = CBool(My.Computer.Registry.GetValue(RegistryFolder, "OnMaybesOK", Nothing))
 
@@ -119,9 +115,7 @@ Public Class RegistryHelpers
             'checkboxes
             ThisAddIn.frmPrefs.chkNotifyViaPB.Checked = ThisAddIn.NotifyViaPBOK
             ThisAddIn.frmPrefs.chkNotifyViaGmail.Checked = ThisAddIn.EmailsOK
-            ThisAddIn.frmPrefs.chkAutoTrash.Checked = ThisAddIn.AutoTrashOK
-            ThisAddIn.frmPrefs.chkAutoTrashBinders.Checked = ThisAddIn.AutoTrashBindersOK
-            ThisAddIn.frmPrefs.chkAutoTrashEbooks.Checked = ThisAddIn.AutoTrashEBooksOK
+            ThisAddIn.frmPrefs.chkAutoCategorize.Checked = ThisAddIn.AutoCategorizeOK
             ThisAddIn.frmPrefs.chkOnMaybes.Checked = ThisAddIn.OnMaybesOK
             ThisAddIn.frmPrefs.chkOnWinners.Checked = ThisAddIn.OnWinnersOK
 
@@ -164,9 +158,7 @@ Public Class RegistryHelpers
                 'checkboxes
                 .SetValue(RegistryFolder, "EmailsOK", ThisAddIn.frmPrefs.chkNotifyViaGmail.Checked)
                 .SetValue(RegistryFolder, "NotifyViaPBOK", ThisAddIn.frmPrefs.chkNotifyViaPB.Checked)
-                .SetValue(RegistryFolder, "AutoTrashOK", ThisAddIn.frmPrefs.chkAutoTrash.Checked)
-                .SetValue(RegistryFolder, "AutoTrashEBooksOK", ThisAddIn.frmPrefs.chkAutoTrashEbooks.Checked)
-                .SetValue(RegistryFolder, "AutoTrashBindersOK", ThisAddIn.frmPrefs.chkAutoTrashBinders.Checked)
+                .SetValue(RegistryFolder, "AutoCategorizeOK", ThisAddIn.frmPrefs.chkAutoCategorize.Checked)
                 .SetValue(RegistryFolder, "OnWinnersOK", ThisAddIn.frmPrefs.chkOnWinners.Checked)
                 .SetValue(RegistryFolder, "OnMaybesOK", ThisAddIn.frmPrefs.chkOnMaybes.Checked)
 

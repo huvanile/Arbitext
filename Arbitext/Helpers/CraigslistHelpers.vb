@@ -4,7 +4,7 @@ Public Class CraigslistHelpers
 
     Public Shared Function isMulti(str As String) As Boolean
         Dim match As Boolean = False
-        If LCase(str) Like "*books*" _
+        If (LCase(str) Like "*books*" And Not LCase(str) Like "*bookstore*") _
         Or LCase(str) Like "*texts*" Then
             match = True
         End If
@@ -100,12 +100,23 @@ Public Class CraigslistHelpers
         End If
 
         If Not IsNumeric(m) Then
+
             'check for actual dollar sign
             If InStr(1, str, "$") <> 0 Then
                 i = InStr(1, LCase(str), "$") + 1
                 m = clean(Mid(str, i, 6), False, True, True, True, True, False)
             End If
+
+            'check again for the actual dollar sign, further down the page
+            If Not IsNumeric(m) Then
+                If InStr(i + 3, str, "$") <> 0 Then
+                    i = InStr(i + 3, LCase(str), "$") + 1
+                    m = clean(Mid(str, i, 6), False, True, True, True, True, False)
+                End If
+            End If
+
         End If
+
         On Error GoTo oops
         If m <> "" Then m = CInt(m)
         On Error GoTo 0

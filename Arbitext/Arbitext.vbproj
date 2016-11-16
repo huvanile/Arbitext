@@ -203,15 +203,11 @@
   -->
   <ItemGroup>
     <AppDesigner Include="My Project\" />
-    <Compile Include="Actions\FindDeals\AutomatedChecks.vb" />
-    <Compile Include="Actions\SheetBuilders\BuildWSActivityLog.vb" />
-    <Compile Include="Actions\SheetBuilders\BuildWSAutomatedChecks.vb" />
-    <Compile Include="Actions\SheetBuilders\BuildWSColorLegend.vb" />
-    <Compile Include="Actions\SheetBuilders\BuildWSKeepers.vb" />
-    <Compile Include="Actions\SheetBuilders\BuildWSMaybes.vb" />
-    <Compile Include="Actions\SheetBuilders\BuildWSMultipostManualCheck.vb" />
-    <Compile Include="Actions\SheetBuilders\BuildWSSingleCheck.vb" />
-    <Compile Include="Actions\SheetBuilders\BuildWSTrash.vb" />
+    <Compile Include="SheetBuilders\BuildWSActivityLog.vb" />
+    <Compile Include="SheetBuilders\BuildWSColorLegend.vb" />
+    <Compile Include="SheetBuilders\BuildWSMultipostManualCheck.vb" />
+    <Compile Include="SheetBuilders\BuildWSResults.vb" />
+    <Compile Include="SheetBuilders\BuildWSSingleCheck.vb" />
     <Compile Include="Controls\FrmPrefs.Designer.vb">
       <DependentUpon>FrmPrefs.vb</DependentUpon>
     </Compile>
@@ -234,8 +230,8 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Models\Book.vb" />
+    <Compile Include="Models\MultiplePostsAnalysis.vb" />
     <Compile Include="Models\Post.vb" />
-    <Compile Include="Models\SearchSession.vb" />
     <Compile Include="Models\SinglePostAnalysis.vb" />
     <Compile Include="ThisAddIn.vb">
       <SubType>Code</SubType>

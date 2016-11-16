@@ -8,12 +8,8 @@ Public Class Ribbon1
 
     Private Sub btnSearch_Click(sender As Object, e As RibbonControlEventArgs) Handles btnSearch.Click
         ThisAddIn.AppExcel.StatusBar = False
-        If Not doesWSExist("Automated Checks") Then
-            If Not isAnyWBOpen() Then ThisAddIn.AppExcel.Workbooks.Add()
-            BuildWSAutomatedChecks.BuildWSAutomatedChecks()
-        End If
-        If Not ThisAddIn.AppExcel.ActiveSheet.Name Like "*Check*" Then ThisAddIn.AppExcel.Sheets("Automated Checks").Activate
-        AutomatedChecks.AutomatedChecks()
+        Dim multiplePostsAnalysis As New MultiplePostsAnalysis
+        multiplePostsAnalysis = Nothing
     End Sub
 
     Private Sub btnAnalyze_Click(sender As Object, e As RibbonControlEventArgs) Handles btnAnalyze.Click
@@ -62,7 +58,7 @@ Public Class Ribbon1
         With ThisAddIn.AppExcel
             Dim callingWS As String = .ActiveSheet.Name
             Dim x As Integer
-            If Not doesWSExist("Keepers") Then BuildWSKeepers.BuildWSKeepers()
+            If Not doesWSExist("Keepers") Then BuildWSResults.buildResultWS("Keepers")
             .Sheets(callingWS).Activate
             Select Case .ActiveSheet.Name
                 Case "Automated Checks"
@@ -86,7 +82,7 @@ Public Class Ribbon1
         With ThisAddIn.AppExcel
             Dim callingWS As String = .ActiveSheet.Name
             Dim x As Integer
-            If Not doesWSExist("Maybes") Then BuildWSMaybes.BuildWSMaybes()
+            If Not doesWSExist("Maybes") Then BuildWSResults.buildResultWS("Maybes")
             .Sheets(callingWS).Activate
             Select Case .ActiveSheet.Name
                 Case "Automated Checks"
@@ -110,7 +106,7 @@ Public Class Ribbon1
         With ThisAddIn.AppExcel
             Dim callingWS As String = .ActiveSheet.Name
             Dim x As Integer
-            If Not doesWSExist("Trash") Then BuildWSTrash.BuildWSTrash()
+            If Not doesWSExist("Trash") Then BuildWSResults.buildResultWS("Trash")
             .Sheets(callingWS).Activate
             Select Case .ActiveSheet.Name
                 Case "Automated Checks"
@@ -132,44 +128,10 @@ Public Class Ribbon1
 #End Region
 
 #Region "Sheet Builders"
-    Private Sub btnAutomatedChecks_Click(sender As Object, e As RibbonControlEventArgs) Handles btnAutomatedChecks.Click
-        ThisAddIn.AppExcel.StatusBar = False
-        BuildWSAutomatedChecks.BuildWSAutomatedChecks()
-    End Sub
-
-    Private Sub btnSingleCheck_Click(sender As Object, e As RibbonControlEventArgs) Handles btnSingleCheck.Click
-        ThisAddIn.AppExcel.StatusBar = False
-        BuildWSSingleCheck.BuildWSSingleCheck()
-    End Sub
-
-    Private Sub btnMultipostManual_Click(sender As Object, e As RibbonControlEventArgs) Handles btnMultipostManual.Click
-        ThisAddIn.AppExcel.StatusBar = False
-        BuildWSMultipostManualCheck.BuildWSMultipostManualCheck()
-    End Sub
-
-    Private Sub btnKeepers_Click(sender As Object, e As RibbonControlEventArgs) Handles btnKeepers.Click
-        ThisAddIn.AppExcel.StatusBar = False
-        BuildWSKeepers.BuildWSKeepers()
-    End Sub
-
-    Private Sub btnColorLegend_Click(sender As Object, e As RibbonControlEventArgs) Handles btnColorLegend.Click
-        ThisAddIn.AppExcel.StatusBar = False
-        BuildWSColorLegend.buildWSColorLegend()
-    End Sub
 
     Private Sub btnActivityLog_Click(sender As Object, e As RibbonControlEventArgs) Handles btnActivityLog.Click
         ThisAddIn.AppExcel.StatusBar = False
         BuildWSActivityLog.buildWSActivityLog()
-    End Sub
-
-    Private Sub btnBuildTrash_Click(sender As Object, e As RibbonControlEventArgs) Handles btnBuildTrash.Click
-        ThisAddIn.AppExcel.StatusBar = False
-        BuildWSTrash.BuildWSTrash()
-    End Sub
-
-    Private Sub btnBuildWSMaybes_Click(sender As Object, e As RibbonControlEventArgs) Handles btnBuildWSMaybes.Click
-        ThisAddIn.AppExcel.StatusBar = False
-        BuildWSMaybes.BuildWSMaybes()
     End Sub
 
 #End Region

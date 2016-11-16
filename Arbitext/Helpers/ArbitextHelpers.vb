@@ -1,5 +1,4 @@
 ﻿Imports Arbitext.ExcelHelpers
-Imports Arbitext.CraigslistHelpers
 Imports Microsoft.Office.Interop.Excel
 Imports Arbitext.StringHelpers
 
@@ -204,7 +203,6 @@ Public Class ArbitextHelpers
     End Sub
 
     Public Shared Sub unFilterTrash()
-        If Not doesWSExist("Trash") Then BuildWSTrash.BuildWSTrash()
         On Error Resume Next
         ThisAddIn.AppExcel.Worksheets("Trash").AutoFilter.Sort.SortFields.Clear
         ThisAddIn.AppExcel.Worksheets("Trash").ShowAllData
@@ -216,11 +214,11 @@ Public Class ArbitextHelpers
         If Not doesWSExist(theCat) Then
             Select Case theCat
                 Case "Maybes"
-                    BuildWSMaybes.BuildWSMaybes()
+                    BuildWSResults.buildResultWS("Maybes")
                 Case "Trash"
-                    BuildWSTrash.BuildWSTrash()
+                    BuildWSResults.buildResultWS("Trash")
                 Case "Keepers"
-                    BuildWSKeepers.BuildWSKeepers()
+                    BuildWSResults.buildResultWS("Keepers")
             End Select
             ThisAddIn.AppExcel.Sheets("Automated Checks").Activate
         End If

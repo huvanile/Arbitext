@@ -38,9 +38,9 @@ Public Class EmailHelpers
 
     Public Shared Function emailBodyString(post As Post, book As Book) As StringBuilder
         Dim message As StringBuilder = New StringBuilder
-        If book.IsMaybe Then
+        If book.IsMaybe(post) Then
             message.AppendLine("<h2 style='color:orange; text-align:left'>..:: Textbook lead with negotiation potential found! ::..</h2>")
-        ElseIf book.IsWinner Then
+        ElseIf book.IsWinner(post) Then
             message.AppendLine("<h2 style='color:green; text-align:left'>..:: Definite Textbook Lead Found! ::..</h2>")
         Else
             message.AppendLine("<h2 style='text-align:left'>..:: Textbook Lead ::..</h2>")
@@ -71,25 +71,25 @@ Public Class EmailHelpers
         message.AppendLine("<hr/>")
 
         message.AppendLine("<h3 style='text-decoration: underline;'>Flags</h3>")
-        If book.isPDF Then
-            message.AppendLine("<p style='color:red;><b>eBook Flag?</b>  " & book.isPDF & "</p>")
+        If book.isPDF(post) Then
+            message.AppendLine("<p style='color:red;><b>eBook Flag? </b>Yes</p>")
         Else
-            message.AppendLine("<p style='color:green;><b>eBook Flag?</b>  " & book.isPDF & "</p>")
+            message.AppendLine("<p style='color:green;><b>eBook Flag? </b>No</p>")
         End If
-        If book.isWeirdEdition Then
-            message.AppendLine("<p style='color:red;><b>Weird Edition Flag?</b>  " & book.isWeirdEdition & "</p>")
+        If book.isWeirdEdition(post) Then
+            message.AppendLine("<p style='color:red;><b>Weird Edition Flag? </b>Yes</p>")
         Else
-            message.AppendLine("<p style='color:green;><b>Weird Edition Flag?</b>  " & book.isWeirdEdition & "</p>")
+            message.AppendLine("<p style='color:green;><b>Weird Edition Flag? </b>No</p>")
         End If
-        If book.aLaCarte Then
-            message.AppendLine("<p style='color:red;><b>A La Carte Edition Flag?</b>  " & book.aLaCarte & "</p>")
+        If book.aLaCarte(post) Then
+            message.AppendLine("<p style='color:red;><b>A La Carte Edition Flag? </b>Yes</p>")
         Else
-            message.AppendLine("<p style='color:green;><b>A La Carte Edition Flag?</b>  " & book.aLaCarte & "</p>")
+            message.AppendLine("<p style='color:green;><b>A La Carte Edition Flag? </b>No</p>")
         End If
-        If book.isOBO Then
-            message.AppendLine("<p style='color:GREEN;><b>""Or Best Offer"" Flag?</b>  " & book.isOBO & "</p>")
+        If book.isOBO(post) Then
+            message.AppendLine("<p style='color:GREEN;><b>""Or Best Offer"" Flag? </b>Yes!</p>")
         Else
-            message.AppendLine("<p><b>""Or Best Offer"" Flag?</b>  " & book.isOBO & "</p>")
+            message.AppendLine("<p><b>""Or Best Offer"" Flag? </b>No</p>")
         End If
         message.AppendLine("<hr/>")
 
