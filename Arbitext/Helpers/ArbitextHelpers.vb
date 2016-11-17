@@ -209,55 +209,24 @@ Public Class ArbitextHelpers
         On Error GoTo 0
     End Sub
 
-    Public Shared Function wasCategorized(post As Post, Optional theISBN As String = "", Optional theAskingPrice As String = "", Optional theCat As String = "Trash") As Boolean
-        wasCategorized = False
-        If Not doesWSExist(theCat) Then
-            Select Case theCat
-                Case "Maybes"
-                    BuildWSResults.buildResultWS("Maybes")
-                Case "Trash"
-                    BuildWSResults.buildResultWS("Trash")
-                Case "Keepers"
-                    BuildWSResults.buildResultWS("Keepers")
-            End Select
-            ThisAddIn.AppExcel.Sheets("Automated Checks").Activate
-        End If
-        With ThisAddIn.AppExcel.Sheets(theCat)
-            If post.isMulti Then
-
-                'to check for parsed multipost results
-                If Not theISBN = "" And Not theISBN Like "*(*" Then
-                    If canFind(theISBN, theCat) Then
-                        If Trim(.Range("e" & .Range(canFind(theISBN, theCat, , True, False)).Row).Value) = theAskingPrice _
-                        And .Range("c" & .Range(canFind(theISBN, theCat, , True, False)).Row).Value = post.Title _
-                        And .Range("j" & .Range(canFind(theISBN, theCat, , True, False)).Row).Value = post.City Then
-                            wasCategorized = True
-                            Exit Function
-                        End If
+    Public Shared Function bookAlreadyPresent(thePostTitle As String, theAskingPrice As Decimal, theCity As String) As Boolean
+        bookAlreadyPresent = False
+        Dim categories As New List(Of String)
+        categories.Add("Trash")
+        categories.Add("Maybes")
+        categories.Add("Keepers")
+        For Each c As String In categories
+            With ThisAddIn.AppExcel.Sheets(c)
+                If canFind(thePostTitle, c,, False, False) Then
+                    Dim foundrow As Short = .range(canFind(thePostTitle, c,, True, False)).row
+                    If .Range("c" & foundrow).Value2.trim = thePostTitle _
+                    And .Range("f" & foundrow).Value2 = theAskingPrice _
+                    And .Range("k" & foundrow).Value2.trim = theCity Then
+                        Return True
                     End If
                 End If
-
-                'to check for unparsable multipost results
-                If canFind(post.Title, theCat) Then
-                    If canFind(post.Title, theCat) Then
-                        If Trim(.Range("e" & .Range(canFind(post.Title, theCat, , True, False)).Row).Value) = post.AskingPrice _
-                        And LCase(.Range("d" & .Range(canFind(post.Title, theCat, , True, False)).Row).Value) Like "*multi*" _
-                        And .Range("j" & .Range(canFind(post.Title, theCat, , True, False)).Row).Value = post.City Then
-                            wasCategorized = True
-                        End If
-                    End If
-                End If
-
-            Else 'not multi
-
-                If canFind(post.Title, theCat) Then
-                    If Trim(.Range("e" & .Range(canFind(post.Title, theCat, , True, False)).Row).Value) = post.AskingPrice _
-                    And .Range("j" & .Range(canFind(post.Title, theCat, , True, False)).Row).Value = post.City Then
-                        wasCategorized = True
-                    End If
-                End If
-            End If
-        End With
+            End With
+        Next
     End Function
 
 End Class

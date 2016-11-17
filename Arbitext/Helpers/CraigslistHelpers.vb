@@ -86,6 +86,7 @@ Public Class CraigslistHelpers
         m = Trim(splitholder(UBound(splitholder)))
         m = Right(m, Len(m) - 1)
         m = Left(m, Len(m) - 1)
+        If Left(m, 2) = "//" Then m = "http:" & m
         Return m
     End Function
 

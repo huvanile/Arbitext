@@ -7,9 +7,9 @@ Imports Arbitext.ArbitextHelpers
 Public Class Post
     Private _url As String                'CL post url
     Private _body As String               'body of the post
-    Private _city As String               'CL post city (from parsing post page) 'public bc also used by wasCategorized function
-    Private _askingPrice As Decimal       'CL asking price (from parsing post page) 'public bc also used by wasCategorized function
-    Private _title As String              'CL post title (from parsing post page) 'public bc also used by wasCategorized function
+    Private _city As String               'CL post city (from parsing post page) 
+    Private _askingPrice As Decimal       'CL asking price (from parsing post page) 
+    Private _title As String              'CL post title (from parsing post page) 
     Private _updateDate As String         'CL post updated
     Private _postDate As String           'CL post date
     Private _isbn As String               'CL post ISBN
@@ -20,28 +20,51 @@ Public Class Post
 
 #Region "Constructors"
 
-    ' Default constructor
-    Sub New(url As String)
+    Sub New(url As String, Optional learnAboutBooks As Boolean = True)
         _url = url
-        _isbn = "(?)"
-        _askingPrice = -1
-        _postDate = "?"
-        _updateDate = "-"
-        _title = "?"
-        _city = "-"
         _body = ""
+        _city = "-"
+        _askingPrice = -1
+        _title = "?"
+        _updateDate = "-"
+        _postDate = "?"
+        _isbn = "(?)"
         _image = ""
+        _html = ""
         _books = Nothing
         If LearnAboutPost() Then
-            _books = New List(Of Book)
-            findBooksInPost("<br>")
-            findBooksInPost("<br><br>")
-            findBooksInPost("<p>")
-            findBooksInPost()
-            If _books.Count > 0 Then _isParsable = True Else _isParsable = False
+            If learnAboutBooks Then
+                _books = New List(Of Book)
+                findBooksInPost("<br>")
+                findBooksInPost("<br><br>")
+                findBooksInPost("<p>")
+                findBooksInPost("")
+                If _books.Count > 0 Then _isParsable = True Else _isParsable = False
+            Else
+                If _askingPrice <> -1 And Not _isbn Like "(" Then _isParsable = True Else _isParsable = False
+            End If
         Else
             _isParsable = False
         End If
+    End Sub
+
+    Sub New(preCheckedPost As Post)
+        _url = preCheckedPost.URL
+        _body = preCheckedPost.Body
+        _city = preCheckedPost.City
+        _askingPrice = preCheckedPost.AskingPrice
+        _title = preCheckedPost.Title
+        _updateDate = preCheckedPost.UpdateDate
+        _postDate = preCheckedPost.PostDate
+        _isbn = preCheckedPost.Isbn
+        _image = preCheckedPost.Image
+        _html = preCheckedPost._html
+        _books = New List(Of Book)
+        findBooksInPost("<br>", False)
+        findBooksInPost("<br><br>", False)
+        findBooksInPost("<p>", False)
+        findBooksInPost("", False)
+        If _books.Count > 0 Then _isParsable = True Else _isParsable = False
     End Sub
 
 #End Region
@@ -183,7 +206,7 @@ Public Class Post
 
 #Region "Methods"
 
-    Sub findBooksInPost(Optional splitter As String = "")
+    Sub findBooksInPost(Optional splitter As String = "", Optional queryBS As Boolean = True)
         Dim tmpISBN As String = ""
         Dim tmpAskingPrice As Decimal = -1
         Dim s As Long = 0                   'splitholder start position, increments as books are parsed
@@ -192,7 +215,7 @@ Public Class Post
         If splitter = "" Then
             tmpISBN = getISBN(_body, URL)
             tmpAskingPrice = getAskingPrice(_html)
-            Dim tmpBook = New Book(tmpISBN, tmpAskingPrice, clean(_body, False, False, False, False, False, False))
+            Dim tmpBook = New Book(tmpISBN, tmpAskingPrice, clean(_body, False, False, False, False, False, False), queryBS)
             Dim match As Boolean = False
             For Each b As Book In _books
                 If b.Equals(tmpBook) Or b.Title = tmpBook.Title Then
@@ -210,7 +233,7 @@ Public Class Post
                 tmpISBN = getISBN(splitholder(t), URL)
                 tmpAskingPrice = getAskingPrice(splitholder(t))
                 If Not tmpISBN Like "(*" And Not tmpAskingPrice = -1 Then 'it's actually a book result!
-                    Dim tmpBook = New Book(tmpISBN, tmpAskingPrice, clean(splitholder(t), False, False, False, False, False, False))
+                    Dim tmpBook = New Book(tmpISBN, tmpAskingPrice, clean(splitholder(t), False, False, False, False, False, False), queryBS)
                     Dim match As Boolean = False
                     For Each b As Book In _books
                         If b.Equals(tmpBook) Or b.Title = tmpBook.Title Then

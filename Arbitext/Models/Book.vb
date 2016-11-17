@@ -13,6 +13,7 @@ Public Class Book
     Private _buybackAmount As Decimal
     Private _buybackSite As String
     Private _buybackLink As String
+    Private _isbnFromPost As String
     Private _bookscouterAPILink As String
     Private _bookscouterSiteLink As String
     Private _askingPrice As Decimal
@@ -20,24 +21,24 @@ Public Class Book
 
 #Region "Contructors"
 
-    Sub New(isbn As String, askingPrice As Decimal, theSaleDesc As String)
-        If isbn.Length = 13 Then
-            _isbn13 = isbn
+    Sub New(isbn As String, askingPrice As Decimal, theSaleDesc As String, Optional queryBS As Boolean = True)
+        _isbnFromPost = isbn.Trim
+        If isbn.Trim.Length = 13 Or isbn.Trim.Length = 10 Then
+            If isbn.Length = 13 Then _isbn13 = isbn Else _isbn10 = isbn
             _bookscouterAPILink = "http://api.bookscouter.com/prices.php?isbn=" & isbn & "&uid=" & randomUID() & ""
             _bookscouterSiteLink = "https://bookscouter.com/prices.php?isbn=" & isbn & "&all"
-
-        ElseIf isbn.Length = 10 Then
-            _isbn10 = isbn
-            _bookscouterAPILink = "http://api.bookscouter.com/prices.php?isbn=" & isbn & "&uid=" & randomUID() & ""
-            _bookscouterSiteLink = "https://bookscouter.com/prices.php?isbn=" & isbn & "&all"
+            _saleDescInPost = theSaleDesc.Trim
+            _askingPrice = askingPrice
+            If queryBS Then
+                If GetDataFromBookscouter() Then _isParsable = True Else _isParsable = False
+            Else
+                _isParsable = True
+            End If
         Else
-
+            _isParsable = False
         End If
-
-        _saleDescInPost = theSaleDesc
-        _askingPrice = askingPrice
-        If GetDataFromBookscouter() Then _isParsable = True Else _isParsable = False
     End Sub
+
 #End Region
 
 #Region "Read & Write Properties"
@@ -53,7 +54,7 @@ Public Class Book
 
     Property Title As String
         Get
-            Return _title.Trim
+            Return _title
         End Get
         Set(value As String)
             _title = value.Trim
@@ -62,7 +63,7 @@ Public Class Book
 
     Property Isbn10 As String
         Get
-            Return _isbn10.Trim
+            Return _isbn10
         End Get
         Set(value As String)
             _isbn10 = value.Trim
@@ -71,7 +72,7 @@ Public Class Book
 
     Property Isbn13 As String
         Get
-            Return _isbn13.Trim
+            Return _isbn13
         End Get
         Set(value As String)
             _isbn13 = value.Trim
@@ -82,6 +83,12 @@ Public Class Book
 
 #Region "Readonly Properties"
 
+    ReadOnly Property IsbnFromPost As String
+        Get
+            Return _isbnFromPost
+        End Get
+    End Property
+
     ReadOnly Property AmazonSearchURL As String
         Get
             Return "http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=" & replacePlusWithSpace(_title)
@@ -90,7 +97,12 @@ Public Class Book
 
     ReadOnly Property IsParsable As Boolean
         Get
-            If Isbn13 = "" Or Isbn13 Like "*(*" Then Return False Else Return True
+            If (Isbn13 = "" Or Isbn13 Like "*(*") _
+            And (Isbn10 = "" Or Isbn10 Like "*(*") Then
+                Return False
+            Else
+                Return True
+            End If
         End Get
     End Property
 
@@ -264,7 +276,6 @@ Public Class Book
     ReadOnly Property WasAlreadyChecked() As Boolean
         Get
             WasAlreadyChecked = False
-            WasAlreadyChecked = findInResultSheet("Unparsable")
             If Not WasAlreadyChecked Then WasAlreadyChecked = findInResultSheet("Winners")
             If Not WasAlreadyChecked Then WasAlreadyChecked = findInResultSheet("Maybes")
             If Not WasAlreadyChecked Then WasAlreadyChecked = findInResultSheet("Trash")
@@ -274,12 +285,11 @@ Public Class Book
 
     Private Function findInResultSheet(sheet As String)
         If doesWSExist(sheet) Then
-            If canFind(_title, sheet,, False, False) Then
+            If canFind(_isbnFromPost, sheet,, False, False) Then
                 With ThisAddIn.AppExcel.Sheets(sheet)
-                    Dim theRow As Int16 : theRow = .range(canFind(_title, sheet,, True, False)).row
-                    If .range("d" & theRow).value2 = _title _
-                        AndAlso .range("e" & theRow).value2 = _isbn13 _
-                        AndAlso .range("f" & theRow).value2 = _askingPrice Then
+                    Dim theRow As Int16 : theRow = .range(canFind(_isbnFromPost, sheet,, True, False)).row
+                    If .range("e" & theRow).value2 = _isbnFromPost _
+                    AndAlso .range("f" & theRow).value2 = _askingPrice Then
                         Return True
                     Else
                         Return False
