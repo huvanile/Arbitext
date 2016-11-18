@@ -1,10 +1,12 @@
 ﻿Imports Arbitext.ExcelHelpers
 Imports Arbitext.ArbitextHelpers
 Imports Arbitext.CraigslistHelpers
+Imports System.Threading
 
 Public Class MultiplePostsAnalysis
     Dim _checkedPostsNotBooks As List(Of Post)      'list of posts checked before populating the post object with the accompanying books
     Dim _checkedPostsAndBooks As List(Of Post)      'list of posts checked with all of the books included
+
 #Region "constructors"
 
     Sub New()
@@ -12,7 +14,14 @@ Public Class MultiplePostsAnalysis
         If ThisAddIn.MaxResults = 0 Then ThisAddIn.MaxResults = 1000000 'just some crazy  high number that we'll never hit if teh user set unlimited results
         _checkedPostsNotBooks = New List(Of Post)
         _checkedPostsAndBooks = New List(Of Post)
-        allQuerySearch()
+        ThisAddIn.t1 = New Thread(AddressOf allQuerySearch)
+        With ThisAddIn.t1
+            If .IsAlive() Then .Abort()
+            .IsBackground = True
+            .Priority = ThreadPriority.BelowNormal
+            .SetApartmentState(ApartmentState.STA)
+            .Start()
+        End With
     End Sub
 
 #End Region
@@ -22,6 +31,8 @@ Public Class MultiplePostsAnalysis
     Private Sub allQuerySearch()
         ThisAddIn.Proceed = True
         ThisAddIn.AppExcel.ScreenUpdating = True
+        Ribbon1.tpnAuto.showLblRecordSafe("")
+        Ribbon1.tpnAuto.UpdateLblNumberSafe("Starting...")
         If Not doesWSExist("Color Legend") Then BuildWSColorLegend.buildWSColorLegend()
         If ThisAddIn.Proceed Then
             Dim searchURL As String = ""
@@ -45,9 +56,16 @@ Public Class MultiplePostsAnalysis
                 oneQuerySearch(searchURL)
             End If
 
-            MsgBox("Done! " & vbCrLf & vbCrLf & "Partially checked posts:  " & _checkedPostsNotBooks.Count & vbCrLf & vbCrLf & "Fully checked posts:  " & _checkedPostsAndBooks.Count, vbOKOnly, ThisAddIn.Title)
+            'books search
+            If ThisAddIn.Proceed Then
+                searchURL = ThisAddIn.TldUrl & "/search/bka?query=text"
+                If ThisAddIn.PostTimingPref Like "*Today*" Then searchURL = searchURL & "&postedToday=1"
+                oneQuerySearch(searchURL)
+            End If
+
+            Ribbon1.tpnAuto.hideLblRecordSafe("")
+            Ribbon1.tpnAuto.UpdateLblStatusSafe("Done! " & vbCrLf & vbCrLf & "Partially checked posts:  " & _checkedPostsNotBooks.Count & vbCrLf & vbCrLf & "Fully checked posts:  " & _checkedPostsAndBooks.Count)
             ThisAddIn.AppExcel.ScreenUpdating = True
-            ThisAddIn.AppExcel.StatusBar = False
         End If
     End Sub
 
@@ -68,22 +86,19 @@ Public Class MultiplePostsAnalysis
         'set or reset global variables
         searchPage = wc.DownloadString(searchURL)
         If Not searchPage Like "*Nothing found for that search*" Then
-            'start scraping
             Do While InStr(startPos, searchPage, ThisAddIn.ResultHook) > 0
-
-                'if max results not yet exceeded
                 If _checkedPostsNotBooks.Count < ThisAddIn.MaxResults Then
-                    ThisAddIn.AppExcel.DisplayStatusBar = True
-                    ThisAddIn.AppExcel.StatusBar = "Cursory examination of post " & getLinkFromCLSearchResults(searchPage, startPos) & ", will ignore if out of town"
+                    Ribbon1.tpnAuto.UpdateLblNumberSafe("On Result Number " & _checkedPostsNotBooks.Count + 1)
+                    Ribbon1.tpnAuto.UpdateLblStatusSafe("Cursory examination of post " & getLinkFromCLSearchResults(searchPage, startPos) & ", will ignore if out of town")
 
                     'if not a nearby result
                     If Not getLinkFromCLSearchResults(searchPage, startPos) Like "*http*" And Not getLinkFromCLSearchResults(searchPage, startPos) Like "*.org*" Then 'this prevents it from showing "nearby results"
-                        ThisAddIn.AppExcel.StatusBar = "Learning more about post " & getLinkFromCLSearchResults(searchPage, startPos) & "(search result number " & _checkedPostsNotBooks.Count + 1 & ")"
+                        Ribbon1.tpnAuto.UpdateLblStatusSafe("Learning more about post " & vbCrLf & getLinkFromCLSearchResults(searchPage, startPos))
 
                         postNotBooks = New Post(ThisAddIn.TldUrl & getLinkFromCLSearchResults(searchPage, startPos), False)
 
                         'ThisAddIn.AppExcel.StatusBar = "Currently on result number " & _checkedPosts.Count & " (old, in trash, or otherwise skipped: " & SearchSession.SkippedResultCount & ") (keepers: " & SearchSession.KeeperCount & ") (maybes: " & SearchSession.NegCount & ") [MULTIPOSTS: " & SearchSession.MultiCount & "]"
-                        ThisAddIn.AppExcel.StatusBar = "Writing search result number " & _checkedPostsNotBooks.Count + 1 & " to workbook"
+                        Ribbon1.tpnAuto.UpdateLblStatusSafe("Writing search result number " & _checkedPostsNotBooks.Count + 1 & vbCrLf & " to workbook")
 
                         'make sure it wasn't aleady checked this session
                         Dim match As Boolean = False
@@ -180,6 +195,7 @@ maxReached:
                 End If
 
                 With ThisAddIn.AppExcel.Sheets(destSheet)
+                    Ribbon1.tpnAuto.UpdateLblStatusSafe("Writing search result number " & _checkedPostsNotBooks.Count + 1 & vbCrLf & " to " & destSheet)
                     .activate
                     Dim r As Integer = lastUsedRow() + 1
                     thinInnerBorder(.Range("a" & r & ":k" & r))
@@ -214,22 +230,6 @@ maxReached:
 
     End Sub
 
-    'Sub WrapUp()
-    '    Dim doneMessage As String
-    '    .ScreenUpdating = True
-    '        doneMessage = "Automated check done examining " & _resultCount & " posts!" & vbCrLf & vbCrLf &
-    '        "KEEPERS: " & _keeperCount & vbCrLf & vbCrLf &
-    '        "TOTAL SKIPPED RESULTS: " & _skippedResultCount & vbCrLf &
-    '        " - Auto-trashed results: " & _atRow & vbCrLf &
-    '        " - Magazine posts: " & _magCount & vbCrLf &
-    '        " - Results already in trash: " & _wasAlreadyCategorized & vbCrLf &
-    '        " - ""Nearby"" (but not really) results: " & _outOfTown & vbCrLf &
-    '        " - Too old posts (based on preferences): " & _tooOldPosts & vbCrLf &
-    '        " - Results we otherwise couldn't figure out: " & _dunnoCount
-    '        ThisAddIn.AppExcel.StatusBar = False
-    '    ThisAddIn.AppExcel.Goto(.Range("A5"), True)
-    'End Sub
-
     Sub HandleWinner(post As Post, book As Book, r As Integer)
         If ThisAddIn.OnWinnersOK Then
             PushbulletHelpers.sendPushbulletNote(ThisAddIn.Title, "Textbook Winner Found: " & book.Title)
@@ -248,4 +248,5 @@ maxReached:
     End Sub
 
 #End Region
+
 End Class

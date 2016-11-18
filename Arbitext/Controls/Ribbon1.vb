@@ -3,13 +3,17 @@ Imports Arbitext.ExcelHelpers
 Imports Arbitext.ArbitextHelpers
 
 Public Class Ribbon1
+    Public Shared tpnAuto As TpnAuto : Public Shared ctpAuto As Microsoft.Office.Tools.CustomTaskPane
 
 #Region "Find Deals"
 
     Private Sub btnSearch_Click(sender As Object, e As RibbonControlEventArgs) Handles btnSearch.Click
-        ThisAddIn.AppExcel.StatusBar = False
-        Dim multiplePostsAnalysis As New MultiplePostsAnalysis
-        multiplePostsAnalysis = Nothing
+        tpnAuto = New TpnAuto
+        ctpAuto = Globals.ThisAddIn.CustomTaskPanes.Add(tpnAuto, "Mass Search")
+        ctpAuto.Width = 300
+        ctpAuto.Control.Width = 300
+        ctpAuto.DockPosition = Microsoft.Office.Core.MsoCTPDockPosition.msoCTPDockPositionRight
+        ctpAuto.Visible = True
     End Sub
 
     Private Sub btnAnalyze_Click(sender As Object, e As RibbonControlEventArgs) Handles btnAnalyze.Click

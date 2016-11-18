@@ -1,4 +1,6 @@
-﻿Public Class ThisAddIn
+﻿Imports System.Threading
+
+Public Class ThisAddIn
     Public Const Title As String = "Arbitext"
     Public Const ResultHook As String = "<li class=""result-row"" data-pid="
     Public Shared AppExcel As Excel.Application
@@ -6,6 +8,7 @@
     Public Shared AppIE As Object
     Public Shared frmPrefs As FrmPrefs
     Public Shared TldUrl As String             'top-level domain name (e.g., http://dallas.craigslist.com)
+    Public Shared t1 As Thread
 
     'pushbullet
     Public Shared PbAPIKey As String
