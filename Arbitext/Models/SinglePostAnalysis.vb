@@ -80,13 +80,13 @@ Public Class SinglePostAnalysis
                     .range(theCol & theRow).offset(3, 0).value2 = post.Books(b).Profit
                     .range(theCol & theRow).offset(4, 0).value2 = post.Books(b).ProfitPercentage
                     .range(theCol & theRow).offset(5, 0).value2 = post.Books(b).MinAskingPriceForDesiredProfit
-                    .range(theCol & theRow).Offset(6, 0).Value2 = post.Books(b).aLaCarte(post)
-                    .range(theCol & theRow).Offset(7, 0).Value2 = post.Books(b).isWeirdEdition(post)
-                    .range(theCol & theRow).Offset(8, 0).Value2 = post.Books(b).isPDF(post)
-                    .range(theCol & theRow).Offset(9, 0).Value2 = post.Books(b).isOBO(post)
-                    If post.Books(b).IsWinner(post) Then
+                    .range(theCol & theRow).Offset(6, 0).Value2 = post.Books(b).aLaCarte()
+                    .range(theCol & theRow).Offset(7, 0).Value2 = post.Books(b).isWeirdEdition()
+                    .range(theCol & theRow).Offset(8, 0).Value2 = post.Books(b).isPDF()
+                    .range(theCol & theRow).Offset(9, 0).Value2 = post.Books(b).isOBO()
+                    If post.Books(b).IsWinner() Then
                         .range(theCol & theRow).offset(10, 0).value2 = "YES!!!"
-                    ElseIf post.Books(b).IsMaybe(post) Then
+                    ElseIf post.Books(b).IsMaybe() Then
                         .range(theCol & theRow).offset(10, 0).value2 = "No, but it's a MAYBE though"
                     Else
                         .range(theCol & theRow).offset(10, 0).value2 = "No :("
@@ -172,11 +172,11 @@ Public Class SinglePostAnalysis
             .Range("C11").value2 = post.Books(0).ProfitPercentage
             .Range("C12").value2 = post.Books(0).MinAskingPriceForDesiredProfit
             .Range("c15").Value2 = post.isMulti
-            .Range("c16") = post.Books(0).aLaCarte(post)
-            .Range("c17") = post.Books(0).isWeirdEdition(post)
-            .Range("c18") = post.Books(0).isPDF(post)
-            .Range("c19") = post.Books(0).isOBO(post)
-            .Range("c20").value2 = post.Books(0).IsWinner(post)
+            .Range("c16") = post.Books(0).aLaCarte()
+            .Range("c17") = post.Books(0).isWeirdEdition()
+            .Range("c18") = post.Books(0).isPDF()
+            .Range("c19") = post.Books(0).isOBO()
+            .Range("c20").value2 = post.Books(0).IsWinner()
             .Range("b23").value2 = post.Body
 
             'download amazon book pic if possible, otherwise just use placeholder pic

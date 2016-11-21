@@ -26,6 +26,7 @@ Partial Class TpnAuto
         Me.btnProceed = New System.Windows.Forms.Button()
         Me.btnCancel = New System.Windows.Forms.Button()
         Me.lblNumber = New System.Windows.Forms.Label()
+        Me.lblCounts = New System.Windows.Forms.Label()
         Me.SuspendLayout()
         '
         'lblStatus
@@ -71,10 +72,23 @@ Partial Class TpnAuto
         Me.lblNumber.TextAlign = System.Drawing.ContentAlignment.TopCenter
         Me.lblNumber.Visible = False
         '
+        'lblCounts
+        '
+        Me.lblCounts.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblCounts.ForeColor = System.Drawing.Color.Maroon
+        Me.lblCounts.Location = New System.Drawing.Point(55, 276)
+        Me.lblCounts.Name = "lblCounts"
+        Me.lblCounts.Size = New System.Drawing.Size(191, 147)
+        Me.lblCounts.TabIndex = 4
+        Me.lblCounts.Text = "Counts:"
+        Me.lblCounts.TextAlign = System.Drawing.ContentAlignment.TopCenter
+        Me.lblCounts.Visible = False
+        '
         'TpnAuto
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+        Me.Controls.Add(Me.lblCounts)
         Me.Controls.Add(Me.lblNumber)
         Me.Controls.Add(Me.btnCancel)
         Me.Controls.Add(Me.btnProceed)
@@ -89,4 +103,5 @@ Partial Class TpnAuto
     Friend WithEvents btnProceed As System.Windows.Forms.Button
     Friend WithEvents btnCancel As System.Windows.Forms.Button
     Friend WithEvents lblNumber As System.Windows.Forms.Label
+    Friend WithEvents lblCounts As System.Windows.Forms.Label
 End Class

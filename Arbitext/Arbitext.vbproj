@@ -209,6 +209,7 @@
     <Compile Include="Controls\TpnAuto.vb">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Models\RSSFeed.vb" />
     <Compile Include="SheetBuilders\BuildWSActivityLog.vb" />
     <Compile Include="SheetBuilders\BuildWSColorLegend.vb" />
     <Compile Include="SheetBuilders\BuildWSMultipostManualCheck.vb" />

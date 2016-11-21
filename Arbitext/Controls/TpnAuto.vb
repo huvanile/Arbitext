@@ -1,6 +1,6 @@
 ﻿Public Class TpnAuto
     Delegate Sub setLabelSafeCallback([theText] As String)
-    Delegate Sub visibleLblRecordSafeCallback([theText] As String)
+    Delegate Sub visibleLblSafeCallback([theText] As String)
 
     Private Sub btnCancel_Click(sender As Object, e As EventArgs) Handles btnCancel.Click
         If MsgBox("Quit current search?", vbYesNoCancel, ThisAddIn.Title) = vbYes Then
@@ -25,7 +25,7 @@
         Try
             With lblNumber
                 If .InvokeRequired Then
-                    Dim d As New visibleLblRecordSafeCallback(AddressOf showLblRecordSafe)
+                    Dim d As New visibleLblSafeCallback(AddressOf showLblRecordSafe)
                     Me.Invoke(d, New Object() {[theText]})
                     d = Nothing
                 Else
@@ -37,15 +37,63 @@
         Catch exAll As Exception : End Try
     End Sub
 
-    Public Sub hideLblRecordSafe(theText As String)
+    Public Sub showLblCountsSafe(theText As String)
         Try
-            With lblNumber
+            With lblCounts
                 If .InvokeRequired Then
-                    Dim d As New visibleLblRecordSafeCallback(AddressOf hideLblRecordSafe)
+                    Dim d As New visibleLblSafeCallback(AddressOf showLblCountsSafe)
+                    Me.Invoke(d, New Object() {[theText]})
+                    d = Nothing
+                Else
+                    .Visible = True
+                    .Refresh()
+                    .Invalidate()
+                End If
+            End With
+        Catch exAll As Exception : End Try
+    End Sub
+
+    Public Sub hideLblCountsSafe(theText As String)
+        Try
+            With lblCounts
+                If .InvokeRequired Then
+                    Dim d As New visibleLblSafeCallback(AddressOf hideLblCountsSafe)
                     Me.Invoke(d, New Object() {[theText]})
                     d = Nothing
                 Else
                     .Visible = False
+                    .Refresh()
+                    .Invalidate()
+                End If
+            End With
+        Catch exAll As Exception : End Try
+    End Sub
+
+    Public Sub hideLblRecordSafe(theText As String)
+        Try
+            With lblNumber
+                If .InvokeRequired Then
+                    Dim d As New visibleLblSafeCallback(AddressOf hideLblRecordSafe)
+                    Me.Invoke(d, New Object() {[theText]})
+                    d = Nothing
+                Else
+                    .Visible = False
+                    .Refresh()
+                    .Invalidate()
+                End If
+            End With
+        Catch exAll As Exception : End Try
+    End Sub
+
+    Public Sub UpdateLblCountSafe(theText As String)
+        Try
+            With lblCounts
+                If .InvokeRequired Then
+                    Dim d As New setLabelSafeCallback(AddressOf UpdateLblCountSafe)
+                    Me.Invoke(d, New Object() {[theText]})
+                    d = Nothing
+                Else
+                    .Text = theText
                     .Refresh()
                     .Invalidate()
                 End If
@@ -83,6 +131,10 @@
                 End If
             End With
         Catch exAll As Exception : End Try
+    End Sub
+
+    Private Sub TpnAuto_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
     End Sub
 
 #End Region

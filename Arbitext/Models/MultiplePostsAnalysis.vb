@@ -64,8 +64,15 @@ Public Class MultiplePostsAnalysis
             End If
 
             Ribbon1.tpnAuto.hideLblRecordSafe("")
-            Ribbon1.tpnAuto.UpdateLblStatusSafe("Done! " & vbCrLf & vbCrLf & "Partially checked posts:  " & _checkedPostsNotBooks.Count & vbCrLf & vbCrLf & "Fully checked posts:  " & _checkedPostsAndBooks.Count)
+            Ribbon1.tpnAuto.UpdateLblStatusSafe("Done!")
             ThisAddIn.AppExcel.ScreenUpdating = True
+            If MsgBox("Would you Like to output winners And maybes to RSS?", vbYesNoCancel, ThisAddIn.Title) = vbYes Then
+                Dim rssfeed As New RSSFeed()
+                rssfeed.CreateChannel("Aribtext", "", "Profitable book deals", Now, "en-US")
+                rssfeed.PopulateFeed("Winners")
+                rssfeed.PopulateFeed("Maybes")
+                Diagnostics.Debug.Print(rssfeed.ToString, "text/xml")
+            End If
         End If
     End Sub
 
@@ -98,7 +105,7 @@ Public Class MultiplePostsAnalysis
                         postNotBooks = New Post(ThisAddIn.TldUrl & getLinkFromCLSearchResults(searchPage, startPos), False)
 
                         'ThisAddIn.AppExcel.StatusBar = "Currently on result number " & _checkedPosts.Count & " (old, in trash, or otherwise skipped: " & SearchSession.SkippedResultCount & ") (keepers: " & SearchSession.KeeperCount & ") (maybes: " & SearchSession.NegCount & ") [MULTIPOSTS: " & SearchSession.MultiCount & "]"
-                        Ribbon1.tpnAuto.UpdateLblStatusSafe("Writing search result number " & _checkedPostsNotBooks.Count + 1 & vbCrLf & " to workbook")
+                        Ribbon1.tpnAuto.UpdateLblStatusSafe("About to write search result to workbook")
 
                         'make sure it wasn't aleady checked this session
                         Dim match As Boolean = False
@@ -159,6 +166,7 @@ maxReached:
         ThisAddIn.Proceed = False
     End Sub
 
+
     Sub WriteSearchResult(post As Post)
         Dim destSheet As String
         For Each b As Book In post.Books
@@ -166,17 +174,16 @@ maxReached:
                 b.GetDataFromBookscouter()
                 If post.IsParsable AndAlso b.IsParsable Then
                     If ThisAddIn.AutoCategorizeOK Then
-                        If b.IsWinner(post) Then
+                        If b.IsWinner() Then
                             If Not doesWSExist("Winners") Then BuildWSResults.buildResultWS("Winners")
                             destSheet = "Winners"
-                        ElseIf b.IsMaybe(post) Then
+                        ElseIf b.IsMaybe() Then
                             If Not doesWSExist("Maybes") Then BuildWSResults.buildResultWS("Maybes")
                             destSheet = "Maybes"
-                        ElseIf b.IsTrash(post) Then
+                        ElseIf b.IsTrash() Then
                             If Not doesWSExist("Trash") Then BuildWSResults.buildResultWS("Trash") Else unFilterTrash()
                             destSheet = "Trash"
                         Else
-                            If Not doesWSExist("Automated Checks") Then BuildWSResults.buildResultWS("Automated Checks")
                             destSheet = "Automated Checks"
                         End If
                     Else
@@ -194,8 +201,18 @@ maxReached:
                     Exit Sub
                 End If
 
+
+
                 With ThisAddIn.AppExcel.Sheets(destSheet)
-                    Ribbon1.tpnAuto.UpdateLblStatusSafe("Writing search result number " & _checkedPostsNotBooks.Count + 1 & vbCrLf & " to " & destSheet)
+                    Ribbon1.tpnAuto.UpdateLblStatusSafe("Writing search result to " & destSheet)
+                    Ribbon1.tpnAuto.showLblCountsSafe("")
+                    Ribbon1.tpnAuto.UpdateLblCountSafe("- Posts:  Partially checked: " & _checkedPostsNotBooks.Count & vbCrLf &
+                                                       "- Posts:  Fully checked:  " & _checkedPostsAndBooks.Count & vbCrLf & vbCrLf &
+                                                       "- Posts:  Unparseable:  " & _checkedPostsNotBooks.Where(Function(x) x.IsParsable = False).Count & vbCrLf &
+                                                       "- Posts:  Parseable: " & _checkedPostsAndBooks.Where(Function(x) x.IsParsable = True).Count & vbCrLf & vbCrLf &
+                                                       "- Books:  Winners: " & _checkedPostsAndBooks.SelectMany(Function(x) x.Books).Where(Function(y) y.IsWinner = True).Count & vbCrLf &
+                                                       "- Books:  Maybes: " & _checkedPostsAndBooks.SelectMany(Function(x) x.Books).Where(Function(y) y.IsMaybe = True).Count & vbCrLf &
+                                                       "- Books:  Trash: " & _checkedPostsAndBooks.SelectMany(Function(x) x.Books).Where(Function(y) y.IsTrash = True).Count)
                     .activate
                     Dim r As Integer = lastUsedRow() + 1
                     thinInnerBorder(.Range("a" & r & ":k" & r))
@@ -215,12 +232,12 @@ maxReached:
                         .range("h" & r).value2 = b.Profit
                         .range("i" & r).value2 = b.ProfitPercentage
                         .range("j" & r).value2 = b.MinAskingPriceForDesiredProfit
-                        If b.aLaCarte(post) Then .Rows(r).font.colorindex = 3
-                        If b.isOBO(post) Then .Rows(r).font.bold = True
-                        If b.isWeirdEdition(post) Then .Rows(r).font.colorindex = 46
-                        If b.isPDF(post) Then .Rows(r).font.colorindex = 53
-                        If b.IsWinner(post) Then HandleWinner(post, b, r)
-                        If b.IsMaybe(post) Then HandleMaybe(post, b, r)
+                        If b.aLaCarte() Then .Rows(r).font.colorindex = 3
+                        If b.isOBO() Then .Rows(r).font.bold = True
+                        If b.isWeirdEdition() Then .Rows(r).font.colorindex = 46
+                        If b.isPDF() Then .Rows(r).font.colorindex = 53
+                        If b.IsWinner() Then HandleWinner(post, b, r)
+                        If b.IsMaybe() Then HandleMaybe(post, b, r)
                     End If
                 End With
             Else

@@ -38,9 +38,9 @@ Public Class EmailHelpers
 
     Public Shared Function emailBodyString(post As Post, book As Book) As StringBuilder
         Dim message As StringBuilder = New StringBuilder
-        If book.IsMaybe(post) Then
+        If book.IsMaybe() Then
             message.AppendLine("<h2 style='color:orange; text-align:left'>..:: Textbook lead with negotiation potential found! ::..</h2>")
-        ElseIf book.IsWinner(post) Then
+        ElseIf book.IsWinner() Then
             message.AppendLine("<h2 style='color:green; text-align:left'>..:: Definite Textbook Lead Found! ::..</h2>")
         Else
             message.AppendLine("<h2 style='text-align:left'>..:: Textbook Lead ::..</h2>")
@@ -71,22 +71,22 @@ Public Class EmailHelpers
         message.AppendLine("<hr/>")
 
         message.AppendLine("<h3 style='text-decoration: underline;'>Flags</h3>")
-        If book.isPDF(post) Then
+        If book.isPDF() Then
             message.AppendLine("<p style='color:red;><b>eBook Flag? </b>Yes</p>")
         Else
             message.AppendLine("<p style='color:green;><b>eBook Flag? </b>No</p>")
         End If
-        If book.isWeirdEdition(post) Then
+        If book.isWeirdEdition() Then
             message.AppendLine("<p style='color:red;><b>Weird Edition Flag? </b>Yes</p>")
         Else
             message.AppendLine("<p style='color:green;><b>Weird Edition Flag? </b>No</p>")
         End If
-        If book.aLaCarte(post) Then
+        If book.aLaCarte() Then
             message.AppendLine("<p style='color:red;><b>A La Carte Edition Flag? </b>Yes</p>")
         Else
             message.AppendLine("<p style='color:green;><b>A La Carte Edition Flag? </b>No</p>")
         End If
-        If book.isOBO(post) Then
+        If book.isOBO() Then
             message.AppendLine("<p style='color:GREEN;><b>""Or Best Offer"" Flag? </b>Yes!</p>")
         Else
             message.AppendLine("<p><b>""Or Best Offer"" Flag? </b>No</p>")

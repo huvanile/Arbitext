@@ -10,6 +10,9 @@ Public Class Book
     Private _isbn10 As String
     Private _isbn13 As String
     Private _author As String
+    Private _hasSiblings As Boolean         'is the book part of a multipost?
+    Private _parentTitle As String          'title of the parent post
+    Private _parentBody As String           'html body of the parent post
     Private _buybackAmount As Decimal
     Private _buybackSite As String
     Private _buybackLink As String
@@ -21,8 +24,11 @@ Public Class Book
 
 #Region "Contructors"
 
-    Sub New(isbn As String, askingPrice As Decimal, theSaleDesc As String, Optional queryBS As Boolean = True)
+    Sub New(isbn As String, askingPrice As Decimal, theSaleDesc As String, queryBS As Boolean, hasSiblings As Boolean, parentTitle As String, parentBody As String)
         _isbnFromPost = isbn.Trim
+        _hasSiblings = hasSiblings
+        _parentBody = parentBody
+        _parentTitle = parentTitle
         If isbn.Trim.Length = 13 Or isbn.Trim.Length = 10 Then
             If isbn.Length = 13 Then _isbn13 = isbn Else _isbn10 = isbn
             _bookscouterAPILink = "http://api.bookscouter.com/prices.php?isbn=" & isbn & "&uid=" & randomUID() & ""
@@ -106,32 +112,32 @@ Public Class Book
         End Get
     End Property
 
-    ReadOnly Property IsTrash(post As Post) As Boolean
+    ReadOnly Property IsTrash() As Boolean
         Get
             IsTrash = False
             If IsParsable Then
-                If isPDF(post) Then IsTrash = True
-                If isWeirdEdition(post) Then IsTrash = True
-                If aLaCarte(post) Then IsTrash = True
+                If isPDF() Then IsTrash = True
+                If isWeirdEdition() Then IsTrash = True
+                If aLaCarte() Then IsTrash = True
                 If Profit <= 0 Then IsTrash = True
             End If
         End Get
     End Property
 
-    ReadOnly Property IsWinner(post As Post) As Boolean
+    ReadOnly Property IsWinner() As Boolean
         Get
             IsWinner = False
             If IsParsable Then
-                If Profit > ThisAddIn.MinTolerableProfit And Not IsTrash(post) Then IsWinner = True
+                If Profit > ThisAddIn.MinTolerableProfit And Not IsTrash() Then IsWinner = True
             End If
         End Get
     End Property
 
-    ReadOnly Property IsMaybe(post As Post) As Boolean
+    ReadOnly Property IsMaybe() As Boolean
         Get
             IsMaybe = False
             If IsParsable Then
-                If Not IsWinner(post) And Not IsTrash(post) Then IsMaybe = True
+                If Not IsWinner() And Not IsTrash() Then IsMaybe = True
             End If
         End Get
     End Property
@@ -233,42 +239,42 @@ Public Class Book
 
 #Region "FLAG Properties"
 
-    ReadOnly Property isPDF(post As Post) As Boolean
+    ReadOnly Property isPDF() As Boolean
         Get
-            If post.Books.Count > 1 Then
+            If _hasSiblings Then
                 If CraigslistHelpers.isPDF(_saleDescInPost) Then Return True Else Return False
             Else
-                If CraigslistHelpers.isPDF(post.Title) Or CraigslistHelpers.isPDF(post.Body) Then Return True Else Return False
+                If CraigslistHelpers.isPDF(_parentTitle) Or CraigslistHelpers.isPDF(_parentBody) Then Return True Else Return False
             End If
         End Get
     End Property
 
-    ReadOnly Property isOBO(post As Post) As Boolean
+    ReadOnly Property isOBO() As Boolean
         Get
-            If post.Books.Count > 1 Then
+            If _hasSiblings Then
                 If CraigslistHelpers.isOBO(_saleDescInPost) Then Return True Else Return False
             Else
-                If CraigslistHelpers.isOBO(post.Title) Or CraigslistHelpers.isOBO(post.Body) Then Return True Else Return False
+                If CraigslistHelpers.isOBO(_parentTitle) Or CraigslistHelpers.isOBO(_parentBody) Then Return True Else Return False
             End If
         End Get
     End Property
 
-    ReadOnly Property isWeirdEdition(post As Post) As Boolean
+    ReadOnly Property isWeirdEdition() As Boolean
         Get
-            If post.Books.Count > 1 Then
+            If _hasSiblings Then
                 If CraigslistHelpers.isWeirdEdition(_saleDescInPost) Then Return True Else Return False
             Else
-                If CraigslistHelpers.isWeirdEdition(post.Title) Or CraigslistHelpers.isWeirdEdition(post.Body) Then Return True Else Return False
+                If CraigslistHelpers.isWeirdEdition(_parentTitle) Or CraigslistHelpers.isWeirdEdition(_parentBody) Then Return True Else Return False
             End If
         End Get
     End Property
 
-    ReadOnly Property aLaCarte(post As Post) As Boolean
+    ReadOnly Property aLaCarte() As Boolean
         Get
-            If post.Books.Count > 1 Then
+            If _hasSiblings Then
                 If CraigslistHelpers.aLaCarte(_saleDescInPost) Then Return True Else Return False
             Else
-                If CraigslistHelpers.aLaCarte(post.Title) Or CraigslistHelpers.aLaCarte(post.Body) Then Return True Else Return False
+                If CraigslistHelpers.aLaCarte(_parentTitle) Or CraigslistHelpers.aLaCarte(_parentBody) Then Return True Else Return False
             End If
         End Get
     End Property
