@@ -44,18 +44,19 @@
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Ribbon1))
         Me.tabBooks = Me.Factory.CreateRibbonTab
         Me.grpFinders = Me.Factory.CreateRibbonGroup
+        Me.grpFind = Me.Factory.CreateRibbonGroup
+        Me.grpTrash = Me.Factory.CreateRibbonGroup
+        Me.grpOther = Me.Factory.CreateRibbonGroup
         Me.btnSearch = Me.Factory.CreateRibbonButton
         Me.btnAnalyze = Me.Factory.CreateRibbonButton
-        Me.grpFind = Me.Factory.CreateRibbonGroup
         Me.btnKeeper = Me.Factory.CreateRibbonButton
         Me.btnMaybe = Me.Factory.CreateRibbonButton
         Me.btnTrash = Me.Factory.CreateRibbonButton
-        Me.grpTrash = Me.Factory.CreateRibbonGroup
         Me.btnTrashBadDeals = Me.Factory.CreateRibbonButton
         Me.btnEmptyTrash = Me.Factory.CreateRibbonButton
-        Me.grpOther = Me.Factory.CreateRibbonGroup
         Me.mnuBuildSheets = Me.Factory.CreateRibbonMenu
         Me.btnActivityLog = Me.Factory.CreateRibbonButton
+        Me.btnRSS = Me.Factory.CreateRibbonButton
         Me.btnSetPrefs = Me.Factory.CreateRibbonButton
         Me.tabBooks.SuspendLayout()
         Me.grpFinders.SuspendLayout()
@@ -80,6 +81,29 @@
         Me.grpFinders.Label = "Find Deals"
         Me.grpFinders.Name = "grpFinders"
         '
+        'grpFind
+        '
+        Me.grpFind.Items.Add(Me.btnKeeper)
+        Me.grpFind.Items.Add(Me.btnMaybe)
+        Me.grpFind.Items.Add(Me.btnTrash)
+        Me.grpFind.Label = "Categorize Deals"
+        Me.grpFind.Name = "grpFind"
+        '
+        'grpTrash
+        '
+        Me.grpTrash.Items.Add(Me.btnTrashBadDeals)
+        Me.grpTrash.Items.Add(Me.btnEmptyTrash)
+        Me.grpTrash.Label = "Trash Stuff"
+        Me.grpTrash.Name = "grpTrash"
+        '
+        'grpOther
+        '
+        Me.grpOther.Items.Add(Me.mnuBuildSheets)
+        Me.grpOther.Items.Add(Me.btnRSS)
+        Me.grpOther.Items.Add(Me.btnSetPrefs)
+        Me.grpOther.Label = "Other Stuff"
+        Me.grpOther.Name = "grpOther"
+        '
         'btnSearch
         '
         Me.btnSearch.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge
@@ -95,14 +119,6 @@
         Me.btnAnalyze.Label = "Analyze Single Post"
         Me.btnAnalyze.Name = "btnAnalyze"
         Me.btnAnalyze.ShowImage = True
-        '
-        'grpFind
-        '
-        Me.grpFind.Items.Add(Me.btnKeeper)
-        Me.grpFind.Items.Add(Me.btnMaybe)
-        Me.grpFind.Items.Add(Me.btnTrash)
-        Me.grpFind.Label = "Categorize Deals"
-        Me.grpFind.Name = "grpFind"
         '
         'btnKeeper
         '
@@ -128,13 +144,6 @@
         Me.btnTrash.Name = "btnTrash"
         Me.btnTrash.ShowImage = True
         '
-        'grpTrash
-        '
-        Me.grpTrash.Items.Add(Me.btnTrashBadDeals)
-        Me.grpTrash.Items.Add(Me.btnEmptyTrash)
-        Me.grpTrash.Label = "Trash Stuff"
-        Me.grpTrash.Name = "grpTrash"
-        '
         'btnTrashBadDeals
         '
         Me.btnTrashBadDeals.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge
@@ -150,13 +159,6 @@
         Me.btnEmptyTrash.Label = "Empty Trash"
         Me.btnEmptyTrash.Name = "btnEmptyTrash"
         Me.btnEmptyTrash.ShowImage = True
-        '
-        'grpOther
-        '
-        Me.grpOther.Items.Add(Me.mnuBuildSheets)
-        Me.grpOther.Items.Add(Me.btnSetPrefs)
-        Me.grpOther.Label = "Other Stuff"
-        Me.grpOther.Name = "grpOther"
         '
         'mnuBuildSheets
         '
@@ -176,6 +178,14 @@
         Me.btnActivityLog.Label = "Activity Log"
         Me.btnActivityLog.Name = "btnActivityLog"
         Me.btnActivityLog.ShowImage = True
+        '
+        'btnRSS
+        '
+        Me.btnRSS.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge
+        Me.btnRSS.Image = CType(resources.GetObject("btnRSS.Image"), System.Drawing.Image)
+        Me.btnRSS.Label = "Export RSS Feed"
+        Me.btnRSS.Name = "btnRSS"
+        Me.btnRSS.ShowImage = True
         '
         'btnSetPrefs
         '
@@ -219,6 +229,7 @@
     Friend WithEvents btnActivityLog As Microsoft.Office.Tools.Ribbon.RibbonButton
     Friend WithEvents btnSetPrefs As Microsoft.Office.Tools.Ribbon.RibbonButton
     Friend WithEvents grpFinders As Microsoft.Office.Tools.Ribbon.RibbonGroup
+    Friend WithEvents btnRSS As Microsoft.Office.Tools.Ribbon.RibbonButton
 End Class
 
 Partial Class ThisRibbonCollection

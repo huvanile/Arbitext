@@ -1,4 +1,5 @@
-﻿Imports Arbitext.ExcelHelpers
+﻿Imports Arbitext.FileHelpers
+Imports Arbitext.ExcelHelpers
 Imports Arbitext.ArbitextHelpers
 Imports Arbitext.CraigslistHelpers
 Imports System.Threading
@@ -66,12 +67,12 @@ Public Class MultiplePostsAnalysis
             Ribbon1.tpnAuto.hideLblRecordSafe("")
             Ribbon1.tpnAuto.UpdateLblStatusSafe("Done!")
             ThisAddIn.AppExcel.ScreenUpdating = True
-            If MsgBox("Would you Like to output winners And maybes to RSS?", vbYesNoCancel, ThisAddIn.Title) = vbYes Then
+            If MsgBox("Would you Like to output winners and maybes to RSS?", vbYesNoCancel, ThisAddIn.Title) = vbYes Then
                 Dim rssfeed As New RSSFeed()
                 rssfeed.CreateChannel("Aribtext", "", "Profitable book deals", Now, "en-US")
-                rssfeed.PopulateFeed("Winners")
-                rssfeed.PopulateFeed("Maybes")
-                Diagnostics.Debug.Print(rssfeed.ToString, "text/xml")
+                rssfeed.PopulateFeed()
+                WriteToFile("D:\Users\US22357\Desktop\test.xml", rssfeed.ToString)
+                MsgBox("Done!", vbInformation, ThisAddIn.Title)
             End If
         End If
     End Sub
