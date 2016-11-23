@@ -1,8 +1,32 @@
 ﻿Imports Arbitext.ExcelHelpers
 Imports Microsoft.Office.Interop.Excel
 Imports Arbitext.StringHelpers
+Imports Arbitext.FileHelpers
+Imports System.Windows.Forms
 
 Public Class ArbitextHelpers
+
+    Public Shared Sub CreateXMLIfDesired()
+        If isAnyWBOpen() Then
+            If MsgBox("Would you like to output winners and maybes to an XML file?", vbYesNoCancel, ThisAddIn.Title) = vbYes Then
+                Dim saveAsFolder As String
+                Dim dialog As New FolderBrowserDialog()
+                dialog.RootFolder = Environment.SpecialFolder.Desktop
+                dialog.SelectedPath = "C:\"
+                dialog.Description = "Select a location to save the .XML file"
+                If dialog.ShowDialog() = DialogResult.OK Then
+                    saveAsFolder = dialog.SelectedPath
+                    Dim rssfeed As New RSSFeed()
+                    rssfeed.CreateChannel("Aribtext", "", "Profitable book deals", Now, "en-US")
+                    rssfeed.PopulateFeed()
+                    WriteToFile(TrailingSlash(saveAsFolder) & ThisAddIn.City & ".xml", rssfeed.ToString)
+                    MsgBox("Done!", vbInformation, ThisAddIn.Title)
+                End If
+            End If
+        Else
+            MsgBox("This can only be performed from an open results workbook", vbCritical, ThisAddIn.Title)
+        End If
+    End Sub
 
     Public Shared Function bookCountFromString(theStr As String) As Integer
         Dim tmpCount As Integer = 0

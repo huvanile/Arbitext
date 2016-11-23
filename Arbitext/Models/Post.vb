@@ -71,10 +71,13 @@ Public Class Post
 
 #Region "Easy Properties"
 
-    ReadOnly Property IsParsable As Boolean
+    Property IsParsable As Boolean
         Get
             Return _isParsable
         End Get
+        Set(value As Boolean)
+            _isParsable = value
+        End Set
     End Property
 
     ReadOnly Property PostDate As String

@@ -148,16 +148,7 @@ Public Class Ribbon1
     End Sub
 
     Private Sub btnRSS_Click(sender As Object, e As RibbonControlEventArgs) Handles btnRSS.Click
-        If isAnyWBOpen() Then
-            If MsgBox("Would you Like to output winners and maybes to RSS?", vbYesNoCancel, ThisAddIn.Title) = vbYes Then
-                Dim rssfeed As New RSSFeed()
-                rssfeed.CreateChannel("Aribtext", "", "Profitable book deals", Now, "en-US")
-                rssfeed.PopulateFeed()
-                WriteToFile("D:\Users\US22357\Desktop\test.xml", rssfeed.ToString)
-                MsgBox("Done!", vbInformation, ThisAddIn.Title)
-            End If
-        Else
-            MsgBox("This can only be performed from an open results workbook", vbCritical, ThisAddIn.Title)
-        End If
+        CreateXMLIfDesired()
     End Sub
+
 End Class

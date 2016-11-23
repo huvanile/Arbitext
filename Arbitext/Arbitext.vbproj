@@ -251,6 +251,7 @@
       <DependentUpon>Ribbon1.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <None Include="Arbitext_1_TemporaryKey.pfx" />
     <None Include="Arbitext_TemporaryKey.pfx" />
     <None Include="ThisAddIn.Designer.xml">
       <DependentUpon>ThisAddIn.vb</DependentUpon>
@@ -306,10 +307,10 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>Arbitext_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>Arbitext_1_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>A0AC214F976687C56E88D6F5B91228446656880E</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>530A30A1EFD98AE3FDC5DF1611F8A6CBC4897780</ManifestCertificateThumbprint>
   </PropertyGroup>
   <!-- Include the build rules for a Visual Basic project. -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
