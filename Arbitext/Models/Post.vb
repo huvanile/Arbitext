@@ -184,7 +184,7 @@ Public Class Post
 
     Private Function findInResultSheet(sheet As String)
         If doesWSExist(sheet) Then
-            If canFind(_title, sheet,, False, False) Then Return True Else Return False
+            If canFindInCol("C", _title, sheet) Then Return True Else Return False
         Else
             Return False
         End If

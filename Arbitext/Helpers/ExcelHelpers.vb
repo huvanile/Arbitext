@@ -153,20 +153,13 @@ Public Class ExcelHelpers
     End Sub
 
     Public Shared Function doesWSExist(ws As String)
-        'function that checks to see if a worksheet exists
-        Dim Worksheet As Worksheet
         doesWSExist = False
-        On Error GoTo noWB
-        For Each Worksheet In ThisAddIn.AppExcel.ActiveWorkbook.Worksheets
-            If Worksheet.Name Like "*" & ws & "*" Then
-                Return True
-            End If
-        Next Worksheet
-        On Error GoTo 0
-        Exit Function
-noWB:
-        MsgBox("An error occurred.  Our guess is that you don't have any workbook open." & vbCrLf & "Try again with a workbook open." & vbCrLf & "If the problem persists, let the developers know." & vbCrLf & vbCrLf & "This tool may not error gracefully here.", vbCritical, ThisAddIn.Title)
-        ThisAddIn.Proceed = False
+        Try
+            Diagnostics.Debug.Print(ThisAddIn.AppExcel.Sheets(ws).name)
+            Return True
+        Catch ex As Exception
+            Return False
+        End Try
     End Function
 
     Public Shared Function columnLetter(ColumnNumber As Integer) As String
@@ -205,6 +198,18 @@ noWB:
         Exit Function
 cantFind:
         canFind = False
+    End Function
+
+    Public Shared Function canFindInCol(theCol As String, theValue As String, Optional theWS As String = "") As String
+        Dim tmp As String
+        If theWS = "" Then theWS = ThisAddIn.AppExcel.ActiveSheet.Name
+        On Error GoTo cantFind
+        tmp = ThisAddIn.AppExcel.Sheets(theWS).columns(theCol).Find(What:=theValue, LookAt:=XlLookAt.xlWhole).Address
+        On Error GoTo 0
+        canFindInCol = True
+        Exit Function
+cantFind:
+        canFindInCol = False
     End Function
 
     Public Shared Function lastUsedRow(Optional sheetName As String = "")

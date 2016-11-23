@@ -16,7 +16,8 @@ Public Class BuildWSResults
             .Range("i3").Value2 = "Profit Margin"
             .Range("j3").Value2 = "Min. Asking Price for desired profit margin"
             .Range("k3").Value2 = "City"
-            standardColumnTitles(.Range("a3:k3"))
+            .Range("l3").Value2 = "Result ID"
+            standardColumnTitles(.Range("a3:l3"))
             .Columns("a").ColumnWidth = 20
             .Columns("b").ColumnWidth = 20
             .Columns("c").ColumnWidth = 50
@@ -28,6 +29,7 @@ Public Class BuildWSResults
             .Columns("i").ColumnWidth = 10
             .Columns("j").ColumnWidth = 20
             .Columns("k").ColumnWidth = 15
+            .Columns("l").columnwidth = 30
             .Columns("i").Style = "Percent"
             .Columns("f:h").Style = "Currency"
             .Columns("j").Style = "Currency"

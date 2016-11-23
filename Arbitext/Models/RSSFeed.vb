@@ -1,6 +1,8 @@
 ﻿Imports Arbitext.ExcelHelpers
 Imports System.IO
+Imports Arbitext.FileHelpers
 Imports System.Xml
+
 ''' <summary>
 ''' Creates a simple RSS feed for blogs/articles etc
 ''' http://www.codeproject.com/Articles/516625/CreatingplusanplusRSSplus-plusfeedpluswithplus-N
@@ -8,7 +10,56 @@ Imports System.Xml
 ''' <remarks></remarks>
 Public Class RSSFeed
 
+#Region "Constructors"
+
+    Public Sub New(title As String, link As String, description As String, dateLastChanged As DateTime, language As String, resultType As String, fileName As String)
+        _document = New XmlDocument
+        Document.AppendChild(Document.CreateNode(XmlNodeType.XmlDeclaration, Nothing, Nothing))
+        Dim rootelement = Document.CreateElement("rss")
+        rootelement.SetAttribute("version", "2.0")
+        Document.AppendChild(rootelement)
+        AddNamespace("dc", "http://purl.org/dc/elements/1.1/")
+        AddNamespace("content", "http://purl.org/rss/1.0/modules/content/")
+        CreateChannel(title, link, description, dateLastChanged, language)
+        PopulateFeed(resultType)
+        WriteToFile(fileName, Me.ToString)
+    End Sub
+
+#End Region
+
 #Region "Properties and Definitions"
+
+    Public Sub PopulateFeed(s As String)
+        If isAnyWBOpen() Then
+            If doesWSExist(s) Then
+                For r As Short = 4 To lastUsedRow(s)
+                    With ThisAddIn.AppExcel.Sheets(s)
+                        Dim datePosted As String = .range("a" & r).value2
+                        Dim dateUpdated As String = .range("b" & r).value2
+                        Dim postTitle As String = .range("c" & r).value2
+                        Dim postLink As String = .range("c" & r).hyperlinks(1).address
+                        Dim city As String = .range("k" & r).value2
+                        Dim bookTitle As String = .range("d" & r).value2
+                        Dim amazonLink As String = .range("d" & r).hyperlinks(1).address
+                        Dim isbn As String = .range("e" & r).value2
+                        Dim askingPrice As Decimal = .range("f" & r).value2
+                        Dim bsLink As String = .rangE("e" & r).hyperlinks(1).address
+                        Dim buybackPrice As Decimal = .range("g" & r).value2
+                        Dim profit As Decimal = .range("h" & r).value2
+                        Dim profitMargin As Decimal = .range("i" & r).value2
+                        Dim id As String = .range("l" & r).value2
+                        Dim resultURL As String = ThisAddIn.wwwLeadsFolder & id & ".php"
+
+                        Dim theDesc As String = "Found a " & Left(s, Len(s) - 1).ToString & " in " & city & " for $" & profit & " potential profit"
+
+                        WriteRSSItem(s & ": " & bookTitle, resultURL, "Arbitext", dateUpdated, s, id, theDesc)
+                    End With
+                Next
+            End If
+        Else
+            MsgBox("A workbook must be open in order to populate the XML file", vbCritical, ThisAddIn.Title)
+        End If
+    End Sub
 
     ''' <summary>
     ''' A custom string writer which outputs in UTF8 rather than UTF16
@@ -59,42 +110,6 @@ Public Class RSSFeed
     End Property
 
 #End Region
-
-    Public Sub PopulateFeed(s As String)
-        If isAnyWBOpen() Then
-            If doesWSExist(s) Then
-                For r As Short = 4 To lastUsedRow(s)
-                    With ThisAddIn.AppExcel.Sheets(s)
-                        Dim theDesc As String = "Found a " & Left(s, Len(s) - 1).ToString & " in " & .range("k" & r).value2 & " for $" & .range("h" & r).value2 & " potential profit"
-                        WriteRSSItem(.range("d" & r).value2, .range("c" & r).hyperlinks(1).address, "Arbitext", .range("b" & r).value2, s, Guid.NewGuid.ToString, theDesc)
-                    End With
-                Next
-            End If
-        Else
-            MsgBox("A workbook must be open in order to populate the XML file", vbCritical, ThisAddIn.Title)
-        End If
-    End Sub
-
-    ''' <summary>
-    ''' Initialise the XML document and create the opening rss tags
-    ''' </summary>
-    ''' <remarks></remarks>
-    Public Sub New()
-
-        _document = New XmlDocument
-        Document.AppendChild(Document.CreateNode(XmlNodeType.XmlDeclaration, Nothing, Nothing))
-
-        'Create the root element and add any name spaces
-        Dim rootelement = Document.CreateElement("rss")
-        rootelement.SetAttribute("version", "2.0")
-
-        Document.AppendChild(rootelement)
-
-        'Add the name spaces we use
-        AddNamespace("dc", "http://purl.org/dc/elements/1.1/")
-        AddNamespace("content", "http://purl.org/rss/1.0/modules/content/")
-
-    End Sub
 
     ''' <summary>
     ''' Adds a prefix and url as a namespace to the rss root element

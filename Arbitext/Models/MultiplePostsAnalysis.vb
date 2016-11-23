@@ -11,7 +11,6 @@ Public Class MultiplePostsAnalysis
 
     Sub New()
         ThisAddIn.TldUrl = "http://" & ThisAddIn.City & ".craigslist.org"
-        If ThisAddIn.MaxResults = 0 Then ThisAddIn.MaxResults = 1000000 'just some crazy  high number that we'll never hit if teh user set unlimited results
         _checkedPostsNotBooks = New List(Of Post)
         _checkedPostsAndBooks = New List(Of Post)
         ThisAddIn.t1 = New Thread(AddressOf allQuerySearch)
@@ -37,28 +36,37 @@ Public Class MultiplePostsAnalysis
         If ThisAddIn.Proceed Then
             Dim searchURL As String = ""
 
-            'isbn search
-            searchURL = ThisAddIn.TldUrl & "/search/sss?query=isbn&sort=rel"
+
+            searchURL = ThisAddIn.TldUrl & "/search/sss?query=isbn"
             If ThisAddIn.PostTimingPref Like "*Today*" Then searchURL = searchURL & "&postedToday=1"
             oneQuerySearch(searchURL)
 
-            'textbook search
             If ThisAddIn.Proceed Then
-                searchURL = ThisAddIn.TldUrl & "/search/sss?query=textbook&sort=rel"
+                searchURL = ThisAddIn.TldUrl & "/search/sss?query=textbook"
                 If ThisAddIn.PostTimingPref Like "*Today*" Then searchURL = searchURL & "&postedToday=1"
                 oneQuerySearch(searchURL)
             End If
 
-            'books search
             If ThisAddIn.Proceed Then
                 searchURL = ThisAddIn.TldUrl & "/search/bka?query=college"
                 If ThisAddIn.PostTimingPref Like "*Today*" Then searchURL = searchURL & "&postedToday=1"
                 oneQuerySearch(searchURL)
             End If
 
-            'books search
+            If ThisAddIn.Proceed Then
+                searchURL = ThisAddIn.TldUrl & "/search/bka?query=university"
+                If ThisAddIn.PostTimingPref Like "*Today*" Then searchURL = searchURL & "&postedToday=1"
+                oneQuerySearch(searchURL)
+            End If
+
             If ThisAddIn.Proceed Then
                 searchURL = ThisAddIn.TldUrl & "/search/bka?query=text"
+                If ThisAddIn.PostTimingPref Like "*Today*" Then searchURL = searchURL & "&postedToday=1"
+                oneQuerySearch(searchURL)
+            End If
+
+            If ThisAddIn.Proceed Then
+                searchURL = ThisAddIn.TldUrl & "/search/bka?query=978"
                 If ThisAddIn.PostTimingPref Like "*Today*" Then searchURL = searchURL & "&postedToday=1"
                 oneQuerySearch(searchURL)
             End If
@@ -66,7 +74,8 @@ Public Class MultiplePostsAnalysis
             Ribbon1.tpnAuto.hideLblRecordSafe("")
             Ribbon1.tpnAuto.UpdateLblStatusSafe("Done!")
             ThisAddIn.AppExcel.ScreenUpdating = True
-            createXMLIfDesired
+            ThisAddIn.AppExcel.StatusBar = False
+            CreateXMLIfDesired()
         End If
     End Sub
 
@@ -88,65 +97,69 @@ Public Class MultiplePostsAnalysis
         searchPage = wc.DownloadString(searchURL)
         If Not searchPage Like "*Nothing found for that search*" Then
             Do While InStr(startPos, searchPage, ThisAddIn.ResultHook) > 0
-                If _checkedPostsNotBooks.Count < ThisAddIn.MaxResults Then
-                    Ribbon1.tpnAuto.UpdateLblNumberSafe("On Result Number " & _checkedPostsNotBooks.Count + 1)
-                    Ribbon1.tpnAuto.UpdateLblStatusSafe("Cursory examination of post " & getLinkFromCLSearchResults(searchPage, startPos) & ", will ignore if out of town")
+                Ribbon1.tpnAuto.UpdateLblNumberSafe("On Result Number " & _checkedPostsNotBooks.Count + 1)
+                Ribbon1.tpnAuto.UpdateLblStatusSafe("Cursory examination of post " & getLinkFromCLSearchResults(searchPage, startPos) & ", will ignore if out of town")
 
-                    'if not a nearby result
-                    If Not getLinkFromCLSearchResults(searchPage, startPos) Like "*http*" And Not getLinkFromCLSearchResults(searchPage, startPos) Like "*.org*" Then 'this prevents it from showing "nearby results"
-                        Ribbon1.tpnAuto.UpdateLblStatusSafe("Learning more about post " & vbCrLf & getLinkFromCLSearchResults(searchPage, startPos))
+                'if not a nearby result
+                If Not getLinkFromCLSearchResults(searchPage, startPos) Like "*http*" And Not getLinkFromCLSearchResults(searchPage, startPos) Like "*.org*" Then 'this prevents it from showing "nearby results"
+                    Ribbon1.tpnAuto.UpdateLblStatusSafe("Learning more about post " & vbCrLf & getLinkFromCLSearchResults(searchPage, startPos))
 
-                        postNotBooks = New Post(ThisAddIn.TldUrl & getLinkFromCLSearchResults(searchPage, startPos), False)
+                    postNotBooks = New Post(ThisAddIn.TldUrl & getLinkFromCLSearchResults(searchPage, startPos), False)
 
-                        'ThisAddIn.AppExcel.StatusBar = "Currently on result number " & _checkedPosts.Count & " (old, in trash, or otherwise skipped: " & SearchSession.SkippedResultCount & ") (keepers: " & SearchSession.KeeperCount & ") (maybes: " & SearchSession.NegCount & ") [MULTIPOSTS: " & SearchSession.MultiCount & "]"
-                        Ribbon1.tpnAuto.UpdateLblStatusSafe("About to write search result to workbook")
+                    'ThisAddIn.AppExcel.StatusBar = "Currently on result number " & _checkedPosts.Count & " (old, in trash, or otherwise skipped: " & SearchSession.SkippedResultCount & ") (keepers: " & SearchSession.KeeperCount & ") (maybes: " & SearchSession.NegCount & ") [MULTIPOSTS: " & SearchSession.MultiCount & "]"
+                    Ribbon1.tpnAuto.UpdateLblStatusSafe("Considering writing result to workbook")
 
-                        'make sure it wasn't aleady checked this session
-                        Dim match As Boolean = False
-                        For Each p In _checkedPostsNotBooks
-                            If p.Equals(postNotBooks) Then
-                                match = True
-                                Exit For
-                            End If
-                        Next
+                    'make sure it wasn't aleady checked this session
+                    Dim match As Boolean = False
+                    For Each p In _checkedPostsNotBooks
+                        If p.Equals(postNotBooks) Then
+                            match = True
+                            Exit For
+                        End If
+                    Next
 
-                        If Not match _
-                        AndAlso Not postNotBooks.IsMagazinePost _
-                        AndAlso Not postNotBooks.IsTooOld Then
-                            If postNotBooks.IsParsable Then
-                                postAndBooks = New Post(postNotBooks)
-                                WriteSearchResult(postAndBooks)
-                                _checkedPostsAndBooks.Add(postAndBooks)
-                            Else
-                                If Not doesWSExist("Unparseable posts") Then createWS("Unparseable posts")
-                                Dim r As Int16 = lastUsedRow("Unparseable posts") + 1
-                                With ThisAddIn.AppExcel.Sheets("Unparseable posts")
-                                    .range("a" & r).value2 = postNotBooks.Title
-                                    .range("b" & r).value2 = postNotBooks.URL
-                                    .Hyperlinks.Add(anchor:= .Range("b" & r), Address:=postNotBooks.URL, TextToDisplay:=postNotBooks.URL)
-                                End With
-                                postNotBooks.IsParsable = False
-                            End If
+                    Ribbon1.tpnAuto.UpdateLblCountSafe("- Posts:  Partially checked: " & _checkedPostsNotBooks.Count & vbCrLf &
+                                                    "- Posts:  Fully checked:  " & _checkedPostsAndBooks.Count & vbCrLf & vbCrLf &
+                                                    "- Posts:  Unparseable:  " & _checkedPostsNotBooks.Where(Function(x) x.IsParsable = False).Count & vbCrLf &
+                                                    "- Posts:  Parseable: " & _checkedPostsAndBooks.Where(Function(x) x.IsParsable = True).Count & vbCrLf & vbCrLf &
+                                                    "- Books:  Winners: " & _checkedPostsAndBooks.SelectMany(Function(x) x.Books).Where(Function(y) y.IsWinner = True).Count & vbCrLf &
+                                                    "- Books:  Maybes: " & _checkedPostsAndBooks.SelectMany(Function(x) x.Books).Where(Function(y) y.IsMaybe = True).Count & vbCrLf &
+                                                    "- Books:  HVSB: " & _checkedPostsAndBooks.SelectMany(Function(x) x.Books).Where(Function(y) y.IsHVSB = True).Count & vbCrLf &
+                                                    "- Books:  Trash: " & _checkedPostsAndBooks.SelectMany(Function(x) x.Books).Where(Function(y) y.IsTrash = True).Count)
+
+                    If Not match _
+                    AndAlso Not postNotBooks.IsMagazinePost _
+                    AndAlso Not postNotBooks.IsTooOld Then
+                        If postNotBooks.IsParsable Then
+                            postAndBooks = New Post(postNotBooks)
+                            WriteSearchResult(postAndBooks)
+                            _checkedPostsAndBooks.Add(postAndBooks)
                         Else
+                            If Not doesWSExist("Unparseable posts") Then createWS("Unparseable posts")
+                            Dim r As Int16 = lastUsedRow("Unparseable posts") + 1
+                            With ThisAddIn.AppExcel.Sheets("Unparseable posts")
+                                .range("a" & r).value2 = postNotBooks.Title
+                                .range("b" & r).value2 = postNotBooks.URL
+                                .Hyperlinks.Add(anchor:= .Range("b" & r), Address:=postNotBooks.URL, TextToDisplay:=postNotBooks.URL)
+                            End With
                             postNotBooks.IsParsable = False
                         End If
-                        _checkedPostsNotBooks.Add(postNotBooks)
+                    Else
+                        postNotBooks.IsParsable = False
                     End If
+                    _checkedPostsNotBooks.Add(postNotBooks)
+                End If
 
-                    'do the pagination
-                    startPos = InStr(startPos, searchPage, ThisAddIn.ResultHook) + 100
-                    If _checkedPostsNotBooks.Count Mod 100 = 0 Then
-                        If InStr(1, searchURL, "&") = 0 Then
-                            updatedSearchURL = searchURL & "?s=" & _checkedPostsNotBooks.Count
-                        Else
-                            updatedSearchURL = searchURL & "&s=" & _checkedPostsNotBooks.Count
-                        End If
-                        searchPage = wc.DownloadString(updatedSearchURL)
-                        startPos = 1 'to start searching at the top of the newly loaded search page
+                'do the pagination
+                startPos = InStr(startPos, searchPage, ThisAddIn.ResultHook) + 100
+                If _checkedPostsNotBooks.Count Mod 100 = 0 Then
+                    If InStr(1, searchURL, "&") = 0 Then
+                        updatedSearchURL = searchURL & "?s=" & _checkedPostsNotBooks.Count
+                    Else
+                        updatedSearchURL = searchURL & "&s=" & _checkedPostsNotBooks.Count
                     End If
-
-                Else 'max count check
-                    GoTo maxReached
+                    searchPage = wc.DownloadString(updatedSearchURL)
+                    startPos = 1 'to start searching at the top of the newly loaded search page
                 End If
 
             Loop
@@ -170,24 +183,19 @@ maxReached:
             If Not b.WasAlreadyChecked Then
                 b.GetDataFromBookscouter()
                 If post.IsParsable AndAlso b.IsParsable Then
-                    If ThisAddIn.AutoCategorizeOK Then
-                        If b.IsWinner() Then
-                            If Not doesWSExist("Winners") Then BuildWSResults.buildResultWS("Winners")
-                            destSheet = "Winners"
-                        ElseIf b.IsMaybe() Then
-                            If Not doesWSExist("Maybes") Then BuildWSResults.buildResultWS("Maybes")
-                            destSheet = "Maybes"
-                        ElseIf b.IsTrash() Then
-                            If Not doesWSExist("Trash") Then BuildWSResults.buildResultWS("Trash") Else unFilterTrash()
-                            destSheet = "Trash"
-                        ElseIf b.IsHVSB Then
-                            If Not doesWSExist("HVSBs") Then BuildWSResults.buildResultWS("HVSBs")
-                            destSheet = "HVSBs"
-                        Else
-                            destSheet = "Automated Checks"
-                        End If
+                    If b.IsWinner() Then
+                        If Not doesWSExist("Winners") Then BuildWSResults.buildResultWS("Winners")
+                        destSheet = "Winners"
+                    ElseIf b.IsMaybe() Then
+                        If Not doesWSExist("Maybes") Then BuildWSResults.buildResultWS("Maybes")
+                        destSheet = "Maybes"
+                    ElseIf b.IsHVSB() Then
+                        If Not doesWSExist("HVSBs") Then BuildWSResults.buildResultWS("HVSBs")
+                        destSheet = "HVSBs"
+                    ElseIf b.IsTrash() Then
+                        If Not doesWSExist("Trash") Then BuildWSResults.buildResultWS("Trash") Else unFilterTrash()
+                        destSheet = "Trash"
                     Else
-                        If Not doesWSExist("Automated Checks") Then BuildWSResults.buildResultWS("Automated Checks")
                         destSheet = "Automated Checks"
                     End If
                 Else
@@ -201,23 +209,13 @@ maxReached:
                     Exit Sub
                 End If
 
-
-
                 With ThisAddIn.AppExcel.Sheets(destSheet)
                     Ribbon1.tpnAuto.UpdateLblStatusSafe("Writing search result to " & destSheet)
                     Ribbon1.tpnAuto.showLblCountsSafe("")
-                    Ribbon1.tpnAuto.UpdateLblCountSafe("- Posts:  Partially checked: " & _checkedPostsNotBooks.Count & vbCrLf &
-                                                       "- Posts:  Fully checked:  " & _checkedPostsAndBooks.Count & vbCrLf & vbCrLf &
-                                                       "- Posts:  Unparseable:  " & _checkedPostsNotBooks.Where(Function(x) x.IsParsable = False).Count & vbCrLf &
-                                                       "- Posts:  Parseable: " & _checkedPostsAndBooks.Where(Function(x) x.IsParsable = True).Count & vbCrLf & vbCrLf &
-                                                       "- Books:  Winners: " & _checkedPostsAndBooks.SelectMany(Function(x) x.Books).Where(Function(y) y.IsWinner = True).Count & vbCrLf &
-                                                       "- Books:  Maybes: " & _checkedPostsAndBooks.SelectMany(Function(x) x.Books).Where(Function(y) y.IsMaybe = True).Count & vbCrLf &
-                                                       "- Books:  HVSB: " & _checkedPostsAndBooks.SelectMany(Function(x) x.Books).Where(Function(y) y.IsHVSB = True).Count & vbCrLf &
-                                                       "- Books:  Trash: " & _checkedPostsAndBooks.SelectMany(Function(x) x.Books).Where(Function(y) y.IsTrash = True).Count)
 
                     .activate
                     Dim r As Integer = lastUsedRow() + 1
-                    thinInnerBorder(.Range("a" & r & ":k" & r))
+                    thinInnerBorder(.Range("a" & r & ":l" & r))
 
                     'write post stuff
                     .Range("a" & r).Value2 = post.PostDate 'date posted
@@ -234,6 +232,8 @@ maxReached:
                         .range("h" & r).value2 = b.Profit
                         .range("i" & r).value2 = b.ProfitPercentage
                         .range("j" & r).value2 = b.MinAskingPriceForDesiredProfit
+                        .range("l" & r).value2 = "'" & b.ID
+
                         If b.aLaCarte() Then .Rows(r).font.colorindex = 3
                         If b.isOBO() Then .Rows(r).font.bold = True
                         If b.isWeirdEdition() Then .Rows(r).font.colorindex = 46
@@ -255,7 +255,7 @@ maxReached:
             EmailHelpers.sendSilentNotification(EmailHelpers.emailBodyString(post, book).ToString, "Textbook Winner Found: " & book.Title)
         End If
         SoundHelpers.PlayWAV("money")
-        ThisAddIn.AppExcel.Range("a" & r & ":k" & r).Interior.ColorIndex = 35
+        ThisAddIn.AppExcel.Range("a" & r & ":l" & r).Interior.ColorIndex = 35
     End Sub
 
     Sub HandleMaybe(post As Post, book As Book, r As Integer)
@@ -263,7 +263,7 @@ maxReached:
             PushbulletHelpers.sendPushbulletNote(ThisAddIn.Title, "Possible Textbook Lead Found: " & book.Title)
             EmailHelpers.sendSilentNotification(EmailHelpers.emailBodyString(post, book).ToString, "Possible Textbook Lead Found: " & book.Title)
         End If
-        ThisAddIn.AppExcel.Range("a" & r & ":k" & r).Interior.ColorIndex = 6
+        ThisAddIn.AppExcel.Range("a" & r & ":l" & r).Interior.ColorIndex = 6
     End Sub
 
 #End Region

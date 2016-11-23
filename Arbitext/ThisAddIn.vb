@@ -9,6 +9,13 @@ Public Class ThisAddIn
     Public Shared frmPrefs As FrmPrefs
     Public Shared TldUrl As String             'top-level domain name (e.g., http://dallas.craigslist.com)
     Public Shared t1 As Thread
+    Public Const wwwLeadsFolder As String = "http://huvanile.com/leads/"
+
+    'sftp
+    Public Shared SFTPUrl As String
+    Public Shared SFTPUser As String
+    Public Shared SFTPPass As String
+    Public Shared SFTPDirectory As String
 
     'pushbullet
     Public Shared PbAPIKey As String
@@ -20,10 +27,8 @@ Public Class ThisAddIn
     Public Shared EmailPassword As String
 
     'preferences
-    Public Shared MaxResults As Double           'number of results to search (user defined)
     Public Shared NotifyViaPBOK As Boolean
     Public Shared KeepIEVisibleOK As Boolean
-    Public Shared AutoCategorizeOK As Boolean
     Public Shared MinTolerableProfit As Decimal
     Public Shared PostTimingPref As String
     Public Shared SaveWBFilePath As String                 'saveFileAs: output filepath

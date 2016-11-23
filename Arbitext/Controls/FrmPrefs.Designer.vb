@@ -36,13 +36,10 @@ Partial Class FrmPrefs
         Me.GroupBox2 = New System.Windows.Forms.GroupBox()
         Me.txtCity = New System.Windows.Forms.TextBox()
         Me.txtMinProfit = New System.Windows.Forms.TextBox()
-        Me.txtResultAmt = New System.Windows.Forms.TextBox()
-        Me.btnGrabCoverArt = New System.Windows.Forms.Button()
         Me.chkOnMaybes = New System.Windows.Forms.CheckBox()
         Me.chkOnWinners = New System.Windows.Forms.CheckBox()
         Me.Label3 = New System.Windows.Forms.Label()
         Me.Label2 = New System.Windows.Forms.Label()
-        Me.Label1 = New System.Windows.Forms.Label()
         Me.grpGmail = New System.Windows.Forms.GroupBox()
         Me.btnTestGmail = New System.Windows.Forms.Button()
         Me.txtEmailPassword = New System.Windows.Forms.TextBox()
@@ -51,7 +48,10 @@ Partial Class FrmPrefs
         Me.lblEmail1 = New System.Windows.Forms.Label()
         Me.chkNotifyViaGmail = New System.Windows.Forms.CheckBox()
         Me.grpSorting = New System.Windows.Forms.GroupBox()
-        Me.chkAutoCategorize = New System.Windows.Forms.CheckBox()
+        Me.txtSFTPDirectory = New System.Windows.Forms.TextBox()
+        Me.txtSFTPPass = New System.Windows.Forms.TextBox()
+        Me.txtSFTPUser = New System.Windows.Forms.TextBox()
+        Me.txtSFTPURL = New System.Windows.Forms.TextBox()
         Me.grpOnlyShowPosts = New System.Windows.Forms.GroupBox()
         Me.optShowAll = New System.Windows.Forms.RadioButton()
         Me.optUpdated14Days = New System.Windows.Forms.RadioButton()
@@ -174,57 +174,37 @@ Partial Class FrmPrefs
         '
         Me.GroupBox2.Controls.Add(Me.txtCity)
         Me.GroupBox2.Controls.Add(Me.txtMinProfit)
-        Me.GroupBox2.Controls.Add(Me.txtResultAmt)
-        Me.GroupBox2.Controls.Add(Me.btnGrabCoverArt)
         Me.GroupBox2.Controls.Add(Me.chkOnMaybes)
         Me.GroupBox2.Controls.Add(Me.chkOnWinners)
         Me.GroupBox2.Controls.Add(Me.Label3)
         Me.GroupBox2.Controls.Add(Me.Label2)
-        Me.GroupBox2.Controls.Add(Me.Label1)
         Me.GroupBox2.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.GroupBox2.Location = New System.Drawing.Point(619, 18)
         Me.GroupBox2.Name = "GroupBox2"
-        Me.GroupBox2.Size = New System.Drawing.Size(276, 219)
+        Me.GroupBox2.Size = New System.Drawing.Size(276, 173)
         Me.GroupBox2.TabIndex = 3
         Me.GroupBox2.TabStop = False
         Me.GroupBox2.Text = "General settings"
         '
         'txtCity
         '
-        Me.txtCity.Location = New System.Drawing.Point(13, 123)
+        Me.txtCity.Location = New System.Drawing.Point(18, 83)
         Me.txtCity.Name = "txtCity"
         Me.txtCity.Size = New System.Drawing.Size(237, 21)
         Me.txtCity.TabIndex = 8
         '
         'txtMinProfit
         '
-        Me.txtMinProfit.Location = New System.Drawing.Point(188, 62)
+        Me.txtMinProfit.Location = New System.Drawing.Point(193, 22)
         Me.txtMinProfit.Name = "txtMinProfit"
         Me.txtMinProfit.Size = New System.Drawing.Size(62, 21)
         Me.txtMinProfit.TabIndex = 7
-        '
-        'txtResultAmt
-        '
-        Me.txtResultAmt.Location = New System.Drawing.Point(188, 25)
-        Me.txtResultAmt.Name = "txtResultAmt"
-        Me.txtResultAmt.Size = New System.Drawing.Size(62, 21)
-        Me.txtResultAmt.TabIndex = 6
-        '
-        'btnGrabCoverArt
-        '
-        Me.btnGrabCoverArt.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnGrabCoverArt.Location = New System.Drawing.Point(150, 162)
-        Me.btnGrabCoverArt.Name = "btnGrabCoverArt"
-        Me.btnGrabCoverArt.Size = New System.Drawing.Size(100, 39)
-        Me.btnGrabCoverArt.TabIndex = 5
-        Me.btnGrabCoverArt.Text = "Download cover art placeholder"
-        Me.btnGrabCoverArt.UseVisualStyleBackColor = True
         '
         'chkOnMaybes
         '
         Me.chkOnMaybes.AutoSize = True
         Me.chkOnMaybes.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.chkOnMaybes.Location = New System.Drawing.Point(13, 182)
+        Me.chkOnMaybes.Location = New System.Drawing.Point(18, 142)
         Me.chkOnMaybes.Name = "chkOnMaybes"
         Me.chkOnMaybes.Size = New System.Drawing.Size(119, 19)
         Me.chkOnMaybes.TabIndex = 4
@@ -235,7 +215,7 @@ Partial Class FrmPrefs
         '
         Me.chkOnWinners.AutoSize = True
         Me.chkOnWinners.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.chkOnWinners.Location = New System.Drawing.Point(13, 157)
+        Me.chkOnWinners.Location = New System.Drawing.Point(18, 117)
         Me.chkOnWinners.Name = "chkOnWinners"
         Me.chkOnWinners.Size = New System.Drawing.Size(119, 19)
         Me.chkOnWinners.TabIndex = 3
@@ -246,7 +226,7 @@ Partial Class FrmPrefs
         '
         Me.Label3.AutoSize = True
         Me.Label3.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label3.Location = New System.Drawing.Point(13, 103)
+        Me.Label3.Location = New System.Drawing.Point(18, 63)
         Me.Label3.Name = "Label3"
         Me.Label3.Size = New System.Drawing.Size(98, 15)
         Me.Label3.TabIndex = 2
@@ -256,21 +236,11 @@ Partial Class FrmPrefs
         '
         Me.Label2.AutoSize = True
         Me.Label2.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label2.Location = New System.Drawing.Point(13, 62)
+        Me.Label2.Location = New System.Drawing.Point(18, 22)
         Me.Label2.Name = "Label2"
         Me.Label2.Size = New System.Drawing.Size(144, 30)
         Me.Label2.TabIndex = 1
         Me.Label2.Text = "Minimum tolerable profit:" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "(Enter 0 to disable)"
-        '
-        'Label1
-        '
-        Me.Label1.AutoSize = True
-        Me.Label1.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label1.Location = New System.Drawing.Point(13, 25)
-        Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(153, 30)
-        Me.Label1.TabIndex = 0
-        Me.Label1.Text = "Search result amount limit:" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "(Enter 0 for unlimited)"
         '
         'grpGmail
         '
@@ -281,7 +251,7 @@ Partial Class FrmPrefs
         Me.grpGmail.Controls.Add(Me.lblEmail1)
         Me.grpGmail.Controls.Add(Me.chkNotifyViaGmail)
         Me.grpGmail.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.grpGmail.Location = New System.Drawing.Point(303, 186)
+        Me.grpGmail.Location = New System.Drawing.Point(303, 180)
         Me.grpGmail.Name = "grpGmail"
         Me.grpGmail.Size = New System.Drawing.Size(304, 155)
         Me.grpGmail.TabIndex = 4
@@ -346,26 +316,46 @@ Partial Class FrmPrefs
         '
         'grpSorting
         '
-        Me.grpSorting.Controls.Add(Me.chkAutoCategorize)
+        Me.grpSorting.Controls.Add(Me.txtSFTPDirectory)
+        Me.grpSorting.Controls.Add(Me.txtSFTPPass)
+        Me.grpSorting.Controls.Add(Me.txtSFTPUser)
+        Me.grpSorting.Controls.Add(Me.txtSFTPURL)
         Me.grpSorting.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grpSorting.Location = New System.Drawing.Point(303, 347)
         Me.grpSorting.Name = "grpSorting"
         Me.grpSorting.Size = New System.Drawing.Size(304, 133)
         Me.grpSorting.TabIndex = 5
         Me.grpSorting.TabStop = False
-        Me.grpSorting.Text = "Auto-sorting Settings"
+        Me.grpSorting.Text = "SFTP Config"
         '
-        'chkAutoCategorize
+        'txtSFTPDirectory
         '
-        Me.chkAutoCategorize.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.chkAutoCategorize.Location = New System.Drawing.Point(16, 20)
-        Me.chkAutoCategorize.Name = "chkAutoCategorize"
-        Me.chkAutoCategorize.Size = New System.Drawing.Size(273, 95)
-        Me.chkAutoCategorize.TabIndex = 6
-        Me.chkAutoCategorize.Text = "Auto-sort results as winners, maybes and trash based on:" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "- Profitability" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "- If i" &
-    "t's an eBook (trash)" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "- If it's a binder (trash)" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "- If it's a weird edition (tra" &
-    "sh)"
-        Me.chkAutoCategorize.UseVisualStyleBackColor = True
+        Me.txtSFTPDirectory.Location = New System.Drawing.Point(17, 105)
+        Me.txtSFTPDirectory.Name = "txtSFTPDirectory"
+        Me.txtSFTPDirectory.Size = New System.Drawing.Size(273, 21)
+        Me.txtSFTPDirectory.TabIndex = 3
+        '
+        'txtSFTPPass
+        '
+        Me.txtSFTPPass.Location = New System.Drawing.Point(16, 78)
+        Me.txtSFTPPass.Name = "txtSFTPPass"
+        Me.txtSFTPPass.PasswordChar = Global.Microsoft.VisualBasic.ChrW(42)
+        Me.txtSFTPPass.Size = New System.Drawing.Size(273, 21)
+        Me.txtSFTPPass.TabIndex = 2
+        '
+        'txtSFTPUser
+        '
+        Me.txtSFTPUser.Location = New System.Drawing.Point(16, 51)
+        Me.txtSFTPUser.Name = "txtSFTPUser"
+        Me.txtSFTPUser.Size = New System.Drawing.Size(273, 21)
+        Me.txtSFTPUser.TabIndex = 1
+        '
+        'txtSFTPURL
+        '
+        Me.txtSFTPURL.Location = New System.Drawing.Point(16, 24)
+        Me.txtSFTPURL.Name = "txtSFTPURL"
+        Me.txtSFTPURL.Size = New System.Drawing.Size(273, 21)
+        Me.txtSFTPURL.TabIndex = 0
         '
         'grpOnlyShowPosts
         '
@@ -375,7 +365,7 @@ Partial Class FrmPrefs
         Me.grpOnlyShowPosts.Controls.Add(Me.optUpdatedToday)
         Me.grpOnlyShowPosts.Controls.Add(Me.optPostedToday)
         Me.grpOnlyShowPosts.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.grpOnlyShowPosts.Location = New System.Drawing.Point(619, 250)
+        Me.grpOnlyShowPosts.Location = New System.Drawing.Point(619, 199)
         Me.grpOnlyShowPosts.Name = "grpOnlyShowPosts"
         Me.grpOnlyShowPosts.Size = New System.Drawing.Size(276, 154)
         Me.grpOnlyShowPosts.TabIndex = 6
@@ -485,6 +475,7 @@ Partial Class FrmPrefs
         Me.grpGmail.ResumeLayout(False)
         Me.grpGmail.PerformLayout()
         Me.grpSorting.ResumeLayout(False)
+        Me.grpSorting.PerformLayout()
         Me.grpOnlyShowPosts.ResumeLayout(False)
         Me.grpOnlyShowPosts.PerformLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
@@ -506,16 +497,12 @@ Partial Class FrmPrefs
     Friend WithEvents GroupBox2 As System.Windows.Forms.GroupBox
     Friend WithEvents txtCity As System.Windows.Forms.TextBox
     Friend WithEvents txtMinProfit As System.Windows.Forms.TextBox
-    Friend WithEvents txtResultAmt As System.Windows.Forms.TextBox
-    Friend WithEvents btnGrabCoverArt As System.Windows.Forms.Button
     Friend WithEvents chkOnMaybes As System.Windows.Forms.CheckBox
     Friend WithEvents chkOnWinners As System.Windows.Forms.CheckBox
     Friend WithEvents Label3 As System.Windows.Forms.Label
     Friend WithEvents Label2 As System.Windows.Forms.Label
-    Friend WithEvents Label1 As System.Windows.Forms.Label
     Friend WithEvents grpGmail As System.Windows.Forms.GroupBox
     Friend WithEvents grpSorting As System.Windows.Forms.GroupBox
-    Friend WithEvents chkAutoCategorize As System.Windows.Forms.CheckBox
     Friend WithEvents grpOnlyShowPosts As System.Windows.Forms.GroupBox
     Friend WithEvents optShowAll As System.Windows.Forms.RadioButton
     Friend WithEvents optUpdated14Days As System.Windows.Forms.RadioButton
@@ -530,4 +517,8 @@ Partial Class FrmPrefs
     Friend WithEvents chkNotifyViaGmail As System.Windows.Forms.CheckBox
     Friend WithEvents PictureBox1 As System.Windows.Forms.PictureBox
     Friend WithEvents Label4 As System.Windows.Forms.Label
+    Friend WithEvents txtSFTPPass As System.Windows.Forms.TextBox
+    Friend WithEvents txtSFTPUser As System.Windows.Forms.TextBox
+    Friend WithEvents txtSFTPURL As System.Windows.Forms.TextBox
+    Friend WithEvents txtSFTPDirectory As System.Windows.Forms.TextBox
 End Class

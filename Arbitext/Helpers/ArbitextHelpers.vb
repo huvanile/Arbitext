@@ -1,25 +1,104 @@
-﻿Imports Arbitext.ExcelHelpers
+﻿Imports Renci.SshNet
+Imports Arbitext.ExcelHelpers
 Imports Microsoft.Office.Interop.Excel
 Imports Arbitext.StringHelpers
-Imports Arbitext.FileHelpers
 Imports System.Windows.Forms
+Imports System.IO
 
 Public Class ArbitextHelpers
 
     Public Shared Sub CreateXMLIfDesired()
-        If isAnyWBOpen() Then
-            If MsgBox("Would you like to output winners and maybes to an XML file?", vbYesNoCancel, ThisAddIn.Title) = vbYes Then
-                Dim saveAsFolder As String
+        If isAnyWBOpen() AndAlso (doesWSExist("HVSBs") Or doesWSExist("Winners") Or doesWSExist("Maybes")) Then
+            Dim saveAsFolder As String
+            Dim theCity As String = StrConv(ThisAddIn.City, VbStrConv.ProperCase)
+            If MsgBox("Would you like to output XML files and results?", vbYesNoCancel, ThisAddIn.Title) = vbYes Then
                 Dim dialog As New FolderBrowserDialog()
                 dialog.RootFolder = Environment.SpecialFolder.Desktop
-                dialog.SelectedPath = "C:\"
-                dialog.Description = "Select a location to save the .XML file"
+                dialog.SelectedPath = Environment.SpecialFolder.Desktop
+                dialog.Description = "Select a local folder location to save the .XML files and results"
                 If dialog.ShowDialog() = DialogResult.OK Then
                     saveAsFolder = dialog.SelectedPath
-                    Dim rssfeed As New RSSFeed()
-                    rssfeed.CreateChannel("Aribtext", "", "Profitable book deals", Now, "en-US")
-                    rssfeed.PopulateFeed()
-                    WriteToFile(TrailingSlash(saveAsFolder) & ThisAddIn.City & ".xml", rssfeed.ToString)
+                    Dim rssFeed As RSSFeed
+                    Dim desc As String = ""
+                    Dim title As String = ""
+                    Dim outfile As String = ""
+
+                    'HANDLE WINNERS
+                    If doesWSExist("Winners") Then
+
+                        'build RSS feed
+                        desc = "Profitable book deals (winners) in " & theCity & "!"
+                        title = "Arbitext: " & theCity & " Winners"
+                        outfile = TrailingSlash(saveAsFolder) & theCity & " Winners.xml"
+                        rssFeed = New RSSFeed(title, ThisAddIn.wwwLeadsFolder & Path.GetFileName(outfile), desc, Now, "en-US", "Winners", outfile)
+
+                        'build result PHP files
+                        For r As Short = 4 To lastUsedRow("Winners")
+                            With ThisAddIn.AppExcel.Sheets("Winners")
+                                Dim resultPage As New ResultPage(r, "Winners", saveAsFolder)
+                                resultPage = Nothing
+                            End With
+                        Next
+
+                    End If
+
+                    'HANDLE MAYBES
+                    If doesWSExist("Maybes") Then
+
+                        'build RSS feed
+                        desc = "Potentially profitable book deals (maybes) in " & theCity & "!"
+                        title = "Arbitext: " & theCity & " Maybes"
+                        outfile = TrailingSlash(saveAsFolder) & theCity & " Maybes.xml"
+                        rssFeed = New RSSFeed(title, ThisAddIn.wwwLeadsFolder & Path.GetFileName(outfile), desc, Now, "en-US", "Maybes", outfile)
+
+                        'build result PHP files
+                        For r As Short = 4 To lastUsedRow("Maybes")
+                            With ThisAddIn.AppExcel.Sheets("Maybes")
+                                Dim resultPage As New ResultPage(r, "Maybes", saveAsFolder)
+                                resultPage = Nothing
+                            End With
+                        Next
+                    End If
+
+                    'HANDLE HVSBs
+                    If doesWSExist("HVSBs") Then
+
+                        'build RSS feed
+                        desc = "High value stale books in " & theCity & ".  These books can be sold for a profit, but only if the seller (who hasn't been successful selling them at the current asking price) will come down on the price a bit."
+                        title = "Arbitext: " & theCity & " High Value Stale Books"
+                        outfile = TrailingSlash(saveAsFolder) & theCity & " High Value Stale Books.xml"
+                        rssFeed = New RSSFeed(title, ThisAddIn.wwwLeadsFolder & Path.GetFileName(outfile), desc, Now, "en-US", "HVSBs", outfile)
+
+                        'build result PHP files
+                        For r As Short = 4 To lastUsedRow("HVSBs")
+                            With ThisAddIn.AppExcel.Sheets("HVSBs")
+                                Dim resultPage As New ResultPage(r, "HVSBs", saveAsFolder)
+                                resultPage = Nothing
+                            End With
+                        Next
+
+                    End If
+                    rssFeed = Nothing
+
+                    If MsgBox("File(s) created successfully." & vbCrLf & vbCrLf & "Would you also like to SFTP the XML files and results the site?", vbYesNoCancel, title) = vbYes Then
+                        Using sftp As New SftpClient(ThisAddIn.SFTPUrl, ThisAddIn.SFTPUser, ThisAddIn.SFTPPass)
+                            sftp.Connect()
+                            sftp.ChangeDirectory(ThisAddIn.SFTPDirectory)
+                            If sftp.IsConnected Then
+                                For Each file As String In Directory.GetFiles(saveAsFolder)
+                                    If file Like "*.xml" Or file Like "*.php*" Then
+                                        Using filestream As New FileStream(file, FileMode.Open)
+                                            sftp.BufferSize = 4 * 1024
+                                            sftp.UploadFile(filestream, Path.GetFileName(file))
+                                        End Using
+                                    End If
+                                Next
+                            Else
+                                MsgBox("SFTP Connection Error!", vbCritical, ThisAddIn.Title)
+                            End If
+                        End Using
+                    End If
+
                     MsgBox("Done!", vbInformation, ThisAddIn.Title)
                 End If
             End If
@@ -52,17 +131,6 @@ Public Class ArbitextHelpers
         Loop
     End Function
 
-    Public Shared Sub deleteBlankAutomatedResults()
-        With ThisAddIn.AppExcel
-            .ScreenUpdating = False
-            Dim c As Long
-            For c = lastUsedRow("Automated Checks") To 5 Step -1
-                If .Sheets("Automated Checks").Range("b" & c).Value = "" Then .Sheets("Automated Checks").Rows(c).Delete
-            Next c
-            .ScreenUpdating = True
-        End With
-    End Sub
-
     Public Shared Sub grabPHPicIfNeeded()
         If Not System.IO.File.Exists(Environ("Temp") & "\placeholder.jpg") Then
             Dim wc As New System.Net.WebClient
@@ -84,173 +152,11 @@ Public Class ArbitextHelpers
         thinInnerBorder(theRange)
     End Sub
 
-    Public Shared Sub reCategorizeRow(theRow As Integer, theDest As String)
-        Dim callingWS As String : callingWS = ThisAddIn.AppExcel.ActiveSheet.Name
-        Dim matchR As Integer
-        If Not doesWSExist(theDest) Then
-            MsgBox("The '" & theDest & "' sheet must be present in order to run this tool.", vbCritical, ThisAddIn.Title)
-            ThisAddIn.Proceed = False
-        End If
-        With ThisAddIn.AppExcel
-            .ScreenUpdating = False
-            matchR = lastUsedRow(theDest) + 1
-            .Rows(theRow).Select
-            .Selection.Cut
-            .Sheets(theDest).Activate
-            .Rows(matchR).Select
-            .ActiveSheet.Paste
-            .Sheets(callingWS).Activate
-            .Rows(theRow).Delete
-            .ScreenUpdating = True
-        End With
-    End Sub
-
-    Public Shared Sub categorizeRow(theRow As Integer, Optional theDest As String = "Trash")
-        Dim tR As Integer
-        Dim matchR As Integer
-        Dim postTitle As String : postTitle = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("e" & theRow).Value 'title
-        Dim postCity As String : postCity = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("l" & theRow).Value
-        Dim postISBN As String : postISBN = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("f" & theRow).Value 'isbn
-        If Not doesWSExist(theDest) Then
-            MsgBox("The '" & theDest & "' sheet must be present in order to run this tool.", vbCritical, ThisAddIn.Title)
-        Else
-            With ThisAddIn.AppExcel.Sheets(theDest)
-                If canFind(postTitle, theDest) Then
-                    'match was already in trash, but showed up in results again because they changed the price and reposted it
-                    'handle this situation by over-writing old row
-                    matchR = ThisAddIn.AppExcel.Range(canFind(postTitle, theDest, , True, False)).Row
-                    If .Range("d" & .Range(canFind(postTitle, theDest, , True, False)).Row).Value = postISBN _
-                And .Range("j" & .Range(canFind(postTitle, theDest, , True, False)).Row).Value = postCity Then
-                        .Range("a" & matchR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("c" & theRow).Value 'date
-                        .Range("b" & matchR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("d" & theRow).Value 'url
-                        .Hyperlinks.Add(anchor:= .Range("b" & matchR), Address:= .Range("b" & matchR).Value, TextToDisplay:= .Range("b" & matchR).Value)
-                        .Range("c" & matchR) = postTitle
-                        .Hyperlinks.Add(anchor:= .Range("c" & matchR), Address:="http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=" & replacePlusWithSpace(postTitle), TextToDisplay:= .Range("c" & matchR).Value)
-                        .Range("d" & matchR) = postISBN 'isbn
-                        '                If Not .Range("d" & matchR) Like "*(*" Then
-                        '                    .Hyperlinks.Add anchor:=.Range("d" & matchR), Address:="https://bookscouter.com/prices.php?isbn=" & postISBN & "&all", TextToDisplay:=.Range("d" & matchR).Value
-                        '                End If
-                        .Range("e" & matchR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("g" & theRow).Value 'price
-                        .Range("f" & matchR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("h" & theRow).Value 'online buy price
-                        .Range("g" & matchR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("i" & theRow).Value 'profit
-                        .Range("h" & matchR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("j" & theRow).Value 'profit margin
-                        .Range("i" & matchR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("k" & theRow).Value 'min. asking price for desired profit margin
-                        .Range("j" & matchR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("l" & theRow).Value
-                        .Range("k" & matchR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("m" & theRow).Value 'date updated
-                        .Range("l" & matchR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("n" & theRow).Value 'price delta
-
-                        'apply flags
-                        If ThisAddIn.AppExcel.Sheets("Automated Checks").Range("b" & theRow).Font.Bold = True Then .Rows(matchR).Font.Bold = True
-                        .Rows(matchR).Font.ColorIndex = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("b" & theRow).Font.ColorIndex
-                        .Range("a" & matchR & ":l" & matchR).Interior.Color = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("b" & theRow).Interior.Color
-
-                        ThisAddIn.AppExcel.Sheets("Automated Checks").Rows(theRow).Delete
-                    Else
-                        tR = lastUsedRow(theDest) + 1
-                        thinInnerBorder(ThisAddIn.AppExcel.Sheets(theDest).Range("A" & tR & ":l" & tR))
-                        .Range("a" & tR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("c" & theRow).Value 'date
-                        .Range("b" & tR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("d" & theRow).Value 'url
-                        .Hyperlinks.Add(anchor:= .Range("b" & tR), Address:= .Range("b" & tR).Value, TextToDisplay:= .Range("b" & tR).Value)
-                        .Range("c" & tR) = postTitle
-                        .Hyperlinks.Add(anchor:= .Range("c" & tR), Address:="http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=" & replacePlusWithSpace(postTitle), TextToDisplay:= .Range("c" & tR).Value)
-                        .Range("d" & tR) = postISBN 'isbn
-                        If Not .Range("d" & tR) Like "*(*" Then
-                            .Hyperlinks.Add(anchor:= .Range("d" & tR), Address:="https://bookscouter.com/prices.php?isbn=" & postISBN & "&all", TextToDisplay:="'" & .Range("d" & tR).Value)
-                        End If
-                        .Range("e" & tR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("g" & theRow).Value 'price
-                        .Range("f" & tR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("h" & theRow).Value 'online buy price
-                        .Range("g" & tR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("i" & theRow).Value 'profit
-                        .Range("h" & tR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("j" & theRow).Value 'profit margin
-                        .Range("i" & tR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("k" & theRow).Value 'min. asking price for desired profit margin
-                        .Range("j" & tR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("l" & theRow).Value
-                        .Range("k" & tR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("m" & theRow).Value 'date updated
-                        .Range("l" & tR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("n" & theRow).Value 'price delta
-
-                        'apply flags
-                        If ThisAddIn.AppExcel.Sheets("Automated Checks").Range("b" & theRow).Font.Bold = True Then .Rows(tR).Font.Bold = True
-                        .Rows(tR).Font.ColorIndex = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("b" & theRow).Font.ColorIndex
-                        .Range("a" & tR & ":l" & tR).Interior.Color = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("b" & theRow).Interior.Color
-
-                        ThisAddIn.AppExcel.Sheets("Automated Checks").Rows(theRow).Delete
-                    End If
-                Else
-                    tR = lastUsedRow(theDest) + 1
-                    thinInnerBorder(ThisAddIn.AppExcel.Sheets(theDest).Range("A" & tR & ":l" & tR))
-                    .Range("a" & tR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("c" & theRow).Value 'date
-                    .Range("b" & tR) = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("d" & theRow).Value 'url
-                    .Hyperlinks.Add(anchor:= .Range("b" & tR), Address:= .Range("b" & tR).Value, TextToDisplay:= .Range("b" & tR).Value)
-                    .Range("c" & tR) = postTitle
-                    .Hyperlinks.Add(anchor:= .Range("c" & tR), Address:="http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=" & replacePlusWithSpace(postTitle), TextToDisplay:= .Range("c" & tR).Value)
-                    .Range("d" & tR) = postISBN 'isbn
-                    If Not .Range("d" & tR).value2 Like "*(*" Then
-                        .Hyperlinks.Add(anchor:= .Range("d" & tR), Address:="https://bookscouter.com/prices.php?isbn=" & postISBN & "&all", TextToDisplay:="'" & .Range("d" & tR).Value)
-                    End If
-                    .Range("e" & tR).value2 = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("g" & theRow).Value 'price
-                    .Range("f" & tR).value2 = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("h" & theRow).Value 'online buy price
-                    .Range("g" & tR).value2 = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("i" & theRow).Value 'profit
-                    .Range("h" & tR).value2 = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("j" & theRow).Value 'profit margin
-                    .Range("i" & tR).value2 = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("k" & theRow).Value 'min. asking price for desired profit margin
-                    .Range("j" & tR).value2 = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("l" & theRow).Value
-                    .Range("k" & tR).value2 = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("m" & theRow).Value 'date updated
-                    .Range("l" & tR).value2 = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("n" & theRow).Value 'price delta
-
-                    'apply flags
-                    If ThisAddIn.AppExcel.Sheets("Automated Checks").Range("b" & theRow).Font.Bold = True Then .Rows(tR).Font.Bold = True
-                    .Rows(tR).Font.ColorIndex = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("b" & theRow).Font.ColorIndex
-                    .Range("a" & tR & ":l" & tR).Interior.Color = ThisAddIn.AppExcel.Sheets("Automated Checks").Range("b" & theRow).Interior.Color
-
-                    ThisAddIn.AppExcel.Sheets("Automated Checks").Rows(theRow).Delete
-                End If
-            End With
-        End If
-    End Sub
-
-    Public Shared Sub trashWSCheck()
-        If Not doesWSExist("Trash") Then
-            MsgBox("The Trash worksheet must be present before this tool can be run.", vbCritical, ThisAddIn.Title)
-            ThisAddIn.Proceed = False
-        End If
-    End Sub
-
-    Public Shared Sub singleCheckPageCheck()
-        If Not ThisAddIn.AppExcel.ActiveSheet.Name = "Single Check" Then
-            MsgBox("Must be on the 'Single Check' page to run this tool", vbCritical, ThisAddIn.Title)
-            ThisAddIn.Proceed = False
-        End If
-    End Sub
-
-    Public Shared Sub automatedChecksPageCheck()
-        If Not ThisAddIn.AppExcel.ActiveSheet.Name = "Automated Checks" Then
-            MsgBox("Must be on the 'Automated Checks' page to run this tool", vbCritical, ThisAddIn.Title)
-            ThisAddIn.Proceed = False
-        End If
-    End Sub
-
     Public Shared Sub unFilterTrash()
         On Error Resume Next
         ThisAddIn.AppExcel.Worksheets("Trash").AutoFilter.Sort.SortFields.Clear
         ThisAddIn.AppExcel.Worksheets("Trash").ShowAllData
         On Error GoTo 0
     End Sub
-
-    Public Shared Function bookAlreadyPresent(thePostTitle As String, theAskingPrice As Decimal, theCity As String) As Boolean
-        bookAlreadyPresent = False
-        Dim categories As New List(Of String)
-        categories.Add("Trash")
-        categories.Add("Maybes")
-        categories.Add("Keepers")
-        For Each c As String In categories
-            With ThisAddIn.AppExcel.Sheets(c)
-                If canFind(thePostTitle, c,, False, False) Then
-                    Dim foundrow As Short = .range(canFind(thePostTitle, c,, True, False)).row
-                    If .Range("c" & foundrow).Value2.trim = thePostTitle _
-                    And .Range("f" & foundrow).Value2 = theAskingPrice _
-                    And .Range("k" & foundrow).Value2.trim = theCity Then
-                        Return True
-                    End If
-                End If
-            End With
-        Next
-    End Function
 
 End Class

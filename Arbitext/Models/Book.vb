@@ -30,6 +30,7 @@ Public Class Book
         _hasSiblings = hasSiblings
         _parentBody = parentBody
         _parentTitle = parentTitle
+        _parentPostDate = parentPostDate
         If isbn.Trim.Length = 13 Or isbn.Trim.Length = 10 Then
             If isbn.Length = 13 Then _isbn13 = isbn Else _isbn10 = isbn
             _bookscouterAPILink = "http://api.bookscouter.com/prices.php?isbn=" & isbn & "&uid=" & randomUID() & ""
@@ -89,6 +90,20 @@ Public Class Book
 #End Region
 
 #Region "Readonly Properties"
+
+    ''' <summary>
+    ''' Unique book sale ID
+    ''' </summary>
+    ''' <returns>Unique book sale ID based on post date, ISBN from post, and asking price</returns>
+    ReadOnly Property ID As String
+        Get
+            Dim tmp As New StringBuilder
+            tmp.Append(Year(_parentPostDate) & Month(_parentPostDate) & Day(_parentPostDate) & Hour(_parentPostDate) & Minute(_parentPostDate))
+            tmp.Append(Trim(IsbnFromPost))
+            tmp.Append(Trim(AskingPrice))
+            Return tmp.ToString
+        End Get
+    End Property
 
     ReadOnly Property IsbnFromPost As String
         Get
@@ -184,6 +199,7 @@ Public Class Book
             End If
         End Get
     End Property
+
     ReadOnly Property SaleDescInPost As String
         Get
             Return _saleDescInPost
@@ -304,29 +320,19 @@ Public Class Book
             If Not WasAlreadyChecked Then WasAlreadyChecked = findInResultSheet("Winners")
             If Not WasAlreadyChecked Then WasAlreadyChecked = findInResultSheet("Maybes")
             If Not WasAlreadyChecked Then WasAlreadyChecked = findInResultSheet("Trash")
+            If Not WasAlreadyChecked Then WasAlreadyChecked = findInResultSheet("HVSBs")
             If Not WasAlreadyChecked Then WasAlreadyChecked = findInResultSheet("Automated Checks")
         End Get
     End Property
 
     Private Function findInResultSheet(sheet As String)
         If doesWSExist(sheet) Then
-            If canFind(_isbnFromPost, sheet,, False, False) Then
-                With ThisAddIn.AppExcel.Sheets(sheet)
-                    Dim theRow As Int16 : theRow = .range(canFind(_isbnFromPost, sheet,, True, False)).row
-                    If .range("e" & theRow).value2 = _isbnFromPost _
-                    AndAlso .range("f" & theRow).value2 = _askingPrice Then
-                        Return True
-                    Else
-                        Return False
-                    End If
-                End With
-            Else
-                Return False
-            End If
+            If canFindInCol("L", ID, sheet) Then Return True Else Return False
         Else
             Return False
         End If
     End Function
+
 #End Region
 
 #Region "Methods"

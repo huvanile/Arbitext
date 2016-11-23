@@ -44,32 +44,21 @@
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Ribbon1))
         Me.tabBooks = Me.Factory.CreateRibbonTab
         Me.grpFinders = Me.Factory.CreateRibbonGroup
-        Me.grpFind = Me.Factory.CreateRibbonGroup
-        Me.grpTrash = Me.Factory.CreateRibbonGroup
-        Me.grpOther = Me.Factory.CreateRibbonGroup
         Me.btnSearch = Me.Factory.CreateRibbonButton
         Me.btnAnalyze = Me.Factory.CreateRibbonButton
-        Me.btnKeeper = Me.Factory.CreateRibbonButton
-        Me.btnMaybe = Me.Factory.CreateRibbonButton
-        Me.btnTrash = Me.Factory.CreateRibbonButton
-        Me.btnTrashBadDeals = Me.Factory.CreateRibbonButton
-        Me.btnEmptyTrash = Me.Factory.CreateRibbonButton
+        Me.grpOther = Me.Factory.CreateRibbonGroup
         Me.mnuBuildSheets = Me.Factory.CreateRibbonMenu
         Me.btnActivityLog = Me.Factory.CreateRibbonButton
         Me.btnRSS = Me.Factory.CreateRibbonButton
         Me.btnSetPrefs = Me.Factory.CreateRibbonButton
         Me.tabBooks.SuspendLayout()
         Me.grpFinders.SuspendLayout()
-        Me.grpFind.SuspendLayout()
-        Me.grpTrash.SuspendLayout()
         Me.grpOther.SuspendLayout()
         Me.SuspendLayout()
         '
         'tabBooks
         '
         Me.tabBooks.Groups.Add(Me.grpFinders)
-        Me.tabBooks.Groups.Add(Me.grpFind)
-        Me.tabBooks.Groups.Add(Me.grpTrash)
         Me.tabBooks.Groups.Add(Me.grpOther)
         Me.tabBooks.Label = "ARBITEXT"
         Me.tabBooks.Name = "tabBooks"
@@ -80,29 +69,6 @@
         Me.grpFinders.Items.Add(Me.btnAnalyze)
         Me.grpFinders.Label = "Find Deals"
         Me.grpFinders.Name = "grpFinders"
-        '
-        'grpFind
-        '
-        Me.grpFind.Items.Add(Me.btnKeeper)
-        Me.grpFind.Items.Add(Me.btnMaybe)
-        Me.grpFind.Items.Add(Me.btnTrash)
-        Me.grpFind.Label = "Categorize Deals"
-        Me.grpFind.Name = "grpFind"
-        '
-        'grpTrash
-        '
-        Me.grpTrash.Items.Add(Me.btnTrashBadDeals)
-        Me.grpTrash.Items.Add(Me.btnEmptyTrash)
-        Me.grpTrash.Label = "Trash Stuff"
-        Me.grpTrash.Name = "grpTrash"
-        '
-        'grpOther
-        '
-        Me.grpOther.Items.Add(Me.mnuBuildSheets)
-        Me.grpOther.Items.Add(Me.btnRSS)
-        Me.grpOther.Items.Add(Me.btnSetPrefs)
-        Me.grpOther.Label = "Other Stuff"
-        Me.grpOther.Name = "grpOther"
         '
         'btnSearch
         '
@@ -120,45 +86,13 @@
         Me.btnAnalyze.Name = "btnAnalyze"
         Me.btnAnalyze.ShowImage = True
         '
-        'btnKeeper
+        'grpOther
         '
-        Me.btnKeeper.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge
-        Me.btnKeeper.Image = CType(resources.GetObject("btnKeeper.Image"), System.Drawing.Image)
-        Me.btnKeeper.Label = "It's a Keeper"
-        Me.btnKeeper.Name = "btnKeeper"
-        Me.btnKeeper.ShowImage = True
-        '
-        'btnMaybe
-        '
-        Me.btnMaybe.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge
-        Me.btnMaybe.Image = CType(resources.GetObject("btnMaybe.Image"), System.Drawing.Image)
-        Me.btnMaybe.Label = "It's a Maybe"
-        Me.btnMaybe.Name = "btnMaybe"
-        Me.btnMaybe.ShowImage = True
-        '
-        'btnTrash
-        '
-        Me.btnTrash.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge
-        Me.btnTrash.Image = CType(resources.GetObject("btnTrash.Image"), System.Drawing.Image)
-        Me.btnTrash.Label = "It's Trash"
-        Me.btnTrash.Name = "btnTrash"
-        Me.btnTrash.ShowImage = True
-        '
-        'btnTrashBadDeals
-        '
-        Me.btnTrashBadDeals.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge
-        Me.btnTrashBadDeals.Image = CType(resources.GetObject("btnTrashBadDeals.Image"), System.Drawing.Image)
-        Me.btnTrashBadDeals.Label = "Trash Bad Deals"
-        Me.btnTrashBadDeals.Name = "btnTrashBadDeals"
-        Me.btnTrashBadDeals.ShowImage = True
-        '
-        'btnEmptyTrash
-        '
-        Me.btnEmptyTrash.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge
-        Me.btnEmptyTrash.Image = CType(resources.GetObject("btnEmptyTrash.Image"), System.Drawing.Image)
-        Me.btnEmptyTrash.Label = "Empty Trash"
-        Me.btnEmptyTrash.Name = "btnEmptyTrash"
-        Me.btnEmptyTrash.ShowImage = True
+        Me.grpOther.Items.Add(Me.mnuBuildSheets)
+        Me.grpOther.Items.Add(Me.btnRSS)
+        Me.grpOther.Items.Add(Me.btnSetPrefs)
+        Me.grpOther.Label = "Other Stuff"
+        Me.grpOther.Name = "grpOther"
         '
         'mnuBuildSheets
         '
@@ -204,10 +138,6 @@
         Me.tabBooks.PerformLayout()
         Me.grpFinders.ResumeLayout(False)
         Me.grpFinders.PerformLayout()
-        Me.grpFind.ResumeLayout(False)
-        Me.grpFind.PerformLayout()
-        Me.grpTrash.ResumeLayout(False)
-        Me.grpTrash.PerformLayout()
         Me.grpOther.ResumeLayout(False)
         Me.grpOther.PerformLayout()
         Me.ResumeLayout(False)
@@ -215,15 +145,8 @@
     End Sub
 
     Friend WithEvents tabBooks As Microsoft.Office.Tools.Ribbon.RibbonTab
-    Friend WithEvents grpFind As Microsoft.Office.Tools.Ribbon.RibbonGroup
     Friend WithEvents btnSearch As Microsoft.Office.Tools.Ribbon.RibbonButton
     Friend WithEvents btnAnalyze As Microsoft.Office.Tools.Ribbon.RibbonButton
-    Friend WithEvents btnKeeper As Microsoft.Office.Tools.Ribbon.RibbonButton
-    Friend WithEvents btnMaybe As Microsoft.Office.Tools.Ribbon.RibbonButton
-    Friend WithEvents btnTrash As Microsoft.Office.Tools.Ribbon.RibbonButton
-    Friend WithEvents grpTrash As Microsoft.Office.Tools.Ribbon.RibbonGroup
-    Friend WithEvents btnTrashBadDeals As Microsoft.Office.Tools.Ribbon.RibbonButton
-    Friend WithEvents btnEmptyTrash As Microsoft.Office.Tools.Ribbon.RibbonButton
     Friend WithEvents grpOther As Microsoft.Office.Tools.Ribbon.RibbonGroup
     Friend WithEvents mnuBuildSheets As Microsoft.Office.Tools.Ribbon.RibbonMenu
     Friend WithEvents btnActivityLog As Microsoft.Office.Tools.Ribbon.RibbonButton

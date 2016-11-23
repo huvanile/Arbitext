@@ -134,7 +134,8 @@
     End Sub
 
     Private Sub TpnAuto_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-
+        txtCity.Text = ThisAddIn.City
+        txtTimingPref.Text = ThisAddIn.PostTimingPref
     End Sub
 
 #End Region

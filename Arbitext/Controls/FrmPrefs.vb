@@ -89,16 +89,6 @@ Public Class FrmPrefs
         togglePBVisibility()
     End Sub
 
-    Private Sub btnGrabCoverArt_Click(sender As Object, e As EventArgs) Handles btnGrabCoverArt.Click
-        Dim webClient As New WebClient
-        webClient.DownloadFile("http://datadump.thelightningpath.com/images/bookimages/PlaceholderBook.png", Environ("Temp") & "\cover.jpg")
-        If System.IO.File.Exists(Environ("Temp") & "\cover.jpg") Then
-            btnGrabCoverArt.Text = "Done!"
-        Else
-            btnGrabCoverArt.Text = "(try again)"
-        End If
-    End Sub
-
     Private Sub btnTestGmail_Click(sender As Object, e As EventArgs) Handles btnTestGmail.Click
         sendSilentNotification("<p>This is a test note from the Craigslist BookScouter connection script.  It works.  Woo.  Now go make some money.</p><img src='http://replygif.net/i/159.gif'/>", "Test email")
         btnTestGmail.Text = "Sent!"

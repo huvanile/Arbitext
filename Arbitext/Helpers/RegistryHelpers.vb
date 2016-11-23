@@ -39,16 +39,12 @@ Public Class RegistryHelpers
             If My.Computer.Registry.GetValue(RegistryFolder, "EmailsOK", Nothing) Is Nothing Then My.Computer.Registry.SetValue(RegistryFolder, "EmailsOK", False)
             If My.Computer.Registry.GetValue(RegistryFolder, "NotifyViaPBOK", Nothing) Is Nothing Then My.Computer.Registry.SetValue(RegistryFolder, "NotifyViaPBOK", False)
             If My.Computer.Registry.GetValue(RegistryFolder, "KeepIEVisibleOK", Nothing) Is Nothing Then My.Computer.Registry.SetValue(RegistryFolder, "KeepIEVisibleOK", False)
-            If My.Computer.Registry.GetValue(RegistryFolder, "AutoCategorizeOK", Nothing) Is Nothing Then My.Computer.Registry.SetValue(RegistryFolder, "AutoCategorizeOK", True)
             If My.Computer.Registry.GetValue(RegistryFolder, "OnWinnersOK", Nothing) Is Nothing Then My.Computer.Registry.SetValue(RegistryFolder, "OnWinnersOK", False)
             If My.Computer.Registry.GetValue(RegistryFolder, "OnMaybesOK", Nothing) Is Nothing Then My.Computer.Registry.SetValue(RegistryFolder, "OnMaybesOK", False)
 
             'numbers
-            If My.Computer.Registry.GetValue(RegistryFolder, "MaxResults", Nothing) Is Nothing _
-                Or My.Computer.Registry.GetValue(RegistryFolder, "MaxResults", Nothing) = 0 Then _
-                My.Computer.Registry.SetValue(RegistryFolder, "MaxResults", 500)
             If My.Computer.Registry.GetValue(RegistryFolder, "MinTolerableProfit", Nothing) Is Nothing Then _
-                My.Computer.Registry.SetValue(RegistryFolder, "MinTolerableProfit", 45)
+                My.Computer.Registry.SetValue(RegistryFolder, "MinTolerableProfit", 15)
 
             'strings
             If My.Computer.Registry.GetValue(RegistryFolder, "PbAPIKey", Nothing) Is Nothing _
@@ -69,6 +65,18 @@ Public Class RegistryHelpers
             If My.Computer.Registry.GetValue(RegistryFolder, "PostTimingPref", Nothing) Is Nothing _
                 Or My.Computer.Registry.GetValue(RegistryFolder, "PostTimingPref", Nothing) = "" _
                 Then My.Computer.Registry.SetValue(RegistryFolder, "PostTimingPref", "timingUpdated14Days")
+            If My.Computer.Registry.GetValue(RegistryFolder, "SFTPUrl", Nothing) Is Nothing _
+                Or My.Computer.Registry.GetValue(RegistryFolder, "SFTPUrl", Nothing) = "" _
+                Then My.Computer.Registry.SetValue(RegistryFolder, "SFTPUrl", "(enter SFTP URL here)")
+            If My.Computer.Registry.GetValue(RegistryFolder, "SFTPUser", Nothing) Is Nothing _
+                Or My.Computer.Registry.GetValue(RegistryFolder, "SFTPUser", Nothing) = "" _
+                Then My.Computer.Registry.SetValue(RegistryFolder, "SFTPUser", "(enter SFTP username here)")
+            If My.Computer.Registry.GetValue(RegistryFolder, "SFTPPass", Nothing) Is Nothing _
+                Or My.Computer.Registry.GetValue(RegistryFolder, "SFTPPass", Nothing) = "" _
+                Then My.Computer.Registry.SetValue(RegistryFolder, "SFTPPass", "(enter SFTP password here)")
+            If My.Computer.Registry.GetValue(RegistryFolder, "SFTPDirectory", Nothing) Is Nothing _
+                Or My.Computer.Registry.GetValue(RegistryFolder, "SFTPDirectory", Nothing) = "" _
+                Then My.Computer.Registry.SetValue(RegistryFolder, "SFTPDirectory", "(enter SFTP upload directory here)")
 
         Catch exAll As Exception
             MsgBox("An error has occurred when pulling in the Arbitext add-in's default preferences.  Error message:" & vbCrLf & vbCrLf & exAll.Message, vbCritical, ThisAddIn.Title)
@@ -85,7 +93,6 @@ Public Class RegistryHelpers
             ThisAddIn.EmailsOK = CBool(My.Computer.Registry.GetValue(RegistryFolder, "EmailsOK", Nothing))
             ThisAddIn.NotifyViaPBOK = CBool(My.Computer.Registry.GetValue(RegistryFolder, "NotifyViaPBOK", Nothing))
             ThisAddIn.KeepIEVisibleOK = CBool(My.Computer.Registry.GetValue(RegistryFolder, "KeepIEVisibleOK", Nothing))
-            ThisAddIn.AutoCategorizeOK = CBool(My.Computer.Registry.GetValue(RegistryFolder, "AutoCategorizeOK", Nothing))
             ThisAddIn.OnWinnersOK = CBool(My.Computer.Registry.GetValue(RegistryFolder, "OnWinnersOK", Nothing))
             ThisAddIn.OnMaybesOK = CBool(My.Computer.Registry.GetValue(RegistryFolder, "OnMaybesOK", Nothing))
 
@@ -94,12 +101,15 @@ Public Class RegistryHelpers
             ThisAddIn.PbDeviceID = My.Computer.Registry.GetValue(RegistryFolder, "PbDeviceID", Nothing)
             ThisAddIn.EmailAddress = My.Computer.Registry.GetValue(RegistryFolder, "EmailAddress", Nothing)
             ThisAddIn.EmailPassword = My.Computer.Registry.GetValue(RegistryFolder, "EmailPassword", Nothing)
-            ThisAddIn.MaxResults = My.Computer.Registry.GetValue(RegistryFolder, "MaxResults", Nothing)
             ThisAddIn.MinTolerableProfit = My.Computer.Registry.GetValue(RegistryFolder, "MinTolerableProfit", Nothing)
             ThisAddIn.PostTimingPref = My.Computer.Registry.GetValue(RegistryFolder, "PostTimingPref", Nothing)
             ThisAddIn.SaveWBFileName = My.Computer.Registry.GetValue(RegistryFolder, "SaveWBFileName", Nothing)
             ThisAddIn.SaveWBFilePath = My.Computer.Registry.GetValue(RegistryFolder, "SaveWBFilePath", Nothing)
             ThisAddIn.City = My.Computer.Registry.GetValue(RegistryFolder, "City", Nothing)
+            ThisAddIn.SFTPUrl = My.Computer.Registry.GetValue(RegistryFolder, "SFTPUrl", Nothing)
+            ThisAddIn.SFTPUser = My.Computer.Registry.GetValue(RegistryFolder, "SFTPUser", Nothing)
+            ThisAddIn.SFTPPass = My.Computer.Registry.GetValue(RegistryFolder, "SFTPPass", Nothing)
+            ThisAddIn.SFTPDirectory = My.Computer.Registry.GetValue(RegistryFolder, "SFTPDirectory", Nothing)
 
         Catch exAll As Exception
             MsgBox("An error has occurred when getting the bot's preferences.  Please close and reopen this bot and try again.", vbCritical, ThisAddIn.Title)
@@ -115,7 +125,6 @@ Public Class RegistryHelpers
             'checkboxes
             ThisAddIn.frmPrefs.chkNotifyViaPB.Checked = ThisAddIn.NotifyViaPBOK
             ThisAddIn.frmPrefs.chkNotifyViaGmail.Checked = ThisAddIn.EmailsOK
-            ThisAddIn.frmPrefs.chkAutoCategorize.Checked = ThisAddIn.AutoCategorizeOK
             ThisAddIn.frmPrefs.chkOnMaybes.Checked = ThisAddIn.OnMaybesOK
             ThisAddIn.frmPrefs.chkOnWinners.Checked = ThisAddIn.OnWinnersOK
 
@@ -124,9 +133,12 @@ Public Class RegistryHelpers
             ThisAddIn.frmPrefs.txtPBDeviceID.Text = ThisAddIn.PbDeviceID
             ThisAddIn.frmPrefs.txtEmailAddress.Text = ThisAddIn.EmailAddress
             ThisAddIn.frmPrefs.txtEmailPassword.Text = ThisAddIn.EmailPassword
-            ThisAddIn.frmPrefs.txtResultAmt.Text = ThisAddIn.MaxResults
             ThisAddIn.frmPrefs.txtMinProfit.Text = ThisAddIn.MinTolerableProfit
             ThisAddIn.frmPrefs.txtCity.Text = ThisAddIn.City
+            ThisAddIn.frmPrefs.txtSFTPURL.Text = ThisAddIn.SFTPUrl
+            ThisAddIn.frmPrefs.txtSFTPUser.Text = ThisAddIn.SFTPUser
+            ThisAddIn.frmPrefs.txtSFTPPass.Text = ThisAddIn.SFTPPass
+            ThisAddIn.frmPrefs.txtSFTPDirectory.Text = ThisAddIn.SFTPDirectory
 
             'radio buttons
             Select Case ThisAddIn.PostTimingPref
@@ -158,7 +170,6 @@ Public Class RegistryHelpers
                 'checkboxes
                 .SetValue(RegistryFolder, "EmailsOK", ThisAddIn.frmPrefs.chkNotifyViaGmail.Checked)
                 .SetValue(RegistryFolder, "NotifyViaPBOK", ThisAddIn.frmPrefs.chkNotifyViaPB.Checked)
-                .SetValue(RegistryFolder, "AutoCategorizeOK", ThisAddIn.frmPrefs.chkAutoCategorize.Checked)
                 .SetValue(RegistryFolder, "OnWinnersOK", ThisAddIn.frmPrefs.chkOnWinners.Checked)
                 .SetValue(RegistryFolder, "OnMaybesOK", ThisAddIn.frmPrefs.chkOnMaybes.Checked)
 
@@ -167,9 +178,12 @@ Public Class RegistryHelpers
                 .SetValue(RegistryFolder, "PbDeviceID", ThisAddIn.frmPrefs.txtPBDeviceID.Text)
                 .SetValue(RegistryFolder, "EmailAddress", ThisAddIn.frmPrefs.txtEmailAddress.Text)
                 .SetValue(RegistryFolder, "EmailPassword", ThisAddIn.frmPrefs.txtEmailPassword.Text)
-                .SetValue(RegistryFolder, "MaxResults", ThisAddIn.frmPrefs.txtResultAmt.Text)
                 .SetValue(RegistryFolder, "MinTolerableProfit", ThisAddIn.frmPrefs.txtMinProfit.Text)
                 .SetValue(RegistryFolder, "City", ThisAddIn.frmPrefs.txtCity.Text)
+                .SetValue(RegistryFolder, "SFTPUrl", ThisAddIn.frmPrefs.txtSFTPURL.Text)
+                .SetValue(RegistryFolder, "SFTPUser", ThisAddIn.frmPrefs.txtSFTPUser.Text)
+                .SetValue(RegistryFolder, "SFTPPass", ThisAddIn.frmPrefs.txtSFTPPass.Text)
+                .SetValue(RegistryFolder, "SFTPDirectory", ThisAddIn.frmPrefs.txtSFTPDirectory.Text)
 
                 'radio buttons
                 If ThisAddIn.frmPrefs.optPostedToday.Checked Then

@@ -27,15 +27,19 @@ Partial Class TpnAuto
         Me.btnCancel = New System.Windows.Forms.Button()
         Me.lblNumber = New System.Windows.Forms.Label()
         Me.lblCounts = New System.Windows.Forms.Label()
+        Me.txtCity = New System.Windows.Forms.TextBox()
+        Me.Label3 = New System.Windows.Forms.Label()
+        Me.txtTimingPref = New System.Windows.Forms.TextBox()
+        Me.Label1 = New System.Windows.Forms.Label()
         Me.SuspendLayout()
         '
         'lblStatus
         '
         Me.lblStatus.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblStatus.ForeColor = System.Drawing.SystemColors.HotTrack
-        Me.lblStatus.Location = New System.Drawing.Point(53, 142)
+        Me.lblStatus.Location = New System.Drawing.Point(52, 189)
         Me.lblStatus.Name = "lblStatus"
-        Me.lblStatus.Size = New System.Drawing.Size(191, 93)
+        Me.lblStatus.Size = New System.Drawing.Size(191, 62)
         Me.lblStatus.TabIndex = 0
         Me.lblStatus.Text = "Press ""Proceed"" to begin"
         Me.lblStatus.TextAlign = System.Drawing.ContentAlignment.TopCenter
@@ -43,7 +47,7 @@ Partial Class TpnAuto
         'btnProceed
         '
         Me.btnProceed.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnProceed.Location = New System.Drawing.Point(53, 60)
+        Me.btnProceed.Location = New System.Drawing.Point(52, 107)
         Me.btnProceed.Name = "btnProceed"
         Me.btnProceed.Size = New System.Drawing.Size(75, 23)
         Me.btnProceed.TabIndex = 1
@@ -53,7 +57,7 @@ Partial Class TpnAuto
         'btnCancel
         '
         Me.btnCancel.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnCancel.Location = New System.Drawing.Point(169, 60)
+        Me.btnCancel.Location = New System.Drawing.Point(168, 107)
         Me.btnCancel.Name = "btnCancel"
         Me.btnCancel.Size = New System.Drawing.Size(75, 23)
         Me.btnCancel.TabIndex = 2
@@ -62,9 +66,9 @@ Partial Class TpnAuto
         '
         'lblNumber
         '
-        Me.lblNumber.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblNumber.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblNumber.ForeColor = System.Drawing.Color.Maroon
-        Me.lblNumber.Location = New System.Drawing.Point(53, 103)
+        Me.lblNumber.Location = New System.Drawing.Point(52, 150)
         Me.lblNumber.Name = "lblNumber"
         Me.lblNumber.Size = New System.Drawing.Size(191, 23)
         Me.lblNumber.TabIndex = 3
@@ -76,18 +80,59 @@ Partial Class TpnAuto
         '
         Me.lblCounts.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblCounts.ForeColor = System.Drawing.Color.Maroon
-        Me.lblCounts.Location = New System.Drawing.Point(55, 276)
+        Me.lblCounts.Location = New System.Drawing.Point(52, 251)
         Me.lblCounts.Name = "lblCounts"
         Me.lblCounts.Size = New System.Drawing.Size(191, 147)
         Me.lblCounts.TabIndex = 4
         Me.lblCounts.Text = "Counts:"
-        Me.lblCounts.TextAlign = System.Drawing.ContentAlignment.TopCenter
         Me.lblCounts.Visible = False
+        '
+        'txtCity
+        '
+        Me.txtCity.BackColor = System.Drawing.SystemColors.ScrollBar
+        Me.txtCity.Enabled = False
+        Me.txtCity.Location = New System.Drawing.Point(29, 34)
+        Me.txtCity.Name = "txtCity"
+        Me.txtCity.Size = New System.Drawing.Size(237, 20)
+        Me.txtCity.TabIndex = 10
+        '
+        'Label3
+        '
+        Me.Label3.AutoSize = True
+        Me.Label3.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label3.Location = New System.Drawing.Point(29, 14)
+        Me.Label3.Name = "Label3"
+        Me.Label3.Size = New System.Drawing.Size(26, 15)
+        Me.Label3.TabIndex = 9
+        Me.Label3.Text = "City"
+        '
+        'txtTimingPref
+        '
+        Me.txtTimingPref.BackColor = System.Drawing.SystemColors.ScrollBar
+        Me.txtTimingPref.Enabled = False
+        Me.txtTimingPref.Location = New System.Drawing.Point(29, 75)
+        Me.txtTimingPref.Name = "txtTimingPref"
+        Me.txtTimingPref.Size = New System.Drawing.Size(237, 20)
+        Me.txtTimingPref.TabIndex = 12
+        '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label1.Location = New System.Drawing.Point(29, 57)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(108, 15)
+        Me.Label1.TabIndex = 11
+        Me.Label1.Text = "Timing Preference"
         '
         'TpnAuto
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+        Me.Controls.Add(Me.txtTimingPref)
+        Me.Controls.Add(Me.Label1)
+        Me.Controls.Add(Me.txtCity)
+        Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.lblCounts)
         Me.Controls.Add(Me.lblNumber)
         Me.Controls.Add(Me.btnCancel)
@@ -96,6 +141,7 @@ Partial Class TpnAuto
         Me.Name = "TpnAuto"
         Me.Size = New System.Drawing.Size(300, 575)
         Me.ResumeLayout(False)
+        Me.PerformLayout()
 
     End Sub
 
@@ -104,4 +150,8 @@ Partial Class TpnAuto
     Friend WithEvents btnCancel As System.Windows.Forms.Button
     Friend WithEvents lblNumber As System.Windows.Forms.Label
     Friend WithEvents lblCounts As System.Windows.Forms.Label
+    Friend WithEvents txtCity As System.Windows.Forms.TextBox
+    Friend WithEvents Label3 As System.Windows.Forms.Label
+    Friend WithEvents txtTimingPref As System.Windows.Forms.TextBox
+    Friend WithEvents Label1 As System.Windows.Forms.Label
 End Class
