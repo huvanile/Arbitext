@@ -60,25 +60,21 @@ Public Class RSSFeed
 
 #End Region
 
-    Public Sub PopulateFeed()
+    Public Sub PopulateFeed(s As String)
         If isAnyWBOpen() Then
-            Dim sheet As New List(Of String)
-            sheet.Add("Winners")
-            sheet.Add("Maybes")
-            For Each s As String In sheet
-                If doesWSExist(s) Then
-                    For r As Short = 4 To lastUsedRow(s)
-                        With ThisAddIn.AppExcel.Sheets(s)
-                            Dim theDesc As String = "Found a " & Left(s, Len(s) - 1).ToString & " in " & .range("k" & r).value2 & " for $" & .range("h" & r).value2 & " potential profit"
-                            WriteRSSItem(.range("d" & r).value2, .range("c" & r).hyperlinks(1).address, "Arbitext", .range("b" & r).value2, s, Guid.NewGuid.ToString, theDesc)
-                        End With
-                    Next
-                End If
-            Next
+            If doesWSExist(s) Then
+                For r As Short = 4 To lastUsedRow(s)
+                    With ThisAddIn.AppExcel.Sheets(s)
+                        Dim theDesc As String = "Found a " & Left(s, Len(s) - 1).ToString & " in " & .range("k" & r).value2 & " for $" & .range("h" & r).value2 & " potential profit"
+                        WriteRSSItem(.range("d" & r).value2, .range("c" & r).hyperlinks(1).address, "Arbitext", .range("b" & r).value2, s, Guid.NewGuid.ToString, theDesc)
+                    End With
+                Next
+            End If
         Else
-            MsgBox("A workbook must be open in order to populate the RSS feed", vbCritical, ThisAddIn.Title)
+            MsgBox("A workbook must be open in order to populate the XML file", vbCritical, ThisAddIn.Title)
         End If
     End Sub
+
     ''' <summary>
     ''' Initialise the XML document and create the opening rss tags
     ''' </summary>

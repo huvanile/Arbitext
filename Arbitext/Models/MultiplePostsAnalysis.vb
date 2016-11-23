@@ -184,6 +184,9 @@ maxReached:
                         ElseIf b.IsTrash() Then
                             If Not doesWSExist("Trash") Then BuildWSResults.buildResultWS("Trash") Else unFilterTrash()
                             destSheet = "Trash"
+                        ElseIf b.IsHVSB Then
+                            If Not doesWSExist("HVSBs") Then BuildWSResults.buildResultWS("HVSBs")
+                            destSheet = "HVSBs"
                         Else
                             destSheet = "Automated Checks"
                         End If
@@ -213,7 +216,9 @@ maxReached:
                                                        "- Posts:  Parseable: " & _checkedPostsAndBooks.Where(Function(x) x.IsParsable = True).Count & vbCrLf & vbCrLf &
                                                        "- Books:  Winners: " & _checkedPostsAndBooks.SelectMany(Function(x) x.Books).Where(Function(y) y.IsWinner = True).Count & vbCrLf &
                                                        "- Books:  Maybes: " & _checkedPostsAndBooks.SelectMany(Function(x) x.Books).Where(Function(y) y.IsMaybe = True).Count & vbCrLf &
+                                                       "- Books:  HVSB: " & _checkedPostsAndBooks.SelectMany(Function(x) x.Books).Where(Function(y) y.IsHVSB = True).Count & vbCrLf &
                                                        "- Books:  Trash: " & _checkedPostsAndBooks.SelectMany(Function(x) x.Books).Where(Function(y) y.IsTrash = True).Count)
+
                     .activate
                     Dim r As Integer = lastUsedRow() + 1
                     thinInnerBorder(.Range("a" & r & ":k" & r))

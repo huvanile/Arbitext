@@ -13,6 +13,7 @@ Public Class Book
     Private _hasSiblings As Boolean         'is the book part of a multipost?
     Private _parentTitle As String          'title of the parent post
     Private _parentBody As String           'html body of the parent post
+    Private _parentPostDate As String       'the date of the original / parent post
     Private _buybackAmount As Decimal
     Private _buybackSite As String
     Private _buybackLink As String
@@ -24,7 +25,7 @@ Public Class Book
 
 #Region "Contructors"
 
-    Sub New(isbn As String, askingPrice As Decimal, theSaleDesc As String, queryBS As Boolean, hasSiblings As Boolean, parentTitle As String, parentBody As String)
+    Sub New(isbn As String, askingPrice As Decimal, theSaleDesc As String, queryBS As Boolean, hasSiblings As Boolean, parentTitle As String, parentBody As String, parentPostDate As String)
         _isbnFromPost = isbn.Trim
         _hasSiblings = hasSiblings
         _parentBody = parentBody
@@ -138,6 +139,24 @@ Public Class Book
             IsMaybe = False
             If IsParsable Then
                 If Not IsWinner() And Not IsTrash() Then IsMaybe = True
+            End If
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' HVSB = High Value Stale Book.  These can sell online for a fair amount, weren't originally profitable based on asking price, and are now stale.
+    ''' These can be profitable if they take a low-ball offer.
+    ''' </summary>
+    ''' <returns>True if the book is a HVSP</returns>
+    ReadOnly Property IsHVSB As Boolean
+        Get
+            IsHVSB = False
+            If IsParsable Then
+                If Not IsWinner AndAlso Not IsMaybe Then
+                    If BuybackAmount > 40 AndAlso DateDiff(DateInterval.Day, CDate(_parentPostDate), Now()) >= 14 Then
+                        IsHVSB = True
+                    End If
+                End If
             End If
         End Get
     End Property
