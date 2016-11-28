@@ -47,6 +47,8 @@ Public Class SinglePostAnalysis
                 Return 130
             Case 19, 20
                 Return 145
+            Case Else
+                Return 0 'should trigger an error
         End Select
     End Function
 

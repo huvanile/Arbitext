@@ -140,20 +140,6 @@ Public Class Post
 #End Region
 
 #Region "Not Easy Properties"
-    ReadOnly Property IsTooOld As Boolean
-        Get
-            IsTooOld = False
-            Select Case ThisAddIn.PostTimingPref
-                Case "timingPostedToday", "timingUpdatedToday"  'if only today's new posts requested
-                    If Not FormatDateTime(_postDate, vbShortDate) = FormatDateTime(Now(), vbShortDate) Then Return True
-                Case "timingUpdated7Days" 'if posts updated in last 7 days
-                    If Not ThisAddIn.AppExcel.WorksheetFunction.Days360(FormatDateTime(_updateDate, vbShortDate), FormatDateTime(DateTime.Now.AddDays(-7), vbShortDate)) <= 0 Then Return True
-                Case "timingUpdated14Days" 'if post updated in last 14 days
-                    If Not ThisAddIn.AppExcel.WorksheetFunction.Days360(FormatDateTime(_updateDate, vbShortDate), FormatDateTime(DateTime.Now.AddDays(-14), vbShortDate)) <= 0 Then Return True
-                Case Else : Return False
-            End Select
-        End Get
-    End Property
 
     ReadOnly Property IsMagazinePost As Boolean
         Get
@@ -163,7 +149,7 @@ Public Class Post
 
     ReadOnly Property AmazonSearchURL As String
         Get
-            Return "http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=" & replacePlusWithSpace(_title)
+            Return "https://href.li/?http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=" & replacePlusWithSpace(_title)
         End Get
     End Property
 

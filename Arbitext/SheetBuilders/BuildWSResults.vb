@@ -17,7 +17,9 @@ Public Class BuildWSResults
             .Range("j3").Value2 = "Min. Asking Price for desired profit margin"
             .Range("k3").Value2 = "City"
             .Range("l3").Value2 = "Result ID"
-            standardColumnTitles(.Range("a3:l3"))
+            .Range("m3").Value2 = "Book Image"
+            .Range("n3").Value2 = "Post Image"
+            standardColumnTitles(.Range("a3:n3"))
             .Columns("a").ColumnWidth = 20
             .Columns("b").ColumnWidth = 20
             .Columns("c").ColumnWidth = 50
@@ -30,6 +32,8 @@ Public Class BuildWSResults
             .Columns("j").ColumnWidth = 20
             .Columns("k").ColumnWidth = 15
             .Columns("l").columnwidth = 30
+            .Columns("m").columnwidth = 20
+            .Columns("n").columnwidth = 20
             .Columns("i").Style = "Percent"
             .Columns("f:h").Style = "Currency"
             .Columns("j").Style = "Currency"

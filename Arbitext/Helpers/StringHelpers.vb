@@ -143,7 +143,11 @@
     End Function
 
     Public Shared Function replacePlusWithSpace(theStr As String) As String
-        replacePlusWithSpace = Replace(theStr, " ", "+")
+        Return Replace(theStr, " ", "+")
+    End Function
+
+    Public Shared Function replaceSpacesWithTwenty(theSTr As String) As String
+        Return Replace(theSTr, " ", "%20")
     End Function
 
     Public Shared Function TrailingSlash(strFolder As String) As String

@@ -33,7 +33,7 @@ Partial Class FrmPrefs
         Me.txtPBAPIKey = New System.Windows.Forms.TextBox()
         Me.lblPB1 = New System.Windows.Forms.Label()
         Me.chkNotifyViaPB = New System.Windows.Forms.CheckBox()
-        Me.GroupBox2 = New System.Windows.Forms.GroupBox()
+        Me.asdf = New System.Windows.Forms.GroupBox()
         Me.txtCity = New System.Windows.Forms.TextBox()
         Me.txtMinProfit = New System.Windows.Forms.TextBox()
         Me.chkOnMaybes = New System.Windows.Forms.CheckBox()
@@ -53,15 +53,11 @@ Partial Class FrmPrefs
         Me.txtSFTPUser = New System.Windows.Forms.TextBox()
         Me.txtSFTPURL = New System.Windows.Forms.TextBox()
         Me.grpOnlyShowPosts = New System.Windows.Forms.GroupBox()
-        Me.optShowAll = New System.Windows.Forms.RadioButton()
-        Me.optUpdated14Days = New System.Windows.Forms.RadioButton()
-        Me.optUpdated7Days = New System.Windows.Forms.RadioButton()
-        Me.optUpdatedToday = New System.Windows.Forms.RadioButton()
-        Me.optPostedToday = New System.Windows.Forms.RadioButton()
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.Label4 = New System.Windows.Forms.Label()
+        Me.txtSaveAsLocation = New System.Windows.Forms.TextBox()
         Me.grpPB.SuspendLayout()
-        Me.GroupBox2.SuspendLayout()
+        Me.asdf.SuspendLayout()
         Me.grpGmail.SuspendLayout()
         Me.grpSorting.SuspendLayout()
         Me.grpOnlyShowPosts.SuspendLayout()
@@ -170,21 +166,21 @@ Partial Class FrmPrefs
         Me.chkNotifyViaPB.Text = "Enable PushBullet notifications"
         Me.chkNotifyViaPB.UseVisualStyleBackColor = True
         '
-        'GroupBox2
+        'asdf
         '
-        Me.GroupBox2.Controls.Add(Me.txtCity)
-        Me.GroupBox2.Controls.Add(Me.txtMinProfit)
-        Me.GroupBox2.Controls.Add(Me.chkOnMaybes)
-        Me.GroupBox2.Controls.Add(Me.chkOnWinners)
-        Me.GroupBox2.Controls.Add(Me.Label3)
-        Me.GroupBox2.Controls.Add(Me.Label2)
-        Me.GroupBox2.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.GroupBox2.Location = New System.Drawing.Point(619, 18)
-        Me.GroupBox2.Name = "GroupBox2"
-        Me.GroupBox2.Size = New System.Drawing.Size(276, 173)
-        Me.GroupBox2.TabIndex = 3
-        Me.GroupBox2.TabStop = False
-        Me.GroupBox2.Text = "General settings"
+        Me.asdf.Controls.Add(Me.txtCity)
+        Me.asdf.Controls.Add(Me.txtMinProfit)
+        Me.asdf.Controls.Add(Me.chkOnMaybes)
+        Me.asdf.Controls.Add(Me.chkOnWinners)
+        Me.asdf.Controls.Add(Me.Label3)
+        Me.asdf.Controls.Add(Me.Label2)
+        Me.asdf.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.asdf.Location = New System.Drawing.Point(619, 18)
+        Me.asdf.Name = "asdf"
+        Me.asdf.Size = New System.Drawing.Size(276, 173)
+        Me.asdf.TabIndex = 3
+        Me.asdf.TabStop = False
+        Me.asdf.Text = "General settings"
         '
         'txtCity
         '
@@ -359,78 +355,14 @@ Partial Class FrmPrefs
         '
         'grpOnlyShowPosts
         '
-        Me.grpOnlyShowPosts.Controls.Add(Me.optShowAll)
-        Me.grpOnlyShowPosts.Controls.Add(Me.optUpdated14Days)
-        Me.grpOnlyShowPosts.Controls.Add(Me.optUpdated7Days)
-        Me.grpOnlyShowPosts.Controls.Add(Me.optUpdatedToday)
-        Me.grpOnlyShowPosts.Controls.Add(Me.optPostedToday)
+        Me.grpOnlyShowPosts.Controls.Add(Me.txtSaveAsLocation)
         Me.grpOnlyShowPosts.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grpOnlyShowPosts.Location = New System.Drawing.Point(619, 199)
         Me.grpOnlyShowPosts.Name = "grpOnlyShowPosts"
-        Me.grpOnlyShowPosts.Size = New System.Drawing.Size(276, 154)
+        Me.grpOnlyShowPosts.Size = New System.Drawing.Size(276, 119)
         Me.grpOnlyShowPosts.TabIndex = 6
         Me.grpOnlyShowPosts.TabStop = False
-        Me.grpOnlyShowPosts.Text = "Only show posts"
-        '
-        'optShowAll
-        '
-        Me.optShowAll.AutoSize = True
-        Me.optShowAll.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.optShowAll.Location = New System.Drawing.Point(21, 121)
-        Me.optShowAll.Name = "optShowAll"
-        Me.optShowAll.Size = New System.Drawing.Size(185, 19)
-        Me.optShowAll.TabIndex = 4
-        Me.optShowAll.TabStop = True
-        Me.optShowAll.Text = "(Show all posts, no time filter)"
-        Me.optShowAll.UseVisualStyleBackColor = True
-        '
-        'optUpdated14Days
-        '
-        Me.optUpdated14Days.AutoSize = True
-        Me.optUpdated14Days.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.optUpdated14Days.Location = New System.Drawing.Point(21, 96)
-        Me.optUpdated14Days.Name = "optUpdated14Days"
-        Me.optUpdated14Days.Size = New System.Drawing.Size(152, 19)
-        Me.optUpdated14Days.TabIndex = 3
-        Me.optUpdated14Days.TabStop = True
-        Me.optUpdated14Days.Text = "Updated in last 14 days"
-        Me.optUpdated14Days.UseVisualStyleBackColor = True
-        '
-        'optUpdated7Days
-        '
-        Me.optUpdated7Days.AutoSize = True
-        Me.optUpdated7Days.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.optUpdated7Days.Location = New System.Drawing.Point(21, 71)
-        Me.optUpdated7Days.Name = "optUpdated7Days"
-        Me.optUpdated7Days.Size = New System.Drawing.Size(145, 19)
-        Me.optUpdated7Days.TabIndex = 2
-        Me.optUpdated7Days.TabStop = True
-        Me.optUpdated7Days.Text = "Updated in last 7 days"
-        Me.optUpdated7Days.UseVisualStyleBackColor = True
-        '
-        'optUpdatedToday
-        '
-        Me.optUpdatedToday.AutoSize = True
-        Me.optUpdatedToday.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.optUpdatedToday.Location = New System.Drawing.Point(21, 46)
-        Me.optUpdatedToday.Name = "optUpdatedToday"
-        Me.optUpdatedToday.Size = New System.Drawing.Size(104, 19)
-        Me.optUpdatedToday.TabIndex = 1
-        Me.optUpdatedToday.TabStop = True
-        Me.optUpdatedToday.Text = "Updated today"
-        Me.optUpdatedToday.UseVisualStyleBackColor = True
-        '
-        'optPostedToday
-        '
-        Me.optPostedToday.AutoSize = True
-        Me.optPostedToday.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.optPostedToday.Location = New System.Drawing.Point(21, 21)
-        Me.optPostedToday.Name = "optPostedToday"
-        Me.optPostedToday.Size = New System.Drawing.Size(95, 19)
-        Me.optPostedToday.TabIndex = 0
-        Me.optPostedToday.TabStop = True
-        Me.optPostedToday.Text = "Posted today"
-        Me.optPostedToday.UseVisualStyleBackColor = True
+        Me.grpOnlyShowPosts.Text = "Output Location"
         '
         'PictureBox1
         '
@@ -452,6 +384,14 @@ Partial Class FrmPrefs
         Me.Label4.TabIndex = 8
         Me.Label4.Text = "Set Those Preferences"
         '
+        'txtSaveAsLocation
+        '
+        Me.txtSaveAsLocation.Location = New System.Drawing.Point(20, 29)
+        Me.txtSaveAsLocation.Multiline = True
+        Me.txtSaveAsLocation.Name = "txtSaveAsLocation"
+        Me.txtSaveAsLocation.Size = New System.Drawing.Size(237, 73)
+        Me.txtSaveAsLocation.TabIndex = 9
+        '
         'FrmPrefs
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -462,7 +402,7 @@ Partial Class FrmPrefs
         Me.Controls.Add(Me.grpOnlyShowPosts)
         Me.Controls.Add(Me.grpSorting)
         Me.Controls.Add(Me.grpGmail)
-        Me.Controls.Add(Me.GroupBox2)
+        Me.Controls.Add(Me.asdf)
         Me.Controls.Add(Me.grpPB)
         Me.Controls.Add(Me.btnClose)
         Me.Controls.Add(Me.btnSave)
@@ -470,8 +410,8 @@ Partial Class FrmPrefs
         Me.Text = "FrmPrefs"
         Me.grpPB.ResumeLayout(False)
         Me.grpPB.PerformLayout()
-        Me.GroupBox2.ResumeLayout(False)
-        Me.GroupBox2.PerformLayout()
+        Me.asdf.ResumeLayout(False)
+        Me.asdf.PerformLayout()
         Me.grpGmail.ResumeLayout(False)
         Me.grpGmail.PerformLayout()
         Me.grpSorting.ResumeLayout(False)
@@ -494,7 +434,7 @@ Partial Class FrmPrefs
     Friend WithEvents txtPBAPIKey As System.Windows.Forms.TextBox
     Friend WithEvents lblPB1 As System.Windows.Forms.Label
     Friend WithEvents chkNotifyViaPB As System.Windows.Forms.CheckBox
-    Friend WithEvents GroupBox2 As System.Windows.Forms.GroupBox
+    Friend WithEvents asdf As System.Windows.Forms.GroupBox
     Friend WithEvents txtCity As System.Windows.Forms.TextBox
     Friend WithEvents txtMinProfit As System.Windows.Forms.TextBox
     Friend WithEvents chkOnMaybes As System.Windows.Forms.CheckBox
@@ -504,11 +444,6 @@ Partial Class FrmPrefs
     Friend WithEvents grpGmail As System.Windows.Forms.GroupBox
     Friend WithEvents grpSorting As System.Windows.Forms.GroupBox
     Friend WithEvents grpOnlyShowPosts As System.Windows.Forms.GroupBox
-    Friend WithEvents optShowAll As System.Windows.Forms.RadioButton
-    Friend WithEvents optUpdated14Days As System.Windows.Forms.RadioButton
-    Friend WithEvents optUpdated7Days As System.Windows.Forms.RadioButton
-    Friend WithEvents optUpdatedToday As System.Windows.Forms.RadioButton
-    Friend WithEvents optPostedToday As System.Windows.Forms.RadioButton
     Friend WithEvents btnTestGmail As System.Windows.Forms.Button
     Friend WithEvents txtEmailPassword As System.Windows.Forms.TextBox
     Friend WithEvents lblEmail2 As System.Windows.Forms.Label
@@ -521,4 +456,5 @@ Partial Class FrmPrefs
     Friend WithEvents txtSFTPUser As System.Windows.Forms.TextBox
     Friend WithEvents txtSFTPURL As System.Windows.Forms.TextBox
     Friend WithEvents txtSFTPDirectory As System.Windows.Forms.TextBox
+    Friend WithEvents txtSaveAsLocation As System.Windows.Forms.TextBox
 End Class

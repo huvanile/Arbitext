@@ -2,6 +2,9 @@
 Imports Arbitext.ArbitextHelpers
 Imports Arbitext.CraigslistHelpers
 Imports System.Threading
+Imports Renci.SshNet
+Imports Arbitext.StringHelpers
+Imports System.IO
 
 Public Class MultiplePostsAnalysis
     Dim _checkedPostsNotBooks As List(Of Post)      'list of posts checked before populating the post object with the accompanying books
@@ -38,36 +41,30 @@ Public Class MultiplePostsAnalysis
 
 
             searchURL = ThisAddIn.TldUrl & "/search/sss?query=isbn"
-            If ThisAddIn.PostTimingPref Like "*Today*" Then searchURL = searchURL & "&postedToday=1"
             oneQuerySearch(searchURL)
 
             If ThisAddIn.Proceed Then
                 searchURL = ThisAddIn.TldUrl & "/search/sss?query=textbook"
-                If ThisAddIn.PostTimingPref Like "*Today*" Then searchURL = searchURL & "&postedToday=1"
                 oneQuerySearch(searchURL)
             End If
 
             If ThisAddIn.Proceed Then
                 searchURL = ThisAddIn.TldUrl & "/search/bka?query=college"
-                If ThisAddIn.PostTimingPref Like "*Today*" Then searchURL = searchURL & "&postedToday=1"
                 oneQuerySearch(searchURL)
             End If
 
             If ThisAddIn.Proceed Then
                 searchURL = ThisAddIn.TldUrl & "/search/bka?query=university"
-                If ThisAddIn.PostTimingPref Like "*Today*" Then searchURL = searchURL & "&postedToday=1"
                 oneQuerySearch(searchURL)
             End If
 
             If ThisAddIn.Proceed Then
                 searchURL = ThisAddIn.TldUrl & "/search/bka?query=text"
-                If ThisAddIn.PostTimingPref Like "*Today*" Then searchURL = searchURL & "&postedToday=1"
                 oneQuerySearch(searchURL)
             End If
 
             If ThisAddIn.Proceed Then
                 searchURL = ThisAddIn.TldUrl & "/search/bka?query=978"
-                If ThisAddIn.PostTimingPref Like "*Today*" Then searchURL = searchURL & "&postedToday=1"
                 oneQuerySearch(searchURL)
             End If
 
@@ -75,7 +72,7 @@ Public Class MultiplePostsAnalysis
             Ribbon1.tpnAuto.UpdateLblStatusSafe("Done!")
             ThisAddIn.AppExcel.ScreenUpdating = True
             ThisAddIn.AppExcel.StatusBar = False
-            CreateXMLIfDesired()
+            CreateXMLFromWorkbook()
         End If
     End Sub
 
@@ -87,7 +84,7 @@ Public Class MultiplePostsAnalysis
     Private Sub oneQuerySearch(searchURL As String)
         Dim postNotBooks As Post                                    'this is a partially populated post object, just the post and not the books
         Dim postAndBooks As Post                                    'this is a fully populated post object, including the books
-        Dim wc As New System.Net.WebClient
+        Dim wc As New Net.WebClient
         Dim resultURL As String : resultURL = ""                     'URL of search result page
         Dim updatedSearchURL As String : updatedSearchURL = ""       'search result URL... this gets iterated through pagination
         Dim startPos As Integer : startPos = 1 'this is the start position of the search in the search results and will be incremented to find different results
@@ -128,8 +125,7 @@ Public Class MultiplePostsAnalysis
                                                     "- Books:  Trash: " & _checkedPostsAndBooks.SelectMany(Function(x) x.Books).Where(Function(y) y.IsTrash = True).Count)
 
                     If Not match _
-                    AndAlso Not postNotBooks.IsMagazinePost _
-                    AndAlso Not postNotBooks.IsTooOld Then
+                    AndAlso Not postNotBooks.IsMagazinePost Then
                         If postNotBooks.IsParsable Then
                             postAndBooks = New Post(postNotBooks)
                             WriteSearchResult(postAndBooks)
@@ -176,6 +172,72 @@ maxReached:
         ThisAddIn.Proceed = False
     End Sub
 
+    Public Shared Sub CreateXMLFromWorkbook()
+        If isAnyWBOpen() AndAlso (doesWSExist("HVSBs") Or doesWSExist("Winners") Or doesWSExist("Maybes")) Then
+            Dim theCity As String = StrConv(ThisAddIn.City, VbStrConv.ProperCase)
+            'If MsgBox("Would you like to output XML files and results?", vbYesNoCancel, ThisAddIn.Title) = vbYes Then
+            Dim rssFeed As RSSFeed
+                Dim desc As String = ""
+                Dim title As String = ""
+                Dim outfile As String = ""
+
+                'HANDLE WINNERS
+                If doesWSExist("Winners") Then
+                    desc = "Profitable book deals (winners) in the " & theCity & " area."
+                    title = theCity & " Winners"
+                    outfile = TrailingSlash(ThisAddIn.SaveAsFolder) & theCity & " Winners.xml"
+                    rssFeed = New RSSFeed(title, ThisAddIn.wwwRoot & "showfeed.php?feed=" & replaceSpacesWithTwenty(Path.GetFileName(outfile)), desc, "Winners", outfile)
+                    rssFeed.PopulateFeedFromSheet()
+                    rssFeed.WriteXMLFile()
+                End If
+
+                'HANDLE MAYBES
+                If doesWSExist("Maybes") Then
+                    desc = "Potentially profitable book deals (maybes) in the " & theCity & " area."
+                    title = theCity & " Maybes"
+                    outfile = TrailingSlash(ThisAddIn.SaveAsFolder) & theCity & " Maybes.xml"
+                    rssFeed = New RSSFeed(title, ThisAddIn.wwwRoot & "showfeed.php?feed=" & replaceSpacesWithTwenty(Path.GetFileName(outfile)), desc, "Maybes", outfile)
+                    rssFeed.PopulateFeedFromSheet()
+                    rssFeed.WriteXMLFile()
+                End If
+
+                'HANDLE HVSBs
+                If doesWSExist("HVSBs") Then
+                    desc = "High value stale books in the " & theCity & " area.  These books can be sold for a profit, but only if the seller (who hasn't been successful selling them at the current asking price) will come down on the price a bit."
+                    title = theCity & " Stale Books of Value"
+                    outfile = TrailingSlash(ThisAddIn.SaveAsFolder) & theCity & " High Value Stale Books.xml"
+                    rssFeed = New RSSFeed(title, ThisAddIn.wwwRoot & "showfeed.php?feed=" & replaceSpacesWithTwenty(Path.GetFileName(outfile)), desc, "HVSBs", outfile)
+                    rssFeed.PopulateFeedFromSheet()
+                    rssFeed.WriteXMLFile()
+                End If
+                rssFeed = Nothing
+
+            'If MsgBox("File(s) created successfully." & vbCrLf & vbCrLf & "Would you also like to SFTP the XML files and results the site?", vbYesNoCancel, title) = vbYes Then
+            Using sftp As New SftpClient(ThisAddIn.SFTPUrl, ThisAddIn.SFTPUser, ThisAddIn.SFTPPass)
+                        sftp.Connect()
+                        sftp.ChangeDirectory(ThisAddIn.SFTPDirectory)
+                        If sftp.IsConnected Then
+                            For Each file As String In Directory.GetFiles(ThisAddIn.SaveAsFolder)
+                                If file Like "*.xml" Or file Like "*.php*" Then
+                                    Using filestream As New FileStream(file, FileMode.Open)
+                                        sftp.BufferSize = 4 * 1024
+                                        sftp.UploadFile(filestream, Path.GetFileName(file))
+                                    End Using
+                                End If
+                            Next
+                        Else
+                            MsgBox("SFTP Connection Error!", vbCritical, ThisAddIn.Title)
+                        End If
+                    End Using
+            'End If
+
+            MsgBox("Done!", vbInformation, ThisAddIn.Title)
+
+            'End If
+        Else
+            MsgBox("This can only be performed from an open results workbook", vbCritical, ThisAddIn.Title)
+        End If
+    End Sub
 
     Sub WriteSearchResult(post As Post)
         Dim destSheet As String
@@ -186,12 +248,18 @@ maxReached:
                     If b.IsWinner() Then
                         If Not doesWSExist("Winners") Then BuildWSResults.buildResultWS("Winners")
                         destSheet = "Winners"
+                        Dim resultpage As New ResultPage(b, post, destSheet, ThisAddIn.SaveAsFolder)
+                        resultpage = Nothing
                     ElseIf b.IsMaybe() Then
                         If Not doesWSExist("Maybes") Then BuildWSResults.buildResultWS("Maybes")
                         destSheet = "Maybes"
+                        Dim resultpage As New ResultPage(b, post, destSheet, ThisAddIn.SaveAsFolder)
+                        resultpage = Nothing
                     ElseIf b.IsHVSB() Then
                         If Not doesWSExist("HVSBs") Then BuildWSResults.buildResultWS("HVSBs")
                         destSheet = "HVSBs"
+                        Dim resultpage As New ResultPage(b, post, destSheet, ThisAddIn.SaveAsFolder)
+                        resultpage = Nothing
                     ElseIf b.IsTrash() Then
                         If Not doesWSExist("Trash") Then BuildWSResults.buildResultWS("Trash") Else unFilterTrash()
                         destSheet = "Trash"
@@ -215,7 +283,7 @@ maxReached:
 
                     .activate
                     Dim r As Integer = lastUsedRow() + 1
-                    thinInnerBorder(.Range("a" & r & ":l" & r))
+                    thinInnerBorder(.Range("a" & r & ":n" & r))
 
                     'write post stuff
                     .Range("a" & r).Value2 = post.PostDate 'date posted
@@ -233,7 +301,8 @@ maxReached:
                         .range("i" & r).value2 = b.ProfitPercentage
                         .range("j" & r).value2 = b.MinAskingPriceForDesiredProfit
                         .range("l" & r).value2 = "'" & b.ID
-
+                        .range("m" & r).value2 = b.ImageURL
+                        .range("n" & r).value2 = post.Image
                         If b.aLaCarte() Then .Rows(r).font.colorindex = 3
                         If b.isOBO() Then .Rows(r).font.bold = True
                         If b.isWeirdEdition() Then .Rows(r).font.colorindex = 46
@@ -255,7 +324,7 @@ maxReached:
             EmailHelpers.sendSilentNotification(EmailHelpers.emailBodyString(post, book).ToString, "Textbook Winner Found: " & book.Title)
         End If
         SoundHelpers.PlayWAV("money")
-        ThisAddIn.AppExcel.Range("a" & r & ":l" & r).Interior.ColorIndex = 35
+        ThisAddIn.AppExcel.Range("a" & r & ":n" & r).Interior.ColorIndex = 35
     End Sub
 
     Sub HandleMaybe(post As Post, book As Book, r As Integer)
@@ -263,7 +332,7 @@ maxReached:
             PushbulletHelpers.sendPushbulletNote(ThisAddIn.Title, "Possible Textbook Lead Found: " & book.Title)
             EmailHelpers.sendSilentNotification(EmailHelpers.emailBodyString(post, book).ToString, "Possible Textbook Lead Found: " & book.Title)
         End If
-        ThisAddIn.AppExcel.Range("a" & r & ":l" & r).Interior.ColorIndex = 6
+        ThisAddIn.AppExcel.Range("a" & r & ":n" & r).Interior.ColorIndex = 6
     End Sub
 
 #End Region

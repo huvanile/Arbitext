@@ -9,7 +9,8 @@ Public Class ThisAddIn
     Public Shared frmPrefs As FrmPrefs
     Public Shared TldUrl As String             'top-level domain name (e.g., http://dallas.craigslist.com)
     Public Shared t1 As Thread
-    Public Const wwwLeadsFolder As String = "http://huvanile.com/leads/"
+    Public Const wwwRoot As String = "http://huvanile.com/"
+    Public Shared SaveAsFolder As String
 
     'sftp
     Public Shared SFTPUrl As String
@@ -30,7 +31,6 @@ Public Class ThisAddIn
     Public Shared NotifyViaPBOK As Boolean
     Public Shared KeepIEVisibleOK As Boolean
     Public Shared MinTolerableProfit As Decimal
-    Public Shared PostTimingPref As String
     Public Shared SaveWBFilePath As String                 'saveFileAs: output filepath
     Public Shared SaveWBFileName As String
     Public Shared OnWinnersOK As Boolean

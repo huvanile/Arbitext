@@ -62,9 +62,6 @@ Public Class RegistryHelpers
             If My.Computer.Registry.GetValue(RegistryFolder, "City", Nothing) Is Nothing _
                 Or My.Computer.Registry.GetValue(RegistryFolder, "City", Nothing) = "" _
                 Then My.Computer.Registry.SetValue(RegistryFolder, "City", "Dallas")
-            If My.Computer.Registry.GetValue(RegistryFolder, "PostTimingPref", Nothing) Is Nothing _
-                Or My.Computer.Registry.GetValue(RegistryFolder, "PostTimingPref", Nothing) = "" _
-                Then My.Computer.Registry.SetValue(RegistryFolder, "PostTimingPref", "timingUpdated14Days")
             If My.Computer.Registry.GetValue(RegistryFolder, "SFTPUrl", Nothing) Is Nothing _
                 Or My.Computer.Registry.GetValue(RegistryFolder, "SFTPUrl", Nothing) = "" _
                 Then My.Computer.Registry.SetValue(RegistryFolder, "SFTPUrl", "(enter SFTP URL here)")
@@ -77,6 +74,9 @@ Public Class RegistryHelpers
             If My.Computer.Registry.GetValue(RegistryFolder, "SFTPDirectory", Nothing) Is Nothing _
                 Or My.Computer.Registry.GetValue(RegistryFolder, "SFTPDirectory", Nothing) = "" _
                 Then My.Computer.Registry.SetValue(RegistryFolder, "SFTPDirectory", "(enter SFTP upload directory here)")
+            If My.Computer.Registry.GetValue(RegistryFolder, "SaveAsLocation", Nothing) Is Nothing _
+                Or My.Computer.Registry.GetValue(RegistryFolder, "SaveAsLocation", Nothing) = "" _
+                Then My.Computer.Registry.SetValue(RegistryFolder, "SaveAsLocation", "(enter XML and PHP file output directory here)")
 
         Catch exAll As Exception
             MsgBox("An error has occurred when pulling in the Arbitext add-in's default preferences.  Error message:" & vbCrLf & vbCrLf & exAll.Message, vbCritical, ThisAddIn.Title)
@@ -102,7 +102,6 @@ Public Class RegistryHelpers
             ThisAddIn.EmailAddress = My.Computer.Registry.GetValue(RegistryFolder, "EmailAddress", Nothing)
             ThisAddIn.EmailPassword = My.Computer.Registry.GetValue(RegistryFolder, "EmailPassword", Nothing)
             ThisAddIn.MinTolerableProfit = My.Computer.Registry.GetValue(RegistryFolder, "MinTolerableProfit", Nothing)
-            ThisAddIn.PostTimingPref = My.Computer.Registry.GetValue(RegistryFolder, "PostTimingPref", Nothing)
             ThisAddIn.SaveWBFileName = My.Computer.Registry.GetValue(RegistryFolder, "SaveWBFileName", Nothing)
             ThisAddIn.SaveWBFilePath = My.Computer.Registry.GetValue(RegistryFolder, "SaveWBFilePath", Nothing)
             ThisAddIn.City = My.Computer.Registry.GetValue(RegistryFolder, "City", Nothing)
@@ -110,6 +109,7 @@ Public Class RegistryHelpers
             ThisAddIn.SFTPUser = My.Computer.Registry.GetValue(RegistryFolder, "SFTPUser", Nothing)
             ThisAddIn.SFTPPass = My.Computer.Registry.GetValue(RegistryFolder, "SFTPPass", Nothing)
             ThisAddIn.SFTPDirectory = My.Computer.Registry.GetValue(RegistryFolder, "SFTPDirectory", Nothing)
+            ThisAddIn.SaveAsFolder = My.Computer.Registry.GetValue(RegistryFolder, "SaveAsFolder", Nothing)
 
         Catch exAll As Exception
             MsgBox("An error has occurred when getting the bot's preferences.  Please close and reopen this bot and try again.", vbCritical, ThisAddIn.Title)
@@ -139,20 +139,7 @@ Public Class RegistryHelpers
             ThisAddIn.frmPrefs.txtSFTPUser.Text = ThisAddIn.SFTPUser
             ThisAddIn.frmPrefs.txtSFTPPass.Text = ThisAddIn.SFTPPass
             ThisAddIn.frmPrefs.txtSFTPDirectory.Text = ThisAddIn.SFTPDirectory
-
-            'radio buttons
-            Select Case ThisAddIn.PostTimingPref
-                Case "timingPostedToday"
-                    ThisAddIn.frmPrefs.optPostedToday.Checked = True
-                Case "timingUpdatedToday"
-                    ThisAddIn.frmPrefs.optUpdatedToday.Checked = True
-                Case "timingUpdated7Days"
-                    ThisAddIn.frmPrefs.optUpdated7Days.Checked = True
-                Case "timingUpdated14Days"
-                    ThisAddIn.frmPrefs.optUpdated14Days.Checked = True
-                Case "timingShowAll"
-                    ThisAddIn.frmPrefs.optShowAll.Checked = True
-            End Select
+            ThisAddIn.frmPrefs.txtSaveAsLocation.Text = ThisAddIn.SaveAsFolder
 
         Catch exAll As Exception
             MsgBox("An error has occurred when loading the bot's preferences.  Please close and reopen this bot and try again.", vbCritical, ThisAddIn.Title)
@@ -184,19 +171,7 @@ Public Class RegistryHelpers
                 .SetValue(RegistryFolder, "SFTPUser", ThisAddIn.frmPrefs.txtSFTPUser.Text)
                 .SetValue(RegistryFolder, "SFTPPass", ThisAddIn.frmPrefs.txtSFTPPass.Text)
                 .SetValue(RegistryFolder, "SFTPDirectory", ThisAddIn.frmPrefs.txtSFTPDirectory.Text)
-
-                'radio buttons
-                If ThisAddIn.frmPrefs.optPostedToday.Checked Then
-                    .SetValue(RegistryFolder, "PostTimingPref", "timingPostedToday")
-                ElseIf ThisAddIn.frmPrefs.optUpdatedToday.Checked Then
-                    .SetValue(RegistryFolder, "PostTimingPref", "timingUpdatedToday")
-                ElseIf ThisAddIn.frmPrefs.optUpdated7Days.Checked Then
-                    .SetValue(RegistryFolder, "PostTimingPref", "timingUpdated7Days")
-                ElseIf ThisAddIn.frmPrefs.optUpdated14Days.Checked Then
-                    .SetValue(RegistryFolder, "PostTimingPref", "timingUpdated14Days")
-                Else
-                    .SetValue(RegistryFolder, "PostTimingPref", "timingShowAll")
-                End If
+                .SetValue(RegistryFolder, "SaveAsFolder", ThisAddIn.frmPrefs.txtSaveAsLocation.Text)
 
             End With
 

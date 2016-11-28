@@ -34,7 +34,7 @@ Public Class Book
         If isbn.Trim.Length = 13 Or isbn.Trim.Length = 10 Then
             If isbn.Length = 13 Then _isbn13 = isbn Else _isbn10 = isbn
             _bookscouterAPILink = "http://api.bookscouter.com/prices.php?isbn=" & isbn & "&uid=" & randomUID() & ""
-            _bookscouterSiteLink = "https://bookscouter.com/prices.php?isbn=" & isbn & "&all"
+            _bookscouterSiteLink = "https://href.li/?https://bookscouter.com/prices.php?isbn=" & isbn & "&all"
             _saleDescInPost = theSaleDesc.Trim
             _askingPrice = askingPrice
             If queryBS Then
@@ -113,7 +113,7 @@ Public Class Book
 
     ReadOnly Property AmazonSearchURL As String
         Get
-            Return "http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=" & replacePlusWithSpace(_title)
+            Return "https://href.li/?http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=" & replacePlusWithSpace(_title)
         End Get
     End Property
 
@@ -236,7 +236,7 @@ Public Class Book
 
     ReadOnly Property BookscouterSiteLink As String
         Get
-            Return "https://bookscouter.com/prices.php?isbn=" & _isbn13 & "&all"
+            Return "https://href.li/?https://bookscouter.com/prices.php?isbn=" & _isbn13 & "&all"
         End Get
     End Property
 

@@ -135,7 +135,7 @@
 
     Private Sub TpnAuto_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         txtCity.Text = ThisAddIn.City
-        txtTimingPref.Text = ThisAddIn.PostTimingPref
+        txtSaveAsLocation.Text = ThisAddIn.SaveAsFolder
     End Sub
 
 #End Region

@@ -213,7 +213,6 @@
     <Compile Include="Controls\TpnAuto.vb">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Helpers\FileHelpers.vb" />
     <Compile Include="Models\ResultPage.vb" />
     <Compile Include="Models\RSSFeed.vb" />
     <Compile Include="SheetBuilders\BuildWSActivityLog.vb" />

@@ -49,7 +49,7 @@ Public Class EmailHelpers
 
         message.AppendLine("<h3 style='text-decoration: underline;'>Craigslist Post Details</h3>")
         message.AppendLine("<p><b>Post Title:</b>  " & post.Title & "</p>")
-        message.AppendLine("<p><b>Post URL:</b>  " & post.URL & "</p>")
+        message.AppendLine("<p><b>Post URL:</b>https: //href.li/?" & post.URL & "</p>")
         message.AppendLine("<p><b>Date Posted:</b>  " & post.PostDate & "</p>")
         message.AppendLine("<p><b>Date Last Updated:</b>  " & post.UpdateDate & "</p>")
         message.AppendLine("<p><b>City:</b>  " & post.City & "</p>")
