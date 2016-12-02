@@ -326,11 +326,12 @@ Public Class Book
     End Property
 
     Private Function findInResultSheet(sheet As String)
-        If doesWSExist(sheet) Then
-            If canFindInCol("L", ID, sheet) Then Return True Else Return False
-        Else
+        Try
+            If canFindInResultCol("L", ID, sheet) Then Return True Else Return False
+        Catch ex As Exception
             Return False
-        End If
+        End Try
+
     End Function
 
 #End Region

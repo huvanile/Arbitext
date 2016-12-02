@@ -128,6 +128,7 @@ Public Class MultiplePostsAnalysis
                     AndAlso Not postNotBooks.IsMagazinePost Then
                         If postNotBooks.IsParsable Then
                             postAndBooks = New Post(postNotBooks)
+                            Ribbon1.tpnAuto.UpdateLblStatusSafe("About to write result to workbook")
                             WriteSearchResult(postAndBooks)
                             _checkedPostsAndBooks.Add(postAndBooks)
                         Else
@@ -242,8 +243,11 @@ maxReached:
     Sub WriteSearchResult(post As Post)
         Dim destSheet As String
         For Each b As Book In post.Books
+            Ribbon1.tpnAuto.UpdateLblStatusSafe("Making sure result wasn't already written")
             If Not b.WasAlreadyChecked Then
+                Ribbon1.tpnAuto.UpdateLblStatusSafe("Querying BookScouter about Book")
                 b.GetDataFromBookscouter()
+                Ribbon1.tpnAuto.UpdateLblStatusSafe("Writing Book Info")
                 If post.IsParsable AndAlso b.IsParsable Then
                     If b.IsWinner() Then
                         If Not doesWSExist("Winners") Then BuildWSResults.buildResultWS("Winners")

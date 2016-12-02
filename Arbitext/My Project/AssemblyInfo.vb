@@ -10,10 +10,10 @@ Imports System.Security
 ' Review the values of the assembly attributes
 
 <Assembly: AssemblyTitle("Arbitext")> 
-<Assembly: AssemblyDescription("")> 
-<Assembly: AssemblyCompany("Grant Thornton LLP")> 
-<Assembly: AssemblyProduct("Arbitext")> 
-<Assembly: AssemblyCopyright("Copyright © Grant Thornton LLP 2016")> 
+<Assembly: AssemblyDescription("")>
+<Assembly: AssemblyCompany("")>
+<Assembly: AssemblyProduct("Arbitext")>
+<Assembly: AssemblyCopyright("")>
 <Assembly: AssemblyTrademark("")> 
 
 ' Setting ComVisible to false makes the types in this assembly not visible 
