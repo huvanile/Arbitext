@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Arbitext", "Arbitext\Arbitext.vbproj", "{9D20118E-3169-4B7D-AED9-804A8FE1E1DC}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "ArbitextConsole", "ArbitextConsole\ArbitextConsole.vbproj", "{C926F09C-9FB2-4214-BDF7-38BCF1DAF622}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{9D20118E-3169-4B7D-AED9-804A8FE1E1DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D20118E-3169-4B7D-AED9-804A8FE1E1DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9D20118E-3169-4B7D-AED9-804A8FE1E1DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C926F09C-9FB2-4214-BDF7-38BCF1DAF622}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C926F09C-9FB2-4214-BDF7-38BCF1DAF622}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C926F09C-9FB2-4214-BDF7-38BCF1DAF622}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C926F09C-9FB2-4214-BDF7-38BCF1DAF622}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
