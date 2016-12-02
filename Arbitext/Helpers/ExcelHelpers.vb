@@ -10,11 +10,14 @@ Public Class ExcelHelpers
     End Sub
 
     Public Shared Sub DeleteWS(theWS As String)
-        ThisAddIn.AppExcel.DisplayAlerts = False
-        On Error Resume Next
-        ThisAddIn.AppExcel.Worksheets(theWS).delete
-        On Error GoTo 0
-        ThisAddIn.AppExcel.DisplayAlerts = True
+        Try
+            ThisAddIn.AppExcel.DisplayAlerts = False
+            ThisAddIn.AppExcel.Worksheets(theWS).delete
+        Catch ex As Exception
+
+        Finally
+            ThisAddIn.AppExcel.DisplayAlerts = True
+        End Try
     End Sub
 
     Public Shared Sub deleteAllPics(Optional theWS As String = "")
@@ -133,23 +136,26 @@ Public Class ExcelHelpers
 
     'check to see if any workbook is open.  returns boolean variable.
     Public Shared Function isAnyWBOpen() As Boolean
-        Dim check As String
-        On Error Resume Next
-        check = ThisAddIn.AppExcel.ActiveSheet.Name
-        If Err.Number <> 0 Then isAnyWBOpen = False Else isAnyWBOpen = True
-        On Error GoTo 0
+        Try
+            Dim check As String = ThisAddIn.AppExcel.ActiveSheet.Name
+            Return True
+        Catch ex As Exception
+            Return False
+        End Try
     End Function
 
     Public Shared Sub createWS(theName As String)
-        If Not isAnyWBOpen() Then
-            ThisAddIn.AppExcel.Workbooks.Add()
-        End If
-        On Error Resume Next
-        ThisAddIn.AppExcel.DisplayAlerts = False
-        ThisAddIn.AppExcel.Sheets(theName).Delete
-        ThisAddIn.AppExcel.DisplayAlerts = True
-        On Error GoTo 0
-        ThisAddIn.AppExcel.Sheets.Add.Name = theName
+        Try
+            If Not isAnyWBOpen() Then
+                ThisAddIn.AppExcel.Workbooks.Add()
+            End If
+            ThisAddIn.AppExcel.DisplayAlerts = False
+            ThisAddIn.AppExcel.Sheets.Add.Name = theName
+        Catch ex As Exception
+
+        Finally
+            ThisAddIn.AppExcel.DisplayAlerts = True
+        End Try
     End Sub
 
     Public Shared Function doesWSExist(ws As String)
@@ -181,35 +187,35 @@ Public Class ExcelHelpers
     End Function
 
     Public Shared Function canFind(theValue As String, Optional theWS As String = "", Optional theWB As String = "", Optional returnAddress As Boolean = False, Optional searchPart As Boolean = False) As String
-        'PURPOSE: searches for theValue in worksheet theWS.  Returns true if found
-        'LAST UPDATED:  JH 23/04/13
-        Dim tmp As String
-        If theWS = "" Then theWS = ThisAddIn.AppExcel.ActiveSheet.Name
-        If theWB = "" Then theWB = ThisAddIn.AppExcel.ActiveWorkbook.Name
-        On Error GoTo cantFind
-        If searchPart Then
-            tmp = ThisAddIn.AppExcel.Workbooks(theWB).Sheets(theWS).Cells.Find(What:=theValue, LookAt:=XlLookAt.xlPart).Address
-        Else
-            tmp = ThisAddIn.AppExcel.Workbooks(theWB).Sheets(theWS).Cells.Find(What:=theValue, LookAt:=XlLookAt.xlWhole).Address
-        End If
-        On Error GoTo 0
-        canFind = True
-        If returnAddress Then canFind = tmp
-        Exit Function
-cantFind:
-        canFind = False
+        Try
+            Dim tmp As String
+            If theWS = "" Then theWS = ThisAddIn.AppExcel.ActiveSheet.Name
+            If theWB = "" Then theWB = ThisAddIn.AppExcel.ActiveWorkbook.Name
+            If searchPart Then
+                tmp = ThisAddIn.AppExcel.Workbooks(theWB).Sheets(theWS).Cells.Find(What:=theValue, LookAt:=XlLookAt.xlPart).Address
+            Else
+                tmp = ThisAddIn.AppExcel.Workbooks(theWB).Sheets(theWS).Cells.Find(What:=theValue, LookAt:=XlLookAt.xlWhole).Address
+            End If
+            canFind = True
+            If returnAddress Then canFind = tmp
+        Catch ex As Exception
+            Return False
+        End Try
     End Function
 
-    Public Shared Function canFindInCol(theCol As String, theValue As String, Optional theWS As String = "") As String
-        Dim tmp As String
-        If theWS = "" Then theWS = ThisAddIn.AppExcel.ActiveSheet.Name
-        On Error GoTo cantFind
-        tmp = ThisAddIn.AppExcel.Sheets(theWS).columns(theCol).Find(What:=theValue, LookAt:=XlLookAt.xlWhole).Address
-        On Error GoTo 0
-        canFindInCol = True
-        Exit Function
-cantFind:
-        canFindInCol = False
+    Public Shared Function canFindInResultCol(theCol As String, theValue As String, Optional theWS As String = "") As String
+        Try
+            If theWS = "" Then theWS = ThisAddIn.AppExcel.ActiveSheet.Name
+            If ThisAddIn.AppExcel.Range(theCol & "4").Value2 = "" Then
+                Return False
+            Else
+                Dim plur = ThisAddIn.AppExcel.Range(theCol & "3").End(XlDirection.xlDown).Row
+                Dim tmp As String = ThisAddIn.AppExcel.Sheets(theWS).range(theCol & "4:" & theCol & plur).Find(What:=theValue, LookAt:=XlLookAt.xlWhole).Address
+                Return True
+            End If
+        Catch ex As Exception
+            Return False
+        End Try
     End Function
 
     Public Shared Function lastUsedRow(Optional sheetName As String = "")

@@ -49,10 +49,10 @@ Public Class ArbitextHelpers
     End Sub
 
     Public Shared Sub unFilterTrash()
-        On Error Resume Next
-        ThisAddIn.AppExcel.Worksheets("Trash").AutoFilter.Sort.SortFields.Clear
-        ThisAddIn.AppExcel.Worksheets("Trash").ShowAllData
-        On Error GoTo 0
+        Try
+            ThisAddIn.AppExcel.Worksheets("Trash").AutoFilter.Sort.SortFields.Clear
+            ThisAddIn.AppExcel.Worksheets("Trash").ShowAllData
+        Catch ex As Exception : End Try
     End Sub
 
 End Class
