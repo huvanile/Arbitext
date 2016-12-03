@@ -1,8 +1,7 @@
 ﻿Imports mshtml
-Imports Arbitext.CraigslistHelpers
-Imports Arbitext.ExcelHelpers
-Imports Arbitext.StringHelpers
-Imports Arbitext.ArbitextHelpers
+Imports ArbitextClassLibrary.CraigslistHelpers
+Imports ArbitextClassLibrary.StringHelpers
+Imports System.Text
 
 Public Class Post
     Private _url As String                'CL post url
@@ -153,28 +152,24 @@ Public Class Post
         End Get
     End Property
 
-    ''' <summary>
-    ''' Used to determine if a post has already been seen and categorized or not
-    ''' </summary>
-    ''' <returns>True if alreadyChecked, False if not</returns>
-    ReadOnly Property WasAlreadyChecked() As Boolean
-        Get
-            WasAlreadyChecked = False
-            findInResultSheet("Unparsable")
-            If Not WasAlreadyChecked Then WasAlreadyChecked = findInResultSheet("Winners")
-            If Not WasAlreadyChecked Then WasAlreadyChecked = findInResultSheet("Maybes")
-            If Not WasAlreadyChecked Then WasAlreadyChecked = findInResultSheet("Trash")
-            If Not WasAlreadyChecked Then WasAlreadyChecked = findInResultSheet("Automated Checks")
-        End Get
-    End Property
+    'ReadOnly Property WasAlreadyChecked() As Boolean
+    '    Get
+    '        WasAlreadyChecked = False
+    '        findInResultSheet("Unparsable")
+    '        If Not WasAlreadyChecked Then WasAlreadyChecked = findInResultSheet("Winners")
+    '        If Not WasAlreadyChecked Then WasAlreadyChecked = findInResultSheet("Maybes")
+    '        If Not WasAlreadyChecked Then WasAlreadyChecked = findInResultSheet("Trash")
+    '        If Not WasAlreadyChecked Then WasAlreadyChecked = findInResultSheet("Automated Checks")
+    '    End Get
+    'End Property
 
-    Private Function findInResultSheet(sheet As String)
-        If doesWSExist(sheet) Then
-            If canFindInResultCol("C", _title, sheet) Then Return True Else Return False
-        Else
-            Return False
-        End If
-    End Function
+    'Private Function findInResultSheet(sheet As String)
+    '    If doesWSExist(sheet) Then
+    '        If canFindInResultCol("C", _title, sheet) Then Return True Else Return False
+    '    Else
+    '        Return False
+    '    End If
+    'End Function
 
     Property Books As List(Of Book)
         Get
@@ -254,7 +249,6 @@ Public Class Post
 
             'find title
             _title = doc.title
-            ThisAddIn.AppExcel.StatusBar = "Learning about post: " & _title
 
             If Not _title Like "*Page Not Found*" Then
                 'find price

@@ -1,5 +1,6 @@
 ﻿Imports Arbitext.ExcelHelpers
 Imports Arbitext.ArbitextHelpers
+Imports ArbitextClassLibrary
 
 Public Class SinglePostAnalysis
     Sub New()

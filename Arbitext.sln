@@ -7,6 +7,8 @@ Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Arbitext", "Arbitext\Arbite
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "ArbitextConsole", "ArbitextConsole\ArbitextConsole.vbproj", "{C926F09C-9FB2-4214-BDF7-38BCF1DAF622}"
 EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "ArbitextClassLibrary", "ArbitextClassLibrary\ArbitextClassLibrary.vbproj", "{57039FE5-DF55-437A-B116-936F7562329B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{C926F09C-9FB2-4214-BDF7-38BCF1DAF622}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C926F09C-9FB2-4214-BDF7-38BCF1DAF622}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C926F09C-9FB2-4214-BDF7-38BCF1DAF622}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57039FE5-DF55-437A-B116-936F7562329B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57039FE5-DF55-437A-B116-936F7562329B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57039FE5-DF55-437A-B116-936F7562329B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57039FE5-DF55-437A-B116-936F7562329B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

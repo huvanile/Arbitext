@@ -1,6 +1,7 @@
 ﻿Imports Arbitext.ExcelHelpers
-Imports Arbitext.ArbitextHelpers
-Imports Arbitext.CraigslistHelpers
+Imports ArbitextClassLibrary
+Imports ArbitextClassLibrary.RSSHelpers
+Imports ArbitextClassLibrary.CraigslistHelpers
 Imports System.Threading
 Imports Renci.SshNet
 Imports Arbitext.StringHelpers
@@ -176,67 +177,92 @@ maxReached:
     Public Shared Sub CreateXMLFromWorkbook()
         If isAnyWBOpen() AndAlso (doesWSExist("HVSBs") Or doesWSExist("Winners") Or doesWSExist("Maybes")) Then
             Dim theCity As String = StrConv(ThisAddIn.City, VbStrConv.ProperCase)
-            'If MsgBox("Would you like to output XML files and results?", vbYesNoCancel, ThisAddIn.Title) = vbYes Then
             Dim rssFeed As RSSFeed
-                Dim desc As String = ""
-                Dim title As String = ""
-                Dim outfile As String = ""
+            Dim desc As String = ""
+            Dim title As String = ""
+            Dim outfile As String = ""
 
-                'HANDLE WINNERS
-                If doesWSExist("Winners") Then
-                    desc = "Profitable book deals (winners) in the " & theCity & " area."
-                    title = theCity & " Winners"
-                    outfile = TrailingSlash(ThisAddIn.SaveAsFolder) & theCity & " Winners.xml"
-                    rssFeed = New RSSFeed(title, ThisAddIn.wwwRoot & "showfeed.php?feed=" & replaceSpacesWithTwenty(Path.GetFileName(outfile)), desc, "Winners", outfile)
-                    rssFeed.PopulateFeedFromSheet()
-                    rssFeed.WriteXMLFile()
-                End If
+            'HANDLE WINNERS
+            If doesWSExist("Winners") Then
+                desc = "Profitable book deals (winners) in the " & theCity & " area."
+                title = theCity & " Winners"
+                outfile = TrailingSlash(ThisAddIn.SaveAsFolder) & theCity & " Winners.xml"
+                rssFeed = New RSSFeed(title, ThisAddIn.wwwRoot & "showfeed.php?feed=" & replaceSpacesWithTwenty(Path.GetFileName(outfile)), desc, "Winners", outfile)
+                PopulateFeedFromSheet("Winners", rssFeed)
+                rssFeed.WriteXMLFile()
+            End If
 
-                'HANDLE MAYBES
-                If doesWSExist("Maybes") Then
-                    desc = "Potentially profitable book deals (maybes) in the " & theCity & " area."
-                    title = theCity & " Maybes"
-                    outfile = TrailingSlash(ThisAddIn.SaveAsFolder) & theCity & " Maybes.xml"
-                    rssFeed = New RSSFeed(title, ThisAddIn.wwwRoot & "showfeed.php?feed=" & replaceSpacesWithTwenty(Path.GetFileName(outfile)), desc, "Maybes", outfile)
-                    rssFeed.PopulateFeedFromSheet()
-                    rssFeed.WriteXMLFile()
-                End If
+            'HANDLE MAYBES
+            If doesWSExist("Maybes") Then
+                desc = "Potentially profitable book deals (maybes) in the " & theCity & " area."
+                title = theCity & " Maybes"
+                outfile = TrailingSlash(ThisAddIn.SaveAsFolder) & theCity & " Maybes.xml"
+                rssFeed = New RSSFeed(title, ThisAddIn.wwwRoot & "showfeed.php?feed=" & replaceSpacesWithTwenty(Path.GetFileName(outfile)), desc, "Maybes", outfile)
+                PopulateFeedFromSheet("Maybes", rssFeed)
+                rssFeed.WriteXMLFile()
+            End If
 
-                'HANDLE HVSBs
-                If doesWSExist("HVSBs") Then
-                    desc = "High value stale books in the " & theCity & " area.  These books can be sold for a profit, but only if the seller (who hasn't been successful selling them at the current asking price) will come down on the price a bit."
-                    title = theCity & " Stale Books of Value"
-                    outfile = TrailingSlash(ThisAddIn.SaveAsFolder) & theCity & " High Value Stale Books.xml"
-                    rssFeed = New RSSFeed(title, ThisAddIn.wwwRoot & "showfeed.php?feed=" & replaceSpacesWithTwenty(Path.GetFileName(outfile)), desc, "HVSBs", outfile)
-                    rssFeed.PopulateFeedFromSheet()
-                    rssFeed.WriteXMLFile()
-                End If
-                rssFeed = Nothing
+            'HANDLE HVSBs
+            If doesWSExist("HVSBs") Then
+                desc = "High value stale books in the " & theCity & " area.  These books can be sold for a profit, but only if the seller (who hasn't been successful selling them at the current asking price) will come down on the price a bit."
+                title = theCity & " Stale Books of Value"
+                outfile = TrailingSlash(ThisAddIn.SaveAsFolder) & theCity & " High Value Stale Books.xml"
+                rssFeed = New RSSFeed(title, ThisAddIn.wwwRoot & "showfeed.php?feed=" & replaceSpacesWithTwenty(Path.GetFileName(outfile)), desc, "HVSBs", outfile)
+                PopulateFeedFromSheet("HVSBs", rssFeed)
+                rssFeed.WriteXMLFile()
+            End If
+            rssFeed = Nothing
 
             'If MsgBox("File(s) created successfully." & vbCrLf & vbCrLf & "Would you also like to SFTP the XML files and results the site?", vbYesNoCancel, title) = vbYes Then
             Using sftp As New SftpClient(ThisAddIn.SFTPUrl, ThisAddIn.SFTPUser, ThisAddIn.SFTPPass)
-                        sftp.Connect()
-                        sftp.ChangeDirectory(ThisAddIn.SFTPDirectory)
-                        If sftp.IsConnected Then
-                            For Each file As String In Directory.GetFiles(ThisAddIn.SaveAsFolder)
-                                If file Like "*.xml" Or file Like "*.php*" Then
-                                    Using filestream As New FileStream(file, FileMode.Open)
-                                        sftp.BufferSize = 4 * 1024
-                                        sftp.UploadFile(filestream, Path.GetFileName(file))
-                                    End Using
-                                End If
-                            Next
-                        Else
-                            MsgBox("SFTP Connection Error!", vbCritical, ThisAddIn.Title)
+                sftp.Connect()
+                sftp.ChangeDirectory(ThisAddIn.SFTPDirectory)
+                If sftp.IsConnected Then
+                    For Each file As String In Directory.GetFiles(ThisAddIn.SaveAsFolder)
+                        If file Like "*.xml" Or file Like "*.php*" Then
+                            Using filestream As New FileStream(file, FileMode.Open)
+                                sftp.BufferSize = 4 * 1024
+                                sftp.UploadFile(filestream, Path.GetFileName(file))
+                            End Using
                         End If
-                    End Using
-            'End If
+                    Next
+                Else
+                    MsgBox("SFTP Connection Error!", vbCritical, ThisAddIn.Title)
+                End If
+            End Using
 
-            MsgBox("Done!", vbInformation, ThisAddIn.Title)
-
-            'End If
         Else
             MsgBox("This can only be performed from an open results workbook", vbCritical, ThisAddIn.Title)
+        End If
+    End Sub
+
+    Public Shared Sub PopulateFeedFromSheet(ws As String, ByRef rssfeed As RSSFeed)
+        If isAnyWBOpen() Then
+            If doesWSExist(ws) Then
+                For r As Short = 4 To lastUsedRow(ws)
+                    With ThisAddIn.AppExcel.Sheets(ws)
+                        Dim dateUpdated As String = .range("b" & r).value2 'pubDate 
+                        Dim postTitle As String = .range("c" & r).value2 'arbitext:postTitle
+                        Dim postLink As String = "https://href.li/?" & .range("c" & r).hyperlinks(1).address 'arbitext:postLink 
+                        Dim postCity As String = .range("k" & r).value2 'arbitext:postCity 
+                        Dim bookTitle As String = .range("d" & r).value2 'arbitext:bookTitle
+                        Dim isbn As String = .range("e" & r).value2 'arbitext:isbn
+                        Dim askingPrice As Decimal = .range("f" & r).value2 'arbitext:askingprice
+                        Dim bsLink As String = .range("e" & r).hyperlinks(1).address 'arbitext:buybackLink
+                        Dim buybackPrice As Decimal = .range("g" & r).value2 'arbitext:buybackPrice
+                        Dim profit As Decimal = .range("h" & r).value2 'arbitext:profit
+                        Dim profitMargin As Decimal = .range("i" & r).value2 'arbitext:profitMargin
+                        Dim id As String = .range("l" & r).value2 'GUID 
+                        Dim resultURL As String = ThisAddIn.wwwRoot & "showitem.php?item=" & replaceSpacesWithTwenty(Path.GetFileName(rssfeed.FileName)) & "|" & id
+                        Dim theDesc As String = getDesc(ws, postCity, askingPrice, profit, buybackPrice)
+                        Dim amazonBookImage As String = .range("m" & r).value2 'arbitext:bookImage 
+                        Dim postImage As String = .range("n" & r).value2 'arbitext:postImage 
+                        WriteRSSItem(rssfeed.Document, bookTitle, resultURL, dateUpdated, theDesc, id, postLink, postTitle, postCity, bookTitle, isbn, askingPrice, bsLink, buybackPrice, profit, profitMargin, postImage, amazonBookImage)
+                    End With
+                Next
+            End If
+        Else
+            MsgBox("A workbook must be open in order to populate the XML file", vbCritical, ThisAddIn.Title)
         End If
     End Sub
 
@@ -244,27 +270,20 @@ maxReached:
         Dim destSheet As String
         For Each b As Book In post.Books
             Ribbon1.tpnAuto.UpdateLblStatusSafe("Making sure result wasn't already written")
-            If Not b.WasAlreadyChecked Then
-                Ribbon1.tpnAuto.UpdateLblStatusSafe("Querying BookScouter about Book")
+            Ribbon1.tpnAuto.UpdateLblStatusSafe("Querying BookScouter about Book")
                 b.GetDataFromBookscouter()
                 Ribbon1.tpnAuto.UpdateLblStatusSafe("Writing Book Info")
                 If post.IsParsable AndAlso b.IsParsable Then
                     If b.IsWinner() Then
                         If Not doesWSExist("Winners") Then BuildWSResults.buildResultWS("Winners")
-                        destSheet = "Winners"
-                        Dim resultpage As New ResultPage(b, post, destSheet, ThisAddIn.SaveAsFolder)
-                        resultpage = Nothing
-                    ElseIf b.IsMaybe() Then
+                    destSheet = "Winners"
+                ElseIf b.IsMaybe() Then
                         If Not doesWSExist("Maybes") Then BuildWSResults.buildResultWS("Maybes")
-                        destSheet = "Maybes"
-                        Dim resultpage As New ResultPage(b, post, destSheet, ThisAddIn.SaveAsFolder)
-                        resultpage = Nothing
-                    ElseIf b.IsHVSB() Then
+                    destSheet = "Maybes"
+                ElseIf b.IsHVSB() Then
                         If Not doesWSExist("HVSBs") Then BuildWSResults.buildResultWS("HVSBs")
-                        destSheet = "HVSBs"
-                        Dim resultpage As New ResultPage(b, post, destSheet, ThisAddIn.SaveAsFolder)
-                        resultpage = Nothing
-                    ElseIf b.IsTrash() Then
+                    destSheet = "HVSBs"
+                ElseIf b.IsTrash() Then
                         If Not doesWSExist("Trash") Then BuildWSResults.buildResultWS("Trash") Else unFilterTrash()
                         destSheet = "Trash"
                     Else
@@ -281,43 +300,40 @@ maxReached:
                     Exit Sub
                 End If
 
-                With ThisAddIn.AppExcel.Sheets(destSheet)
-                    Ribbon1.tpnAuto.UpdateLblStatusSafe("Writing search result to " & destSheet)
-                    Ribbon1.tpnAuto.showLblCountsSafe("")
+            With ThisAddIn.AppExcel.Sheets(destSheet)
+                Ribbon1.tpnAuto.UpdateLblStatusSafe("Writing search result to " & destSheet)
+                Ribbon1.tpnAuto.showLblCountsSafe("")
 
-                    .activate
-                    Dim r As Integer = lastUsedRow() + 1
-                    thinInnerBorder(.Range("a" & r & ":n" & r))
+                .activate
+                Dim r As Integer = lastUsedRow() + 1
+                thinInnerBorder(.Range("a" & r & ":n" & r))
 
-                    'write post stuff
-                    .Range("a" & r).Value2 = post.PostDate 'date posted
-                    .Range("b" & r).Value2 = post.UpdateDate 'date updated
-                    .Hyperlinks.Add(anchor:= .Range("c" & r), Address:=post.URL, TextToDisplay:=post.Title)
-                    .range("k" & r).value2 = post.City
+                'write post stuff
+                .Range("a" & r).Value2 = post.PostDate 'date posted
+                .Range("b" & r).Value2 = post.UpdateDate 'date updated
+                .Hyperlinks.Add(anchor:= .Range("c" & r), Address:=post.URL, TextToDisplay:=post.Title)
+                .range("k" & r).value2 = post.City
 
-                    'write book stuff
-                    If b.IsParsable Then
-                        .Hyperlinks.Add(anchor:= .Range("d" & r), Address:=b.AmazonSearchURL, TextToDisplay:=b.Title)
-                        .Hyperlinks.Add(anchor:= .Range("e" & r), Address:=b.BookscouterSiteLink, TextToDisplay:="'" & b.IsbnFromPost)
-                        .Range("f" & r).Value2 = b.AskingPrice
-                        .Range("g" & r).Value2 = b.BuybackAmount
-                        .range("h" & r).value2 = b.Profit
-                        .range("i" & r).value2 = b.ProfitPercentage
-                        .range("j" & r).value2 = b.MinAskingPriceForDesiredProfit
-                        .range("l" & r).value2 = "'" & b.ID
-                        .range("m" & r).value2 = b.ImageURL
-                        .range("n" & r).value2 = post.Image
-                        If b.aLaCarte() Then .Rows(r).font.colorindex = 3
-                        If b.isOBO() Then .Rows(r).font.bold = True
-                        If b.isWeirdEdition() Then .Rows(r).font.colorindex = 46
-                        If b.isPDF() Then .Rows(r).font.colorindex = 53
-                        If b.IsWinner() Then HandleWinner(post, b, r)
-                        If b.IsMaybe() Then HandleMaybe(post, b, r)
-                    End If
-                End With
-            Else
-                'already checked, so don't write it
-            End If
+                'write book stuff
+                If b.IsParsable Then
+                    .Hyperlinks.Add(anchor:= .Range("d" & r), Address:=b.AmazonSearchURL, TextToDisplay:=b.Title)
+                    .Hyperlinks.Add(anchor:= .Range("e" & r), Address:=b.BookscouterSiteLink, TextToDisplay:="'" & b.IsbnFromPost)
+                    .Range("f" & r).Value2 = b.AskingPrice
+                    .Range("g" & r).Value2 = b.BuybackAmount
+                    .range("h" & r).value2 = b.Profit
+                    .range("i" & r).value2 = b.ProfitPercentage
+                    .range("j" & r).value2 = b.MinAskingPriceForDesiredProfit
+                    .range("l" & r).value2 = "'" & b.ID
+                    .range("m" & r).value2 = b.ImageURL
+                    .range("n" & r).value2 = post.Image
+                    If b.aLaCarte() Then .Rows(r).font.colorindex = 3
+                    If b.isOBO() Then .Rows(r).font.bold = True
+                    If b.isWeirdEdition() Then .Rows(r).font.colorindex = 46
+                    If b.isPDF() Then .Rows(r).font.colorindex = 53
+                    If b.IsWinner() Then HandleWinner(post, b, r)
+                    If b.IsMaybe() Then HandleMaybe(post, b, r)
+                End If
+            End With
         Next b
 
     End Sub

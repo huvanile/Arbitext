@@ -2,6 +2,26 @@
 
 Public Class ExcelHelpers
 
+    Public Shared Sub rowTitles(theRange As Excel.Range)
+        With theRange
+            .HorizontalAlignment = XlHAlign.xlHAlignRight
+            .Interior.ColorIndex = 15
+        End With
+        thinInnerBorder(theRange)
+    End Sub
+
+    Public Shared Sub rowValues(theRange As Excel.Range)
+        theRange.Interior.ColorIndex = 6
+        thinInnerBorder(theRange)
+    End Sub
+
+    Public Shared Sub unFilterTrash()
+        Try
+            ThisAddIn.AppExcel.Worksheets("Trash").AutoFilter.Sort.SortFields.Clear
+            ThisAddIn.AppExcel.Worksheets("Trash").ShowAllData
+        Catch ex As Exception : End Try
+    End Sub
+
     Public Shared Sub verifyOneRowSelected()
         If ThisAddIn.AppExcel.Selection.Rows.Count > 1 Then
             MsgBox("Only 1 row must be selected", vbInformation, ThisAddIn.Title)

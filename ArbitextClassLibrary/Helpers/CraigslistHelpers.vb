@@ -1,6 +1,20 @@
-﻿Imports Arbitext.StringHelpers
+﻿Imports ArbitextClassLibrary.StringHelpers
 
 Public Class CraigslistHelpers
+
+    Public Shared Function bookCountFromString(theStr As String) As Integer
+        Dim tmpCount As Integer = 0
+        Dim tmp1 As Integer
+        Dim tmp2 As Integer
+        Dim tmp3 As Integer
+        tmp1 = UBound(Split(LCase(theStr), "isbn"))
+        tmp2 = UBound(Split(LCase(theStr), "978"))
+        tmp3 = UBound(Split(LCase(theStr), "$"))
+        tmpCount = tmp1
+        If tmp2 > tmpCount Then tmpCount = tmp2
+        If tmp3 > tmpCount Then tmpCount = tmp3
+        Return tmpCount
+    End Function
 
     Public Shared Function isMulti(str As String) As Boolean
         Dim match As Boolean = False
@@ -78,7 +92,7 @@ Public Class CraigslistHelpers
         Dim z As Long : z = 0
         Dim splitholder
         Dim m As String : m = ""
-        z = Strings.InStr(startPosition, LCase(str), ThisAddIn.ResultHook) + Len(ThisAddIn.ResultHook) 'start at different locations "startPosition" to get different results
+        z = Strings.InStr(startPosition, LCase(str), "<li class=""result-row"" data-pid=") + Len("<li class=""result-row"" data-pid=") 'start at different locations "startPosition" to get different results
         m = Right(str, Len(str) - z)
         splitholder = Split(m, "class=""result-image ") 'boundary
         m = Trim(splitholder(0))
@@ -310,3 +324,4 @@ oops:
     End Function
 
 End Class
+

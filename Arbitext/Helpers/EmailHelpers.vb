@@ -1,4 +1,4 @@
-﻿Imports Arbitext.RegistryHelpers
+﻿Imports ArbitextClassLibrary
 
 Public Class EmailHelpers
     Public Shared Sub sendSilentNotification(emailBodyMessage As String, emailSubject As String)

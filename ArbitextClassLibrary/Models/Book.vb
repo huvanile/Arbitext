@@ -1,7 +1,6 @@
-﻿Imports Arbitext.ArbitextHelpers
-Imports Arbitext.ExcelHelpers
-Imports Arbitext.StringHelpers
+﻿Imports ArbitextClassLibrary.StringHelpers
 Imports System.Xml
+Imports System.Text
 
 Public Class Book
     Private _title As String
@@ -144,7 +143,7 @@ Public Class Book
         Get
             IsWinner = False
             If IsParsable Then
-                If Profit > ThisAddIn.MinTolerableProfit And Not IsTrash() Then IsWinner = True
+                If Profit > 15 And Not IsTrash() Then IsWinner = True
             End If
         End Get
     End Property
@@ -189,8 +188,8 @@ Public Class Book
     ReadOnly Property MinAskingPriceForDesiredProfit As Decimal
         Get
             If _buybackAmount > 0 Then
-                If _buybackAmount - ThisAddIn.MinTolerableProfit > 0 Then
-                    Return Math.Round(_buybackAmount - ThisAddIn.MinTolerableProfit, 0)
+                If _buybackAmount - 15 > 0 Then
+                    Return Math.Round(_buybackAmount - 15, 0)
                 Else
                     Return 0
                 End If
@@ -210,7 +209,7 @@ Public Class Book
         Get
             Dim tmp As Decimal = 0
             If _buybackAmount > 0 Then
-                tmp = ThisAddIn.AppExcel.Round(_buybackAmount - _askingPrice, 2)
+                tmp = Math.Round(_buybackAmount - _askingPrice, 2)
                 If tmp > 0 Then Return tmp Else Return 0
             Else
                 Return 0
@@ -314,25 +313,25 @@ Public Class Book
         End Get
     End Property
 
-    ReadOnly Property WasAlreadyChecked() As Boolean
-        Get
-            WasAlreadyChecked = False
-            If Not WasAlreadyChecked Then WasAlreadyChecked = findInResultSheet("Winners")
-            If Not WasAlreadyChecked Then WasAlreadyChecked = findInResultSheet("Maybes")
-            If Not WasAlreadyChecked Then WasAlreadyChecked = findInResultSheet("Trash")
-            If Not WasAlreadyChecked Then WasAlreadyChecked = findInResultSheet("HVSBs")
-            If Not WasAlreadyChecked Then WasAlreadyChecked = findInResultSheet("Automated Checks")
-        End Get
-    End Property
+    'ReadOnly Property WasAlreadyChecked() As Boolean
+    '    Get
+    '        WasAlreadyChecked = False
+    '        If Not WasAlreadyChecked Then WasAlreadyChecked = findInResultSheet("Winners")
+    '        If Not WasAlreadyChecked Then WasAlreadyChecked = findInResultSheet("Maybes")
+    '        If Not WasAlreadyChecked Then WasAlreadyChecked = findInResultSheet("Trash")
+    '        If Not WasAlreadyChecked Then WasAlreadyChecked = findInResultSheet("HVSBs")
+    '        If Not WasAlreadyChecked Then WasAlreadyChecked = findInResultSheet("Automated Checks")
+    '    End Get
+    'End Property
 
-    Private Function findInResultSheet(sheet As String)
-        Try
-            If canFindInResultCol("L", ID, sheet) Then Return True Else Return False
-        Catch ex As Exception
-            Return False
-        End Try
+    'Private Function findInResultSheet(sheet As String)
+    '    Try
+    '        If canFindInResultCol("L", ID, sheet) Then Return True Else Return False
+    '    Catch ex As Exception
+    '        Return False
+    '    End Try
 
-    End Function
+    'End Function
 
 #End Region
 
@@ -343,8 +342,6 @@ Public Class Book
 
             Dim wc As New Net.WebClient
             Dim isbn As String : If _isbn13 = "" Then isbn = _isbn10 Else isbn = _isbn13
-            ThisAddIn.AppExcel.DisplayStatusBar = True
-            ThisAddIn.AppExcel.StatusBar = "Learning about book: " & isbn
             Dim bXML() As Byte = wc.DownloadData(_bookscouterAPILink)
             Dim sXML As String = New UTF8Encoding().GetString(bXML)
             Dim doc As XmlDocument = New XmlDocument
