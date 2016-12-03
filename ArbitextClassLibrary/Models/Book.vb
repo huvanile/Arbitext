@@ -161,15 +161,30 @@ Public Class Book
     ''' HVSB = High Value Stale Book.  These can sell online for a fair amount, weren't originally profitable based on asking price, and are now stale.
     ''' These can be profitable if they take a low-ball offer.
     ''' </summary>
-    ''' <returns>True if the book is a HVSP</returns>
+    ''' <returns>True if the book is a HVSB</returns>
     ReadOnly Property IsHVSB As Boolean
         Get
             IsHVSB = False
             If IsParsable Then
                 If Not IsWinner AndAlso Not IsMaybe Then
                     If BuybackAmount > 40 AndAlso DateDiff(DateInterval.Day, CDate(_parentPostDate), Now()) >= 14 Then
-                        IsHVSB = True
+                        Return True
                     End If
+                End If
+            End If
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' HVOBO = High Value Or Best Offer.  These can sell online for a fair amoubt, aren't profitable at the given asking price, and the seller said they'd take the best offer.
+    ''' </summary>
+    ''' <returns></returns>
+    ReadOnly Property IsHVOBO As Boolean
+        Get
+            IsHVOBO = False
+            If IsParsable Then
+                If Not IsWinner AndAlso Not IsMaybe AndAlso Not IsHVSB AndAlso isOBO AndAlso BuybackAmount > 40 Then
+                    Return True
                 End If
             End If
         End Get

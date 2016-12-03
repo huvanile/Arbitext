@@ -1,9 +1,9 @@
-﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class TpnAuto
     Inherits System.Windows.Forms.UserControl
 
     'UserControl overrides dispose to clean up the component list.
-    <System.Diagnostics.DebuggerNonUserCode()> _
+    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If disposing AndAlso components IsNot Nothing Then
@@ -20,7 +20,7 @@ Partial Class TpnAuto
     'NOTE: The following procedure is required by the Windows Form Designer
     'It can be modified using the Windows Form Designer.  
     'Do not modify it using the code editor.
-    <System.Diagnostics.DebuggerStepThrough()> _
+    <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.lblStatus = New System.Windows.Forms.Label()
         Me.btnProceed = New System.Windows.Forms.Button()
@@ -29,8 +29,6 @@ Partial Class TpnAuto
         Me.lblCounts = New System.Windows.Forms.Label()
         Me.txtCity = New System.Windows.Forms.TextBox()
         Me.Label3 = New System.Windows.Forms.Label()
-        Me.Label1 = New System.Windows.Forms.Label()
-        Me.txtSaveAsLocation = New System.Windows.Forms.TextBox()
         Me.SuspendLayout()
         '
         'lblStatus
@@ -106,32 +104,10 @@ Partial Class TpnAuto
         Me.Label3.TabIndex = 9
         Me.Label3.Text = "City"
         '
-        'Label1
-        '
-        Me.Label1.AutoSize = True
-        Me.Label1.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label1.Location = New System.Drawing.Point(29, 57)
-        Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(81, 15)
-        Me.Label1.TabIndex = 11
-        Me.Label1.Text = "Output Folder"
-        '
-        'txtSaveAsLocation
-        '
-        Me.txtSaveAsLocation.BackColor = System.Drawing.SystemColors.ScrollBar
-        Me.txtSaveAsLocation.Enabled = False
-        Me.txtSaveAsLocation.Location = New System.Drawing.Point(29, 75)
-        Me.txtSaveAsLocation.Multiline = True
-        Me.txtSaveAsLocation.Name = "txtSaveAsLocation"
-        Me.txtSaveAsLocation.Size = New System.Drawing.Size(237, 45)
-        Me.txtSaveAsLocation.TabIndex = 12
-        '
         'TpnAuto
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.Controls.Add(Me.txtSaveAsLocation)
-        Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.txtCity)
         Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.lblCounts)
@@ -153,6 +129,4 @@ Partial Class TpnAuto
     Friend WithEvents lblCounts As System.Windows.Forms.Label
     Friend WithEvents txtCity As System.Windows.Forms.TextBox
     Friend WithEvents Label3 As System.Windows.Forms.Label
-    Friend WithEvents Label1 As System.Windows.Forms.Label
-    Friend WithEvents txtSaveAsLocation As System.Windows.Forms.TextBox
 End Class

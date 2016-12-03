@@ -20,7 +20,7 @@ Public Class RSSHelpers
     End Function
 
     Public Shared Function AlreadyInRSSFeed(id As String, type As String, sftp As SftpClient, sftpDirectory As String, city As String, sftpURL As String)
-        If LCase(type) Like "hv" Then type = "stale"
+        If LCase(type) Like "hvs" Then type = "stale"
         Dim files As IEnumerable(Of Sftp.SftpFile) = sftp.ListDirectory(sftpDirectory)
         For Each file As Sftp.SftpFile In files
             If file.Name Like "*.xml*" AndAlso LCase(file.Name) Like "*" & LCase(city) & "*" AndAlso LCase(file.Name) Like "*" & LCase(type) & "*" Then
@@ -42,6 +42,11 @@ Public Class RSSHelpers
 
     Public Shared Function getDesc(resultType As String, postcity As String, askingprice As Decimal, profit As Decimal, buybackPrice As Decimal) As String
         Select Case resultType
+            Case "HVOBOs"
+                Return "Someone in " & StrConv(postcity, VbStrConv.ProperCase) &
+                    " is asking " & FormatCurrency(askingprice, 2, TriState.False) &
+                    " for this book which sells online for " & FormatCurrency(buybackPrice, 2, TriState.False) &
+                    ". BUT, they said they'd take the best offer. Could be profitable if negotiated."
             Case "HVSBs"
                 Return "Someone in " & StrConv(postcity, VbStrConv.ProperCase) &
                     " is asking " & FormatCurrency(askingprice, 2, TriState.False) &
@@ -80,9 +85,10 @@ Public Class RSSHelpers
                         buybackPrice As Decimal,
                         profit As Decimal,
                         profitMargin As Decimal,
+                        isOBO As Boolean,
                         Optional postImageURL As String = globals.wwwRoot & "/img/PlaceholderBook.png",
-                        Optional amazonBookImageURL As String = globals.wwwRoot & "/img/PlaceholderBook.png",
-                        Optional Content As String = Nothing) 'content could be used to show book.saleDescInPost
+                        Optional amazonBookImageURL As String = globals.wwwRoot & "/img/PlaceholderBook.png")
+
 
         'First check we haven't already created a chnanel, as there should only be one in the feed
         Dim channels = document.GetElementsByTagName("channel")
@@ -101,6 +107,7 @@ Public Class RSSHelpers
         thisitem.AppendChild(addCustomNode("postCity", postCity, document))
         thisitem.AppendChild(addCustomNode("bookTitle", bookTitle, document))
         thisitem.AppendChild(addCustomNode("isbn", isbn, document))
+        thisitem.AppendChild(addCustomNode("isOBO", isOBO, document))
         thisitem.AppendChild(addCustomNode("askingPrice", askingPrice, document))
         thisitem.AppendChild(addCustomNode("buybackLink", bsLink, document))
         thisitem.AppendChild(addCustomNode("buybackPrice", buybackPrice, document))
@@ -109,13 +116,6 @@ Public Class RSSHelpers
         thisitem.AppendChild(addCustomNode("postImage", postImageURL, document))
         thisitem.AppendChild(addCustomNode("bookImage", amazonBookImageURL, document))
         thisitem.AppendChild(CreateTextElement("description", Description, document))
-
-        'Write the content node
-        If Not Content Is Nothing Then
-            Dim contentNode = document.CreateNode(XmlNodeType.Element, "content", "encoded", document.GetElementsByTagName("rss")(0).GetNamespaceOfPrefix("content"))
-            contentNode.InnerText = Content
-            thisitem.AppendChild(contentNode)
-        End If
 
         'Append the element
         mainchannel.AppendChild(thisitem)

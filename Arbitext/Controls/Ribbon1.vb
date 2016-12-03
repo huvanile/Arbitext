@@ -1,5 +1,4 @@
 ﻿Imports Microsoft.Office.Tools.Ribbon
-Imports Arbitext.ArbitextHelpers
 
 Public Class Ribbon1
     Public Shared tpnAuto As TpnAuto : Public Shared ctpAuto As Microsoft.Office.Tools.CustomTaskPane
@@ -36,10 +35,6 @@ Public Class Ribbon1
         ThisAddIn.AppExcel.StatusBar = False
         ThisAddIn.frmPrefs = New FrmPrefs
         ThisAddIn.frmPrefs.Show()
-    End Sub
-
-    Private Sub btnRSS_Click(sender As Object, e As RibbonControlEventArgs) Handles btnRSS.Click
-        MultiplePostsAnalysis.CreateXMLFromWorkbook()
     End Sub
 
 End Class
