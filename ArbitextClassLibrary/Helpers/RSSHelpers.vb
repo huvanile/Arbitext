@@ -8,7 +8,8 @@ Public Class RSSHelpers
 
     Public Shared Function FeedAlreadyExists(type As String, sftp As SftpClient, sftpDirectory As String, city As String)
         Dim files As IEnumerable(Of Sftp.SftpFile) = sftp.ListDirectory(sftpDirectory)
-        If LCase(type) Like "hv" Then type = "stale"
+        If LCase(type) Like "*hvs*" Then type = "stale"
+        If LCase(type) Like "*obo*" Then type = "best"
         For Each file As Sftp.SftpFile In files
             If file.Name Like "*.xml*" AndAlso LCase(file.Name) Like "*" & LCase(city) & "*" AndAlso LCase(file.Name) Like "*" & LCase(type) & "*" Then
                 files = Nothing
@@ -20,7 +21,12 @@ Public Class RSSHelpers
     End Function
 
     Public Shared Function AlreadyInRSSFeed(id As String, type As String, sftp As SftpClient, sftpDirectory As String, city As String, sftpURL As String)
-        If LCase(type) Like "hvs" Then type = "stale"
+        If LCase(type) Like "*hvs*" Then
+            type = "stale"
+        End If
+        If LCase(type) Like "*obo*" Then
+            type = "best"
+        End If
         Dim files As IEnumerable(Of Sftp.SftpFile) = sftp.ListDirectory(sftpDirectory)
         For Each file As Sftp.SftpFile In files
             If file.Name Like "*.xml*" AndAlso LCase(file.Name) Like "*" & LCase(city) & "*" AndAlso LCase(file.Name) Like "*" & LCase(type) & "*" Then

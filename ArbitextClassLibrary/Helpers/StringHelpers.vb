@@ -19,10 +19,23 @@
             str = splitOnValue(str, "ISBN", isbnWork) 'added 2/1/15 to address the isbn %%%% isbn #### scenario
             str = splitOnValue(str, "and", isbnWork) 'added 6/26/15
             str = splitOnValue(str, "AND", isbnWork) 'added 6/26/15
+            str = splitOnValue(str, "And", isbnWork) 'added 2/1/15
             str = splitOnValue(str, "edition", isbnWork)  'added 6/26/15
+            str = splitOnValue(str, "Edition", isbnWork)  'added 12/4/16
             str = splitOnValue(str, "EDITION", isbnWork) 'added 6/26/15
             str = splitOnValue(str, "or", isbnWork) 'added 2/1/15
-            str = splitOnValue(str, "and", isbnWork) 'added 2/1/15
+            str = splitOnValue(str, "OR", isbnWork) 'added 12/4/16
+            str = splitOnValue(str, "Or", isbnWork) 'added 12/4/16
+            str = splitOnValue(str, "1st", isbnWork) 'added 12/4/16
+            str = splitOnValue(str, "2nd", isbnWork) 'added 12/4/16
+            str = splitOnValue(str, "3rd", isbnWork) 'added 12/4/16
+            str = splitOnValue(str, "4th", isbnWork) 'added 12/4/16
+            str = splitOnValue(str, "5th", isbnWork) 'added 12/4/16
+            str = splitOnValue(str, "6th", isbnWork) 'added 12/4/16
+            str = splitOnValue(str, "7th", isbnWork) 'added 12/4/16
+            str = splitOnValue(str, "8th", isbnWork) 'added 12/4/16
+            str = splitOnValue(str, "9th", isbnWork) 'added 12/4/16
+            str = splitOnValue(str, "10th", isbnWork) 'added 12/4/16
             str = splitOnValue(str, "$", isbnWork)
             str = splitOnValue(str, "&", isbnWork) 'added 2/1/15
             str = splitOnValue(str, Chr(10), isbnWork)
@@ -102,7 +115,8 @@
         If removePeriods Then
             str = Replace(str, ".", "")
         End If
-
+        str = Trim(str)
+        If Left(str, 3) = "987" Then str = "978" & Right(str, Len(str) - 3) 'added 12/4/16 to catch when people swap the first few numbers of the isbn
         clean = Trim(str)
     End Function
 

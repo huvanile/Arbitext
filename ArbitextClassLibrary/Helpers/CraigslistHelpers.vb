@@ -42,11 +42,15 @@ Public Class CraigslistHelpers
         Dim match As Boolean = False
         If LCase(str) Like "* obo*" _
         Or LCase(str) Like "*best offer*" _
+        Or LCase(str) Like "*talk price*" _
+        Or LCase(str) Like "*make a offer*" _
         Or LCase(str) Like "*make an offer*" _
         Or LCase(str) Like "*make me offer*" _
+        Or LCase(str) Like "*reasonable offer*" _
+        Or LCase(str) Like "*reasonable price offer*" _
         Or LCase(str) Like "*me an offer*" _
         Or LCase(str) Like "*better offer*" _
-        Or LCase(str) Like "*negotiable*" Then
+        Or (LCase(str) Like "*negotiable*" And Not LCase(str) Like "*non-negotiable*") Then
             match = True
         End If
         Return match
@@ -104,6 +108,11 @@ Public Class CraigslistHelpers
         Return m
     End Function
 
+    ''' <summary>
+    ''' gets asking price from a string
+    ''' </summary>
+    ''' <param name="str"></param>
+    ''' <returns>a postitive number if it works just fine, -1 if it couldn't find it, and -2 if it couldn't find it AND its an OBO</returns>
     Public Shared Function getAskingPrice(str As String) As Decimal 'str is posting page html
         Dim i As Integer : i = 0
         Dim m As String : m = ""
@@ -132,13 +141,30 @@ Public Class CraigslistHelpers
 
         End If
 
+
+        If Right(m, 1) = "." Then
+            m = Left(m, Len(m) - 1) 'added 12/4/16
+        End If
+
         On Error GoTo oops
         If m <> "" Then m = CInt(m)
         On Error GoTo 0
-        If IsNumeric(m) Then getAskingPrice = CInt(m) Else getAskingPrice = -1
+        If IsNumeric(m) Then
+            getAskingPrice = CInt(m)
+        Else
+            If CraigslistHelpers.isOBO(str) Then
+                Return -2
+            Else
+                Return -1
+            End If
+        End If
         Exit Function
 oops:
-        getAskingPrice = -1
+        If CraigslistHelpers.isOBO(str) Then
+            Return -2
+        Else
+            Return -1
+        End If
     End Function
 
     Public Shared Function getISBN(str As String, postURL As String) 'str is posting page html
@@ -275,6 +301,12 @@ oops:
             ElseIf LCase(str) Like "*isbn number is *" Then
                 i = InStr(1, LCase(str), "isbn number is ") + Len("isbn number is ")
 
+            ElseIf LCase(str) Like "*isbn number of:*" Then
+                i = InStr(1, LCase(str), "isbn number of:") + Len("isbn number of:")
+
+            ElseIf LCase(str) Like "*isbn number of *" Then
+                i = InStr(1, LCase(str), "isbn number of ") + Len("isbn number of ")
+
             ElseIf LCase(str) Like "*isbn for this book is *" Then
                 i = InStr(1, LCase(str), "isbn for this book is ") + Len("isbn for this book is ")
 
@@ -304,7 +336,7 @@ oops:
         'just to get any pesky lingering spaces
         On Error Resume Next
         If Not IsNumeric(Right(m, 1)) _
-    And Right(m, 1) <> "X" Then
+        And Right(m, 1) <> "X" Then
             m = Left(m, Len(m) - 1)
         End If
         On Error GoTo 0
@@ -312,12 +344,11 @@ oops:
 
         'check resulting string composition
         If (Len(m) = 10 _
-    Or Len(m) = 13) _
-    And (IsNumeric(m) Or Right(m, 1) = "X") Then
+        Or Len(m) = 13) _
+        And (IsNumeric(m) Or Right(m, 1) = "X") Then
             Return m
         Else
-
-            System.Diagnostics.Debug.Print("weird ISBN:  " & m & " | post URL: " & postURL)
+            Debug.Print("weird ISBN:  " & m & " | post URL: " & postURL)
             Return "(unknown)"
         End If
 

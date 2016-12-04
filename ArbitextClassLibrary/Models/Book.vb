@@ -143,7 +143,7 @@ Public Class Book
         Get
             IsWinner = False
             If IsParsable Then
-                If Profit > 15 And Not IsTrash() Then IsWinner = True
+                If Profit > 15 AndAlso AskingPrice > 0 AndAlso Not IsTrash() Then IsWinner = True
             End If
         End Get
     End Property
@@ -152,7 +152,7 @@ Public Class Book
         Get
             IsMaybe = False
             If IsParsable Then
-                If Not IsWinner() And Not IsTrash() Then IsMaybe = True
+                If Not IsWinner() AndAlso Not IsTrash() AndAlso AskingPrice > 0 Then IsMaybe = True
             End If
         End Get
     End Property
@@ -165,12 +165,13 @@ Public Class Book
     ReadOnly Property IsHVSB As Boolean
         Get
             IsHVSB = False
-            If IsParsable Then
-                If Not IsWinner AndAlso Not IsMaybe Then
-                    If BuybackAmount > 40 AndAlso DateDiff(DateInterval.Day, CDate(_parentPostDate), Now()) >= 14 Then
-                        Return True
-                    End If
-                End If
+            If IsParsable _
+                AndAlso IsWinner _
+                AndAlso Not IsMaybe _
+                AndAlso AskingPrice > 0 _
+                AndAlso BuybackAmount >= 35 _
+                AndAlso DateDiff(DateInterval.Day, CDate(_parentPostDate), Now()) >= 14 Then
+                Return True
             End If
         End Get
     End Property
@@ -182,10 +183,13 @@ Public Class Book
     ReadOnly Property IsHVOBO As Boolean
         Get
             IsHVOBO = False
-            If IsParsable Then
-                If Not IsWinner AndAlso Not IsMaybe AndAlso Not IsHVSB AndAlso isOBO AndAlso BuybackAmount > 40 Then
-                    Return True
-                End If
+            If IsParsable _
+            AndAlso Not IsWinner _
+            AndAlso Not IsMaybe _
+            AndAlso Not IsHVSB _
+            AndAlso (isOBO Or AskingPrice = -2) _
+            AndAlso BuybackAmount >= 35 Then
+                Return True
             End If
         End Get
     End Property
@@ -222,9 +226,8 @@ Public Class Book
 
     ReadOnly Property Profit As Decimal
         Get
-            Dim tmp As Decimal = 0
             If _buybackAmount > 0 Then
-                tmp = Math.Round(_buybackAmount - _askingPrice, 2)
+                Dim tmp As Decimal = Math.Round(_buybackAmount - _askingPrice, 2)
                 If tmp > 0 Then Return tmp Else Return 0
             Else
                 Return 0
@@ -235,7 +238,8 @@ Public Class Book
     ReadOnly Property ProfitPercentage As Decimal
         Get
             If _buybackAmount > 0 Then
-                Return Profit / _askingPrice
+                Dim tmp As Decimal = Profit / _askingPrice
+                If tmp > 0 Then Return tmp Else Return 0
             Else
                 Return 0
             End If

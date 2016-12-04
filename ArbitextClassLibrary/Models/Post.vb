@@ -199,16 +199,18 @@ Public Class Post
         If splitter = "" Then
             tmpISBN = getISBN(_body, URL)
             tmpAskingPrice = getAskingPrice(_html)
-            Dim tmpBook = New Book(tmpISBN, tmpAskingPrice, clean(_body, False, False, False, False, False, False), queryBS, CraigslistHelpers.isMulti(_body), _title, _body, _postDate)
-            Dim match As Boolean = False
-            For Each b As Book In _books
-                If b.Equals(tmpBook) Or b.Title = tmpBook.Title Then
-                    match = True
-                    Exit For
-                End If
-            Next b
-            If Not match And bookCountFromString(tmpBook.SaleDescInPost) < 4 Then _books.Add(tmpBook)
-            tmpBook = Nothing
+            If Not tmpISBN Like "(*" And Not tmpAskingPrice = -1 Then 'it's actually a book result!
+                Dim tmpBook = New Book(tmpISBN, tmpAskingPrice, clean(_body, False, False, False, False, False, False), queryBS, CraigslistHelpers.isMulti(_body), _title, _body, _postDate)
+                Dim match As Boolean = False
+                For Each b As Book In _books
+                    If b.Equals(tmpBook) Or b.Title = tmpBook.Title Then
+                        match = True
+                        Exit For
+                    End If
+                Next b
+                If Not match And bookCountFromString(tmpBook.SaleDescInPost) < 4 Then _books.Add(tmpBook)
+                tmpBook = Nothing
+            End If
         Else
             Dim tmpPostBody As String = Replace(_body, Chr(10), "")
             tmpPostBody = Replace(tmpPostBody, Chr(13), "")
