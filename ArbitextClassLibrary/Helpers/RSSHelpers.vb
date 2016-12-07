@@ -47,22 +47,17 @@ Public Class RSSHelpers
     End Function
 
     Public Shared Function getDesc(resultType As String, postcity As String, askingprice As Decimal, profit As Decimal, buybackPrice As Decimal) As String
+        Dim tmp As String = "Someone"
+        If postcity.Trim.Length <= 3 And LCase(postcity.Trim) <> "google map" Then tmp = tmp & " in " & StrConv(postcity, VbStrConv.ProperCase).Trim
+        tmp = tmp & " is asking " & FormatCurrency(askingprice, 2, TriState.False) &
+                    " for this book which sells online For " & FormatCurrency(buybackPrice, 2, TriState.False) & ".  "
         Select Case resultType
             Case "HVOBOs"
-                Return "Someone in " & StrConv(postcity, VbStrConv.ProperCase) &
-                    " is asking " & FormatCurrency(askingprice, 2, TriState.False) &
-                    " for this book which sells online for " & FormatCurrency(buybackPrice, 2, TriState.False) &
-                    ". BUT, they said they'd take the best offer. Could be profitable if negotiated."
+                Return tmp & "BUT, they said they'd take the best offer. Could be profitable if negotiated."
             Case "HVSBs"
-                Return "Someone in " & StrConv(postcity, VbStrConv.ProperCase) &
-                    " is asking " & FormatCurrency(askingprice, 2, TriState.False) &
-                    " for this book which sells online for " & FormatCurrency(buybackPrice, 2, TriState.False) &
-                    ". It's been over 2 weeks and they haven't sold it. Could be profitable if negotiated."
+                Return tmp & "It's been over 2 weeks and they haven't sold it.  They might take a lowball offer."
             Case "Maybes", "Winners"
-                Return "Someone In " & StrConv(postcity, VbStrConv.ProperCase) &
-                    " Is asking " & FormatCurrency(askingprice, 2, TriState.False) &
-                    " For this book which sells online For " & FormatCurrency(buybackPrice, 2, TriState.False) &
-                    ". That's a potential profit of " & FormatCurrency(profit, 2, TriState.False) & " (maybe more if negotiated)!"
+                Return tmp & "That's a potential profit of " & FormatCurrency(profit, 2, TriState.False) & " (maybe more if negotiated)!"
         End Select
         Return ""
     End Function
