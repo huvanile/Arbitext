@@ -49,7 +49,6 @@
         Me.grpOther = Me.Factory.CreateRibbonGroup
         Me.mnuBuildSheets = Me.Factory.CreateRibbonMenu
         Me.btnActivityLog = Me.Factory.CreateRibbonButton
-        Me.btnRSS = Me.Factory.CreateRibbonButton
         Me.btnSetPrefs = Me.Factory.CreateRibbonButton
         Me.tabBooks.SuspendLayout()
         Me.grpFinders.SuspendLayout()
@@ -89,7 +88,6 @@
         'grpOther
         '
         Me.grpOther.Items.Add(Me.mnuBuildSheets)
-        Me.grpOther.Items.Add(Me.btnRSS)
         Me.grpOther.Items.Add(Me.btnSetPrefs)
         Me.grpOther.Label = "Other Stuff"
         Me.grpOther.Name = "grpOther"
@@ -112,14 +110,6 @@
         Me.btnActivityLog.Label = "Activity Log"
         Me.btnActivityLog.Name = "btnActivityLog"
         Me.btnActivityLog.ShowImage = True
-        '
-        'btnRSS
-        '
-        Me.btnRSS.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge
-        Me.btnRSS.Image = CType(resources.GetObject("btnRSS.Image"), System.Drawing.Image)
-        Me.btnRSS.Label = "Export RSS Feed"
-        Me.btnRSS.Name = "btnRSS"
-        Me.btnRSS.ShowImage = True
         '
         'btnSetPrefs
         '
@@ -152,7 +142,6 @@
     Friend WithEvents btnActivityLog As Microsoft.Office.Tools.Ribbon.RibbonButton
     Friend WithEvents btnSetPrefs As Microsoft.Office.Tools.Ribbon.RibbonButton
     Friend WithEvents grpFinders As Microsoft.Office.Tools.Ribbon.RibbonGroup
-    Friend WithEvents btnRSS As Microsoft.Office.Tools.Ribbon.RibbonButton
 End Class
 
 Partial Class ThisRibbonCollection

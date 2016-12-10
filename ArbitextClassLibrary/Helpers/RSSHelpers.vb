@@ -8,7 +8,8 @@ Public Class RSSHelpers
 
     Public Shared Function FeedAlreadyExists(type As String, sftp As SftpClient, sftpDirectory As String, city As String)
         Dim files As IEnumerable(Of Sftp.SftpFile) = sftp.ListDirectory(sftpDirectory)
-        If LCase(type) Like "hv" Then type = "stale"
+        If LCase(type) Like "*hvs*" Then type = "stale"
+        If LCase(type) Like "*obo*" Then type = "best"
         For Each file As Sftp.SftpFile In files
             If file.Name Like "*.xml*" AndAlso LCase(file.Name) Like "*" & LCase(city) & "*" AndAlso LCase(file.Name) Like "*" & LCase(type) & "*" Then
                 files = Nothing
@@ -20,7 +21,12 @@ Public Class RSSHelpers
     End Function
 
     Public Shared Function AlreadyInRSSFeed(id As String, type As String, sftp As SftpClient, sftpDirectory As String, city As String, sftpURL As String)
-        If LCase(type) Like "hv" Then type = "stale"
+        If LCase(type) Like "*hvs*" Then
+            type = "stale"
+        End If
+        If LCase(type) Like "*obo*" Then
+            type = "best"
+        End If
         Dim files As IEnumerable(Of Sftp.SftpFile) = sftp.ListDirectory(sftpDirectory)
         For Each file As Sftp.SftpFile In files
             If file.Name Like "*.xml*" AndAlso LCase(file.Name) Like "*" & LCase(city) & "*" AndAlso LCase(file.Name) Like "*" & LCase(type) & "*" Then
@@ -41,17 +47,17 @@ Public Class RSSHelpers
     End Function
 
     Public Shared Function getDesc(resultType As String, postcity As String, askingprice As Decimal, profit As Decimal, buybackPrice As Decimal) As String
+        Dim tmp As String = "Someone"
+        If postcity.Trim.Length <= 3 And LCase(postcity.Trim) <> "google map" Then tmp = tmp & " in " & StrConv(postcity, VbStrConv.ProperCase).Trim
+        tmp = tmp & " is asking " & FormatCurrency(askingprice, 2, TriState.False) &
+                    " for this book which sells online For " & FormatCurrency(buybackPrice, 2, TriState.False) & ".  "
         Select Case resultType
+            Case "HVOBOs"
+                Return tmp & "BUT, they said they'd take the best offer. Could be profitable if negotiated."
             Case "HVSBs"
-                Return "Someone in " & StrConv(postcity, VbStrConv.ProperCase) &
-                    " is asking " & FormatCurrency(askingprice, 2, TriState.False) &
-                    " for this book which sells online for " & FormatCurrency(buybackPrice, 2, TriState.False) &
-                    ". It's been over 2 weeks and they haven't sold it. Could be profitable if negotiated."
+                Return tmp & "It's been over 2 weeks and they haven't sold it.  They might take a lowball offer."
             Case "Maybes", "Winners"
-                Return "Someone In " & StrConv(postcity, VbStrConv.ProperCase) &
-                    " Is asking " & FormatCurrency(askingprice, 2, TriState.False) &
-                    " For this book which sells online For " & FormatCurrency(buybackPrice, 2, TriState.False) &
-                    ". That's a potential profit of " & FormatCurrency(profit, 2, TriState.False) & " (maybe more if negotiated)!"
+                Return tmp & "That's a potential profit of " & FormatCurrency(profit, 2, TriState.False) & " (maybe more if negotiated)!"
         End Select
         Return ""
     End Function
@@ -80,9 +86,10 @@ Public Class RSSHelpers
                         buybackPrice As Decimal,
                         profit As Decimal,
                         profitMargin As Decimal,
+                        isOBO As Boolean,
                         Optional postImageURL As String = globals.wwwRoot & "/img/PlaceholderBook.png",
-                        Optional amazonBookImageURL As String = globals.wwwRoot & "/img/PlaceholderBook.png",
-                        Optional Content As String = Nothing) 'content could be used to show book.saleDescInPost
+                        Optional amazonBookImageURL As String = globals.wwwRoot & "/img/PlaceholderBook.png")
+
 
         'First check we haven't already created a chnanel, as there should only be one in the feed
         Dim channels = document.GetElementsByTagName("channel")
@@ -101,6 +108,7 @@ Public Class RSSHelpers
         thisitem.AppendChild(addCustomNode("postCity", postCity, document))
         thisitem.AppendChild(addCustomNode("bookTitle", bookTitle, document))
         thisitem.AppendChild(addCustomNode("isbn", isbn, document))
+        thisitem.AppendChild(addCustomNode("isOBO", isOBO, document))
         thisitem.AppendChild(addCustomNode("askingPrice", askingPrice, document))
         thisitem.AppendChild(addCustomNode("buybackLink", bsLink, document))
         thisitem.AppendChild(addCustomNode("buybackPrice", buybackPrice, document))
@@ -109,13 +117,6 @@ Public Class RSSHelpers
         thisitem.AppendChild(addCustomNode("postImage", postImageURL, document))
         thisitem.AppendChild(addCustomNode("bookImage", amazonBookImageURL, document))
         thisitem.AppendChild(CreateTextElement("description", Description, document))
-
-        'Write the content node
-        If Not Content Is Nothing Then
-            Dim contentNode = document.CreateNode(XmlNodeType.Element, "content", "encoded", document.GetElementsByTagName("rss")(0).GetNamespaceOfPrefix("content"))
-            contentNode.InnerText = Content
-            thisitem.AppendChild(contentNode)
-        End If
 
         'Append the element
         mainchannel.AppendChild(thisitem)

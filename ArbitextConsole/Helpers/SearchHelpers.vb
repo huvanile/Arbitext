@@ -62,6 +62,7 @@ Public Class SearchHelpers
                     Console.WriteLine("- Books:  Winners: " & _checkedPostsAndBooks.SelectMany(Function(x) x.Books).Where(Function(y) y.IsWinner = True).Count)
                     Console.WriteLine("- Books:  Maybes: " & _checkedPostsAndBooks.SelectMany(Function(x) x.Books).Where(Function(y) y.IsMaybe = True).Count)
                     Console.WriteLine("- Books:  HVSB: " & _checkedPostsAndBooks.SelectMany(Function(x) x.Books).Where(Function(y) y.IsHVSB = True).Count)
+                    Console.WriteLine("- Books:  HVOBO: " & _checkedPostsAndBooks.SelectMany(Function(x) x.Books).Where(Function(y) y.IsHVOBO = True).Count)
                     Console.WriteLine("- Books:  Trash: " & _checkedPostsAndBooks.SelectMany(Function(x) x.Books).Where(Function(y) y.IsTrash = True).Count)
                     Console.ResetColor()
 
@@ -75,6 +76,7 @@ Public Class SearchHelpers
                         Else
                             Console.ForegroundColor = ConsoleColor.DarkRed
                             Console.WriteLine("Unparseable post: " & postNotBooks.URL)
+                            Debug.Print("Unparseable post: " & postNotBooks.URL)
                             Console.ResetColor()
                             postNotBooks.IsParsable = False
                         End If
@@ -122,7 +124,7 @@ Public Class SearchHelpers
             If post.IsParsable AndAlso b.IsParsable Then
                 If b.IsWinner() Then
                     Console.ForegroundColor = ConsoleColor.Green
-                    Console.WriteLine("WINNER WINNER WINNER!")
+                    Console.Write("WINNER WINNER WINNER!")
                     Console.ResetColor()
                     resultType = "Winners"
                     desc = "Profitable book deals (winners) in the " & theCity & " area."
@@ -130,7 +132,7 @@ Public Class SearchHelpers
                     outfile = theCity & " Winners.xml"
                 ElseIf b.IsMaybe() Then
                     Console.ForegroundColor = ConsoleColor.Cyan
-                    Console.WriteLine("MAYBE MAYBE MAYBE!")
+                    Console.Write("MAYBE MAYBE MAYBE!")
                     Console.ResetColor()
                     resultType = "Maybes"
                     desc = "Potentially profitable book deals (maybes) in the " & theCity & " area."
@@ -138,52 +140,61 @@ Public Class SearchHelpers
                     outfile = theCity & " Maybes.xml"
                 ElseIf b.IsHVSB() Then
                     Console.ForegroundColor = ConsoleColor.Magenta
-                    Console.WriteLine("HIGH VALUE STALE BOOK!")
+                    Console.Write("VALUABLE STALE BOOK!")
                     Console.ResetColor()
                     resultType = "HVSBs"
                     desc = "High value stale books in the " & theCity & " area.  These books can be sold for a profit, but only if the seller (who hasn't been successful selling them at the current asking price) will come down on the price a bit."
-                    title = theCity & " Stale Books of Value"
-                    outfile = theCity & " High Value Stale Books.xml"
+                    title = theCity & " Valuable Stale Books"
+                    outfile = theCity & " Valuable Stale Books.xml"
+                ElseIf b.IsHVOBO() Then
+                    Console.ForegroundColor = ConsoleColor.Magenta
+                    Console.Write("VALUABLE 'OR BEST OFFER' BOOK!")
+                    Console.ResetColor()
+                    resultType = "HVOBOs"
+                    desc = "High value 'or best offer' books in the " & theCity & " area.  These books can be sold for a profit, but only if the seller (who indicated that they'd consider the best offer) will come down on the price a bit."
+                    title = theCity & " Valuable 'Or Best Offer' Books"
+                    outfile = theCity & " Valuable Or Best Offer Books.xml"
                 Else
                     Console.ForegroundColor = ConsoleColor.DarkRed
                     Console.WriteLine("Trashed book found in: " & post.URL)
+                    resultType = "trash"
                     Console.ResetColor()
                     proceed = False
                 End If
             Else
                 Console.ForegroundColor = ConsoleColor.DarkRed
                 Console.WriteLine("Unparseable post or book:  " & post.URL)
+                Debug.Print("Unparseable post or book:  " & post.URL)
+                resultType = "unparseable"
                 Console.ResetColor()
                 proceed = False
             End If
 
             If proceed Then
-                If Not FeedAlreadyExists(resultType, Sftp, SftpDirectory, City) Then
-                    rssFeed = New RSSFeed(title, wwwRoot & "showfeed.php?feed=" & replaceSpacesWithTwenty(Path.GetFileName(outfile)), desc, resultType, outfile)
-                Else
-                    rssFeed = New RSSFeed(wwwRoot & "leads/" & replaceSpacesWithTwenty(outfile))
-                End If
 
-                'add the result to the rss feed
                 If Not AlreadyInRSSFeed(b.ID, resultType, Sftp, SftpDirectory, City, SftpURL) Then
-                    Dim dateUpdated As String = post.UpdateDate 'pubDate 
-                    Dim postTitle As String = post.Title 'arbitext:postTitle
+                    Console.ForegroundColor = ConsoleColor.Yellow
+                    Console.WriteLine(" NOT YET IN THE FEEDS- ADDING!")
+                    Console.ResetColor()
+
+                    If Not FeedAlreadyExists(resultType, Sftp, SftpDirectory, City) Then
+                        rssFeed = New RSSFeed(title, wwwRoot & "showfeed.php?feed=" & replaceSpacesWithTwenty(Path.GetFileName(outfile)), desc, resultType, outfile)
+                    Else
+                        rssFeed = New RSSFeed(wwwRoot & "leads/" & replaceSpacesWithTwenty(outfile))
+                    End If
+
+
                     Dim postLink As String = "https://href.li/?" & post.URL 'arbitext:postLink 
-                    Dim postCity As String = post.City 'arbitext:postCity 
-                    Dim bookTitle As String = b.Title 'arbitext:bookTitle
-                    Dim isbn As String = b.IsbnFromPost 'arbitext:isbn
-                    Dim askingPrice As Decimal = b.AskingPrice 'arbitext:askingprice
-                    Dim bsLink As String = b.BookscouterSiteLink 'arbitext:buybackLink
-                    Dim buybackPrice As Decimal = b.BuybackAmount 'arbitext:buybackPrice
-                    Dim profit As Decimal = b.Profit 'arbitext:profit
-                    Dim profitMargin As Decimal = b.ProfitPercentage 'arbitext:profitMargin
-                    Dim id As String = b.ID 'GUID 
-                    Dim resultURL As String = wwwRoot & "showitem.php?item=" & replaceSpacesWithTwenty(Path.GetFileName(rssFeed.FileName)) & "|" & id
-                    Dim theDesc As String = getDesc(resultType, postCity, askingPrice, profit, buybackPrice)
-                    Dim amazonBookImage As String = b.ImageURL 'arbitext:bookImage 
-                    Dim postImage As String = post.Image 'arbitext:postImage 
-                    WriteRSSItem(rssFeed.Document, bookTitle, resultURL, dateUpdated, theDesc, id, postLink, postTitle, postCity, bookTitle, isbn, askingPrice, bsLink, buybackPrice, profit, profitMargin, postImage, amazonBookImage)
+                    Dim resultURL As String = wwwRoot & "showitem.php?item=" & replaceSpacesWithTwenty(Path.GetFileName(rssFeed.FileName)) & "|" & b.ID
+                    Dim theDesc As String = getDesc(resultType, post.City, b.AskingPrice, b.Profit, b.BuybackAmount)
+                    WriteRSSItem(rssFeed.Document, b.Title, resultURL, post.UpdateDate, theDesc,
+                                 b.ID, postLink, post.Title, post.City, b.Title, b.IsbnFromPost, b.AskingPrice,
+                                 b.BookscouterSiteLink, b.BuybackAmount, b.Profit, b.ProfitPercentage, b.isOBO, post.Image, b.ImageURL)
                     PushUpdatedXML(rssFeed, Sftp)
+                Else
+                    Console.ForegroundColor = ConsoleColor.DarkYellow
+                    Console.WriteLine("  Already in the feeds, no need to add")
+                    Console.ResetColor()
                 End If
             End If 'proceed check
         Next b
