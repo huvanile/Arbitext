@@ -75,10 +75,13 @@
     <Compile Include="globals.vb" />
     <Compile Include="Helpers\CraigslistHelpers.vb" />
     <Compile Include="Helpers\RSSHelpers.vb" />
+    <Compile Include="Helpers\SFTPHelpers.vb" />
     <Compile Include="Helpers\StringHelpers.vb" />
     <Compile Include="Models\Book.vb" />
+    <Compile Include="Models\Phone.vb" />
     <Compile Include="Models\Post.vb" />
     <Compile Include="Models\RSSFeed.vb" />
+    <Compile Include="Models\TPGResult.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>

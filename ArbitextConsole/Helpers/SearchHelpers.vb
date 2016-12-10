@@ -1,4 +1,4 @@
-﻿Imports ArbitextConsole.Globals
+﻿Imports ArbitextClassLibrary.Globals
 Imports ArbitextClassLibrary
 Imports ArbitextClassLibrary.StringHelpers
 Imports ArbitextClassLibrary.CraigslistHelpers
@@ -8,7 +8,6 @@ Imports System.IO
 Public Class SearchHelpers
     Private Shared _checkedPostsNotBooks As List(Of Post)      'list of posts checked before populating the post object with the accompanying books
     Private Shared _checkedPostsAndBooks As List(Of Post)      'list of posts checked with all of the books included
-    Private Const _resultHook As String = "<li class=""result-row"" data-pid="
 
     Public Shared Sub allQuerySearch()
         _checkedPostsNotBooks = New List(Of Post)

@@ -1,5 +1,5 @@
-﻿Imports ArbitextClassLibrary.SFTPHelpers
-Imports ArbitextClassLibrary.Globals
+﻿Imports ArbitextClassLibrary.Globals
+Imports ArbitextClassLibrary.SFTPHelpers
 
 Module Main
 

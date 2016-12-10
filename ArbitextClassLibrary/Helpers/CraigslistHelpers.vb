@@ -16,6 +16,18 @@ Public Class CraigslistHelpers
         Return tmpCount
     End Function
 
+    Public Shared Function getMakeAndModel(str As String) As String
+        Dim z As Long : z = 0
+        Dim splitholder
+        Dim m As String : m = ""
+        z = Strings.InStr(1, LCase(str), "<span>model name / number: <b>")
+        m = Right(str, Len(str) - z)
+        splitholder = Split(m, "</b></span><br>") 'boundary
+        splitholder = Split(splitholder(0), "<b>")
+        m = Trim(splitholder(UBound(splitholder)))
+        Return m
+    End Function
+
     Public Shared Function isMulti(str As String) As Boolean
         Dim match As Boolean = False
         If (LCase(str) Like "*books*" And Not LCase(str) Like "*bookstore*") _

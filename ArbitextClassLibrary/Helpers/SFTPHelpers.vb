@@ -1,5 +1,5 @@
-﻿Imports ArbitextConsole.Globals
-Imports Renci.SshNet
+﻿Imports Renci.SshNet
+Imports ArbitextClassLibrary.Globals
 
 Public Class SFTPHelpers
     Public Shared Function ConnectToSFTP()

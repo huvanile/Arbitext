@@ -15,7 +15,9 @@ Public Class Post
     Private _image As String              'url of image in craiglist post
     Private _html As String               'html of post
     Private _books As List(Of Book)
+    Private _phones As List(Of Phone)
     Private _isParsable As Boolean        'is this post parseable?
+    Private _searchterm As String
 
 #Region "Constructors"
 
@@ -47,6 +49,27 @@ Public Class Post
         End If
     End Sub
 
+    Sub New(learnAboutPhones As Boolean, url As String)
+        _url = url
+        _body = ""
+        _city = "-"
+        _askingPrice = -1
+        _title = "?"
+        _updateDate = "-"
+        _postDate = "?"
+        _searchterm = "(?)"
+        _image = ""
+        _html = ""
+        _books = Nothing
+        If LearnAboutPost(True) Then
+            _phones = New List(Of Phone)
+            findPhonesInPost()
+            If _phones.Count > 0 And _askingPrice <> -1 And _askingPrice <> 1 Then _isParsable = True Else _isParsable = False
+        Else
+            If _askingPrice <> -1 And _askingPrice <> 1 And Not _searchterm Like "(" Then _isParsable = True Else _isParsable = False
+        End If
+    End Sub
+
     Sub New(preCheckedPost As Post)
         _url = preCheckedPost.URL
         _body = preCheckedPost.Body
@@ -64,6 +87,22 @@ Public Class Post
         findBooksInPost("<p>", False)
         findBooksInPost("", False)
         If _books.Count > 0 Then _isParsable = True Else _isParsable = False
+    End Sub
+
+    Sub New(preCheckedPost As Post, forPhones As Boolean)
+        _url = preCheckedPost.URL
+        _body = preCheckedPost.Body
+        _city = preCheckedPost.City
+        _askingPrice = preCheckedPost.AskingPrice
+        _title = preCheckedPost.Title
+        _updateDate = preCheckedPost.UpdateDate
+        _postDate = preCheckedPost.PostDate
+        _searchterm = preCheckedPost.SearchTerm
+        _image = preCheckedPost.Image
+        _html = preCheckedPost._html
+        _phones = New List(Of Phone)
+        findPhonesInPost()
+        If _phones.Count > 0 Then _isParsable = True Else _isParsable = False
     End Sub
 
 #End Region
@@ -112,6 +151,11 @@ Public Class Post
         End Get
     End Property
 
+    ReadOnly Property SearchTerm As String
+        Get
+            Return _searchterm
+        End Get
+    End Property
     ReadOnly Property Isbn As String
         Get
             Return _isbn.Trim
@@ -171,6 +215,15 @@ Public Class Post
     '    End If
     'End Function
 
+    Property Phones As List(Of Phone)
+        Get
+            Return _phones
+        End Get
+        Set(value As List(Of Phone))
+            _phones = value
+        End Set
+    End Property
+
     Property Books As List(Of Book)
         Get
             Return _books
@@ -189,6 +242,19 @@ Public Class Post
 #End Region
 
 #Region "Methods"
+
+    Sub findPhonesInPost()
+        Dim tmpphone As Phone
+        If _html.Contains("<span>model name / number: <b>") Then
+            _searchterm = getMakeAndModel(_html)
+            If _searchterm.Length < 5 Then _searchterm = _title
+        Else
+            _searchterm = _title
+            If _searchterm.Length < 5 Then _searchterm = getMakeAndModel(_html)
+        End If
+        tmpphone = New Phone(_searchterm, _askingPrice, _body, True, False, _title, _body, _updateDate)
+        _phones.Add(tmpphone)
+    End Sub
 
     Sub findBooksInPost(Optional splitter As String = "", Optional queryBS As Boolean = True)
         Dim tmpISBN As String = ""
@@ -232,7 +298,7 @@ Public Class Post
         End If
     End Sub
 
-    Function LearnAboutPost() As Boolean
+    Function LearnAboutPost(Optional forPhones As Boolean = False) As Boolean
 
         Dim tmp As String = ""
         Dim wc As New Net.WebClient
@@ -262,7 +328,7 @@ Public Class Post
                     _askingPrice = getAskingPrice(_html)
                 End If
 
-                'find location (HAP)
+                'find location (MAP)
                 For Each element In allElements.tags("small")
                     Dim tmpLoc As String = Trim(element.innerText)
                     tmpLoc = Replace(tmpLoc, ")", "")
@@ -316,8 +382,13 @@ Public Class Post
                 m = Trim(splitholder(0))
                 _body = m
 
-                'get isbn
-                _isbn = getISBN(_html, _url)
+                If forPhones Then
+
+                Else
+                    'get isbn
+                    _isbn = getISBN(_html, _url)
+                End If
+
 
                 'clean up
                 element = Nothing
@@ -326,7 +397,11 @@ Public Class Post
                 bHTML = Nothing
                 allElements = Nothing
 
-                If _isbn Like "*(*" Or _askingPrice = -1 Then Return False Else Return True
+                If forPhones Then
+                    Return True
+                Else
+                    If _isbn Like "*(*" Or _askingPrice = -1 Then Return False Else Return True
+                End If
 
             Else
                 'page not found title
