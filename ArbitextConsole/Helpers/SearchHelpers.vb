@@ -177,7 +177,7 @@ Public Class SearchHelpers
                     Console.WriteLine(" NOT YET IN THE FEEDS- ADDING!")
                     Console.ResetColor()
 
-                    If Not FeedAlreadyExists(resultType, Sftp, SftpDirectory, City) Then
+                    If Not FeedAlreadyExists("book", resultType, Sftp, SftpDirectory, City) Then
                         rssFeed = New RSSFeed(title, wwwRoot & "showfeed.php?feed=" & replaceSpacesWithTwenty(Path.GetFileName(outfile)), desc, resultType, outfile)
                     Else
                         rssFeed = New RSSFeed(wwwRoot & "leads/" & replaceSpacesWithTwenty(outfile))

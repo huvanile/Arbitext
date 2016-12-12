@@ -6,14 +6,21 @@ Imports System.Text
 
 Public Class RSSHelpers
 
-    Public Shared Function FeedAlreadyExists(type As String, sftp As SftpClient, sftpDirectory As String, city As String)
+    Public Shared Function FeedAlreadyExists(category As String, type As String, sftp As SftpClient, sftpDirectory As String, city As String)
         Dim files As IEnumerable(Of Sftp.SftpFile) = sftp.ListDirectory(sftpDirectory)
         If LCase(type) Like "*hvs*" Then type = "stale"
         If LCase(type) Like "*obo*" Then type = "best"
         For Each file As Sftp.SftpFile In files
             If file.Name Like "*.xml*" AndAlso LCase(file.Name) Like "*" & LCase(city) & "*" AndAlso LCase(file.Name) Like "*" & LCase(type) & "*" Then
-                files = Nothing
-                Return True
+                If category = "phone" Then
+                    If LCase(file.Name) Like "*phone*" Then
+                        files = Nothing
+                        Return True
+                    End If
+                Else
+                    files = Nothing
+                    Return True
+                End If
             End If
         Next
         files = Nothing
@@ -50,7 +57,7 @@ Public Class RSSHelpers
         Dim tmp As String = "Someone"
         If postcity.Trim.Length <= 3 And LCase(postcity.Trim) <> "google map" Then tmp = tmp & " in " & StrConv(postcity, VbStrConv.ProperCase).Trim
         tmp = tmp & " is asking " & FormatCurrency(askingprice, 2, TriState.False) &
-                    " for this book which sells online For " & FormatCurrency(buybackPrice, 2, TriState.False) & ".  "
+                    " for this item which sells online for " & FormatCurrency(buybackPrice, 2, TriState.False) & ".  "
         Select Case resultType
             Case "HVOBOs"
                 Return tmp & "BUT, they said they'd take the best offer. Could be profitable if negotiated."
@@ -71,24 +78,71 @@ Public Class RSSHelpers
     End Sub
 
     Public Shared Sub WriteRSSItem(ByRef document As XmlDocument,
-                        Title As String,
-                        Link As String,
-                        pubDate As DateTime,
-                        Description As String,
-                        Guid As String,
-                        postLink As String,
-                        postTitle As String,
-                        postCity As String,
-                        bookTitle As String,
-                        isbn As String,
-                        askingPrice As Decimal,
-                        bsLink As String,
-                        buybackPrice As Decimal,
-                        profit As Decimal,
-                        profitMargin As Decimal,
-                        isOBO As Boolean,
-                        Optional postImageURL As String = globals.wwwRoot & "/img/PlaceholderBook.png",
-                        Optional amazonBookImageURL As String = globals.wwwRoot & "/img/PlaceholderBook.png")
+        searchTerm As String,
+        link As String,
+        pubDate As DateTime,
+        Description As String,
+        Guid As String,
+        postLink As String,
+        postTitle As String,
+        postCity As String,
+        askingPrice As Decimal,
+        tpgUrl As String,
+        median As Decimal,
+        mean As Decimal,
+        profit As Decimal,
+        profitMargin As Decimal,
+        isOBO As Boolean,
+        Optional postImageURL As String = Globals.wwwRoot & "/img/PlaceholderBook.png")
+
+        'First check we haven't already created a chnanel, as there should only be one in the feed
+        Dim channels = document.GetElementsByTagName("channel")
+        If channels.Count = 0 Then Throw New ArgumentException("Please create a channel first by calling CreateChannel")
+
+        Dim mainchannel = channels(0)
+
+        'Create an item
+        Dim thisitem = document.CreateElement("item")
+        thisitem.AppendChild(CreateTextElement("title", postTitle, document))
+        thisitem.AppendChild(CreateTextElement("link", link, document))
+        thisitem.AppendChild(CreateTextElement("guid", Guid, {New KeyValuePair(Of String, String)("isPermaLink", "false")}, document))
+        thisitem.AppendChild(CreateTextElement("pubDate", FormatDateTime(pubDate, vbLongDate), document))
+        thisitem.AppendChild(addCustomNode("postLink", postLink, document))
+        thisitem.AppendChild(addCustomNode("postTitle", postTitle, document))
+        thisitem.AppendChild(addCustomNode("postCity", postCity, document))
+        thisitem.AppendChild(addCustomNode("askingPrice", askingPrice, document))
+        thisitem.AppendChild(addCustomNode("buybackLink", tpgUrl, document))
+        thisitem.AppendChild(addCustomNode("median", median, document))
+        thisitem.AppendChild(addCustomNode("mean", mean, document))
+        thisitem.AppendChild(addCustomNode("profit", profit, document))
+        thisitem.AppendChild(addCustomNode("profitMargin", profitMargin, document))
+        thisitem.AppendChild(addCustomNode("postImage", postImageURL, document))
+        thisitem.AppendChild(addCustomNode("phoneImage", "/img/phoneph.png", document))
+        thisitem.AppendChild(CreateTextElement("description", Description, document))
+
+        'Append the element
+        mainchannel.AppendChild(thisitem)
+    End Sub
+
+    Public Shared Sub WriteRSSItem(ByRef document As XmlDocument,
+        Title As String,
+        Link As String,
+        pubDate As DateTime,
+        Description As String,
+        Guid As String,
+        postLink As String,
+        postTitle As String,
+        postCity As String,
+        bookTitle As String,
+        isbn As String,
+        askingPrice As Decimal,
+        bsLink As String,
+        buybackPrice As Decimal,
+        profit As Decimal,
+        profitMargin As Decimal,
+        isOBO As Boolean,
+        Optional postImageURL As String = Globals.wwwRoot & "/img/phoneph.png",
+        Optional amazonItemImageURL As String = Globals.wwwRoot & "/img/phoneph.png")
 
 
         'First check we haven't already created a chnanel, as there should only be one in the feed
@@ -115,7 +169,7 @@ Public Class RSSHelpers
         thisitem.AppendChild(addCustomNode("profit", profit, document))
         thisitem.AppendChild(addCustomNode("profitMargin", profitMargin, document))
         thisitem.AppendChild(addCustomNode("postImage", postImageURL, document))
-        thisitem.AppendChild(addCustomNode("bookImage", amazonBookImageURL, document))
+        thisitem.AppendChild(addCustomNode("itemImage", amazonItemImageURL, document))
         thisitem.AppendChild(CreateTextElement("description", Description, document))
 
         'Append the element

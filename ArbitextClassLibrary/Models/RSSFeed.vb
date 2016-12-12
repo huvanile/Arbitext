@@ -45,11 +45,18 @@ Public Class RSSFeed
     End Sub
 
     Public Sub New(url As String)
-        Dim MyRssRequest As WebRequest = WebRequest.Create(url)
-        Dim MyRssResponse As WebResponse = MyRssRequest.GetResponse()
-        Dim MyRssStream As Stream = MyRssResponse.GetResponseStream()
-        _document = New XmlDocument()
-        _document.Load(MyRssStream)
+        Try
+            Dim MyRssRequest As WebRequest = WebRequest.Create(url)
+            Dim MyRssResponse As WebResponse = MyRssRequest.GetResponse()
+            Dim MyRssStream As Stream = MyRssResponse.GetResponseStream() 'errors when feed doesnt yet exist
+            _document = New XmlDocument()
+            _document.Load(MyRssStream)
+            MyRssRequest = Nothing
+            MyRssResponse = Nothing
+            MyRssStream = Nothing
+        Catch
+            _document = New XmlDocument()
+        End Try
         _fileName = Path.GetFileName(New Uri(url).LocalPath)
         _description = _document.GetElementsByTagName("description")(0).InnerText.ToString
         _title = _document.GetElementsByTagName("title")(0).InnerText.ToString
@@ -58,9 +65,6 @@ Public Class RSSFeed
         If channels.Count = 0 Then
             CreateChannel()
         End If
-        MyRssRequest = Nothing
-        MyRssResponse = Nothing
-        MyRssStream = Nothing
     End Sub
 
 #End Region

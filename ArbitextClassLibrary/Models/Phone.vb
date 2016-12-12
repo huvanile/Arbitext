@@ -45,19 +45,20 @@ Public Class Phone
         End Set
     End Property
 
-    Property Title As String
-        Get
-            Return _title
-        End Get
-        Set(value As String)
-            _title = value.Trim
-        End Set
-    End Property
-
 #End Region
 
 #Region "Readonly Properties"
 
+    ReadOnly Property TpgURL As String
+        Get
+            Dim splitholder = Split(_searchterm, " ")
+            Dim tmp As String = "http://www.thepricegeek.com/results/"
+            For x = LBound(splitholder) To UBound(splitholder)
+                If x = 0 Then tmp = tmp & splitholder(x) Else tmp = tmp & "+" & splitholder(x)
+            Next
+            Return tmp & "?country=us"
+        End Get
+    End Property
     ''' <summary>
     ''' Unique phone lead ID
     ''' </summary>
@@ -115,6 +116,19 @@ Public Class Phone
         End Get
     End Property
 
+    ReadOnly Property IsHVOBO As Boolean
+        Get
+            IsHVOBO = False
+            If IsParsable _
+            AndAlso Not IsWinner _
+            AndAlso Not IsMaybe _
+            AndAlso Not IsHVSP _
+            AndAlso (isOBO Or _askingPrice = -2) _
+            AndAlso _median >= 35 Then
+                Return True
+            End If
+        End Get
+    End Property
 
     ReadOnly Property IsHVSP As Boolean
         Get
@@ -159,7 +173,7 @@ Public Class Phone
 
     ReadOnly Property ImageURL As String
         Get
-            Return _imageURL.Trim
+            Return "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcRSMCkoA3IEaxwUHRf4k5GdLK1UafoP92D0V5QEyjyXJWC_SJYW8w"
         End Get
     End Property
 
@@ -193,6 +207,11 @@ Public Class Phone
         End Get
     End Property
 
+    ReadOnly Property SearchTerm As String
+        Get
+            Return _searchterm
+        End Get
+    End Property
 #End Region
 
 #Region "FLAG Properties"

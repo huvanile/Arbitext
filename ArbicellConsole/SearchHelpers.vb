@@ -60,6 +60,7 @@ Public Class SearchHelpers
                     Console.WriteLine("- Phones:  Winners: " & _checkedPostsAndPhones.SelectMany(Function(x) x.Phones).Where(Function(y) y.IsWinner = True).Count)
                     Console.WriteLine("- Phones:  Maybes: " & _checkedPostsAndPhones.SelectMany(Function(x) x.Phones).Where(Function(y) y.IsMaybe = True).Count)
                     Console.WriteLine("- Phones:  HVSB: " & _checkedPostsAndPhones.SelectMany(Function(x) x.Phones).Where(Function(y) y.IsHVSP = True).Count)
+                    Console.WriteLine("- Phones:  HVOBO: " & _checkedPostsAndPhones.SelectMany(Function(x) x.Phones).Where(Function(y) y.IsHVOBO = True).Count)
                     Console.WriteLine("- Phones:  Trash: " & _checkedPostsAndPhones.SelectMany(Function(x) x.Phones).Where(Function(y) y.IsTrash = True).Count)
                     Console.ResetColor()
 
@@ -117,28 +118,36 @@ Public Class SearchHelpers
             If post.IsParsable AndAlso p.IsParsable Then
                 If p.IsWinner() Then
                     Console.ForegroundColor = ConsoleColor.Green
-                    Console.WriteLine("WINNER WINNER WINNER!")
+                    Console.Write("WINNER phone WINNER phone WINNER!  ")
                     Console.ResetColor()
                     resultType = "Winners"
                     desc = "Profitable phone deals (winners) in the " & theCity & " area."
-                    title = theCity & " Winners"
-                    outfile = theCity & " Winners.xml"
+                    title = theCity & " Winners- Phones"
+                    outfile = theCity & " Winners- Phones.xml"
                 ElseIf p.IsMaybe() Then
                     Console.ForegroundColor = ConsoleColor.Cyan
-                    Console.WriteLine("MAYBE MAYBE MAYBE!")
+                    Console.Write("MAYBE phone MAYBE phone MAYBE!  ")
                     Console.ResetColor()
                     resultType = "Maybes"
                     desc = "Potentially profitable phone deals (maybes) in the " & theCity & " area."
-                    title = theCity & " Maybes"
-                    outfile = theCity & " Maybes.xml"
+                    title = theCity & " Maybes- Phones"
+                    outfile = theCity & " Maybes- Phones.xml"
                 ElseIf p.IsHVSP() Then
                     Console.ForegroundColor = ConsoleColor.Magenta
-                    Console.WriteLine("HIGH VALUE STALE PHONE!")
+                    Console.Write("HIGH VALUE STALE PHONE!  ")
                     Console.ResetColor()
                     resultType = "HVSPs"
                     desc = "High value stale phones in the " & theCity & " area.  These phones can be sold for a profit, but only if the seller (who hasn't been successful selling them at the current asking price) will come down on the price a bit."
                     title = theCity & " Stale Phones of Value"
                     outfile = theCity & " High Value Stale Phones.xml"
+                ElseIf p.IsHVOBO() Then
+                    Console.ForegroundColor = ConsoleColor.Magenta
+                    Console.Write("VALUABLE 'OR BEST OFFER' PHONE!")
+                    Console.ResetColor()
+                    resultType = "HVOBOs"
+                    desc = "High value 'or best offer' phones in the " & theCity & " area.  These phones can be sold for a profit, but only if the seller (who indicated that they'd consider the best offer) will come down on the price a bit."
+                    title = theCity & " Valuable 'Or Best Offer' Phones"
+                    outfile = theCity & " Valuable Or Best Offer Phones.xml"
                 Else
                     Console.ForegroundColor = ConsoleColor.DarkRed
                     Console.WriteLine("Trash phone lead found in: " & post.URL)
@@ -154,33 +163,31 @@ Public Class SearchHelpers
 
             If proceed Then
                 Debug.Print(p.ID, " ", resultType, post.URL)
-                '    If Not FeedAlreadyExists(resultType, Sftp, SftpDirectory, City) Then
-                '        rssFeed = New RSSFeed(title, wwwRoot & "showfeed.php?feed=" & replaceSpacesWithTwenty(Path.GetFileName(outfile)), desc, resultType, outfile)
-                '    Else
-                '        rssFeed = New RSSFeed(wwwRoot & "leads/" & replaceSpacesWithTwenty(outfile))
-                '    End If
+                If Not AlreadyInRSSFeed(p.ID, resultType, Sftp, SftpDirectory, City, SftpURL) Then
+                    Console.ForegroundColor = ConsoleColor.Yellow
+                    Console.WriteLine(" NOT YET IN THE FEEDS- ADDING!")
+                    Console.ResetColor()
 
-                '    'add the result to the rss feed
-                '    If Not AlreadyInRSSFeed(p.ID, resultType, Sftp, SftpDirectory, City, SftpURL) Then
-                '        'Dim dateUpdated As String = post.UpdateDate
-                '        'Dim postTitle As String = post.Title
-                '        'Dim postLink As String = "https://href.li/?" & post.URL
-                '        'Dim postCity As String = post.City
-                '        'Dim phoneMake As String = p.Make
-                '        'Dim phoneModel As String = p.Model
-                '        'Dim askingPrice As Decimal = p.AskingPrice
-                '        'Dim bsLink As String = p.ThePriceGeekLink
-                '        'Dim avgPrice As Decimal = p.AvgPrice
-                '        'Dim profit As Decimal = p.Profit
-                '        'Dim profitMargin As Decimal = p.ProfitPercentage
-                '        'Dim id As String = p.ID
-                '        'Dim resultURL As String = wwwRoot & "showitem.php?item=" & replaceSpacesWithTwenty(Path.GetFileName(rssFeed.FileName)) & "|" & id
-                '        'Dim theDesc As String = getDesc(resultType, postCity, askingPrice, profit, buybackPrice)
-                '        'Dim amazonBookImage As String = p.ImageURL 'arbitext:bookImage 
-                '        'Dim postImage As String = post.Image 'arbitext:postImage 
-                '        ''WriteRSSItem(rssFeed.Document, bookTitle, resultURL, dateUpdated, theDesc, id, postLink, postTitle, postCity, bookTitle, isbn, askingPrice, bsLink, buybackPrice, profit, profitMargin, postImage, amazonBookImage)
-                '        'PushUpdatedXML(rssFeed, Sftp)
-                '    End If
+                    If Not FeedAlreadyExists("phone", resultType, Sftp, SftpDirectory, City) Then
+                        rssFeed = New RSSFeed(title, wwwRoot & "showfeed.php?feed=" & replaceSpacesWithTwenty(Path.GetFileName(outfile)), desc, resultType, outfile)
+                    Else
+                        rssFeed = New RSSFeed(wwwRoot & "leads/" & replaceSpacesWithTwenty(outfile))
+                    End If
+
+
+                    Dim postLink As String = "https://href.li/?" & post.URL 'arbitext:postLink 
+                    Dim resultURL As String = wwwRoot & "showitem.php?item=" & replaceSpacesWithTwenty(Path.GetFileName(rssFeed.FileName)) & "|" & p.ID
+                    Dim theDesc As String = getDesc(resultType, post.City, p.AskingPrice, p.Profit, p.Median)
+
+                    WriteRSSItem(rssFeed.Document, p.SearchTerm, resultURL, CDate(post.UpdateDate), theDesc, p.ID, post.URL, post.Title, post.City,
+                                 p.AskingPrice, p.TpgURL, p.Median, p.Mean, p.Profit, p.ProfitPercentage, p.isOBO, post.Image)
+
+                    PushUpdatedXML(rssFeed, Sftp)
+                Else
+                    Console.ForegroundColor = ConsoleColor.DarkYellow
+                    Console.WriteLine("  Already in the feeds, no need to add")
+                    Console.ResetColor()
+                End If
             End If 'proceed check
         Next p
 
