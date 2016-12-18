@@ -358,7 +358,6 @@ Public Class Book
 
     Public Function GetDataFromBookscouter() As Boolean
         Try
-
             Dim wc As New Net.WebClient
             Dim isbn As String : If _isbn13 = "" Then isbn = _isbn10 Else isbn = _isbn13
             Dim bXML() As Byte = wc.DownloadData(_bookscouterAPILink)
@@ -371,7 +370,7 @@ Public Class Book
             If doc.ChildNodes.Count >= 2 Then 'its 2 if its a bad isbn, and 0 if not response at all
                 nodes = doc.GetElementsByTagName("title") : _title = nodes(0).InnerText.Trim()
                 nodes = doc.GetElementsByTagName("image") : _imageURL = nodes(0).InnerText.Trim()
-                _imageURL = Replace(ImageURL, "._SL75_.", "._SL300_.")
+                _imageURL = Replace(ImageURL, "._SL75_.", "._SL400_.")
                 nodes = doc.GetElementsByTagName("isbn10") : _isbn10 = nodes(0).InnerText.Trim()
                 nodes = doc.GetElementsByTagName("isbn13") : _isbn13 = nodes(0).InnerText.Trim()
                 nodes = doc.GetElementsByTagName("author") : _author = nodes(0).InnerText.Trim() & vbCrLf

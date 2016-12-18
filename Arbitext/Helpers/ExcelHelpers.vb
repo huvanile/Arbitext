@@ -1,5 +1,5 @@
 ﻿Imports Microsoft.Office.Interop.Excel
-
+Imports ArbitextClassLibrary.Globals
 Public Class ExcelHelpers
 
     Public Shared Sub rowTitles(theRange As Excel.Range)
@@ -24,7 +24,7 @@ Public Class ExcelHelpers
 
     Public Shared Sub verifyOneRowSelected()
         If ThisAddIn.AppExcel.Selection.Rows.Count > 1 Then
-            MsgBox("Only 1 row must be selected", vbInformation, ThisAddIn.Title)
+            MsgBox("Only 1 row must be selected", vbInformation, Title)
             ThisAddIn.Proceed = False
         End If
     End Sub

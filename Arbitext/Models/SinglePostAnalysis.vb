@@ -1,23 +1,23 @@
 ﻿Imports Arbitext.ExcelHelpers
 Imports Arbitext.ArbitextHelpers
 Imports ArbitextClassLibrary
-
+Imports ArbitextClassLibrary.Globals
 Public Class SinglePostAnalysis
     Sub New()
-        ThisAddIn.TldUrl = "http://" & ThisAddIn.City & ".craigslist.org"
-        Dim tmpURL As String = InputBox("What's the post URL?", ThisAddIn.Title).Trim
+        TldUrl = "http://" & City & ".craigslist.org"
+        Dim tmpURL As String = InputBox("What's the post URL?", Title).Trim
         If Not tmpURL = "" Then
             Dim post As Post = New Post(tmpURL)
             If post.IsParsable Then
                 grabPHPicIfNeeded()
                 If post.isMulti Then
                     doAMultiManualCheck(post)
-                    MsgBox("Done!", vbOK, ThisAddIn.Title)
+                    MsgBox("Done!", vbOK, Title)
                 Else
                     SingleManualCheck(post)
                 End If
             Else
-                MsgBox("Post is unparsable, unable to find books in post, or hit a 404 page", vbOK, ThisAddIn.Title)
+                MsgBox("Post is unparsable, unable to find books in post, or hit a 404 page", vbOK, Title)
             End If
         Else
             'hit cancel on inputbox, do nothing

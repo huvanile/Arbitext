@@ -1,4 +1,5 @@
 ﻿Imports System.Net
+Imports ArbitextClassLibrary.Globals
 Imports Arbitext.RegistryHelpers
 
 Public Class FrmPrefs
@@ -7,7 +8,7 @@ Public Class FrmPrefs
         addressNullPrefs()
         loadVariablesFromRegistry()
         loadFormPrefsFromVariables()
-        Me.Text = ThisAddIn.Title
+        Me.Text = Title
     End Sub
 
     Private Sub btnSave_Click(sender As Object, e As EventArgs) Handles btnSave.Click

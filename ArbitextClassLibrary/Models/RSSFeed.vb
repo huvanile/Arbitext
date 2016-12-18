@@ -55,7 +55,7 @@ Public Class RSSFeed
             MyRssResponse = Nothing
             MyRssStream = Nothing
         Catch
-            _document = New XmlDocument()
+            Throw New Exception
         End Try
         _fileName = Path.GetFileName(New Uri(url).LocalPath)
         _description = _document.GetElementsByTagName("description")(0).InnerText.ToString

@@ -6,28 +6,71 @@ Imports System.Text
 
 Public Class RSSHelpers
 
+    ''' <summary>
+    ''' This loops through all entries in the feed and kills any that have been removed from craigslist
+    ''' </summary>
+    Public Shared Sub RemoveDeadLeads(sftp As SftpClient)
+        Dim files As IEnumerable(Of Sftp.SftpFile) = sftp.ListDirectory(Globals.SftpDirectory)
+        For Each file As Sftp.SftpFile In files
+            If file.Name Like "*.xml*" Then
+                Try
+                    Dim url As String = Globals.wwwRoot & "leads/" & StringHelpers.replaceSpacesWithTwenty(file.Name)
+                    Dim MyRssRequest As WebRequest = WebRequest.Create(url)
+                    Dim MyRssResponse As WebResponse = MyRssRequest.GetResponse()
+                    Dim MyRssStream As Stream = MyRssResponse.GetResponseStream() 'errors when feed doesnt yet exist
+                    Dim doc = New XmlDocument()
+                    doc.Load(MyRssStream)
+                    MyRssRequest = Nothing
+                    MyRssResponse = Nothing
+                    MyRssStream = Nothing
+
+                    Dim channels As XmlNodeList = doc.GetElementsByTagName("channel")
+                    If channels.Count = 0 Then Throw New ArgumentException("Please create a channel first by calling CreateChannel")
+                    Dim mainchannel = channels(0)
+                    Dim x As XmlNodeList = doc.GetElementsByTagName("item")
+                    For i As Short = (doc.GetElementsByTagName("item").Count - 1) To 0 Step -1
+                        Debug.Print("Checking item " & i & " in feed: " & file.Name)
+                        If x(i).ChildNodes.Count > 0 Then
+                            Dim thelink As String = x(i).ChildNodes(4).InnerText
+                            Using wc As New WebClient
+                                Dim value As String = wc.DownloadString(thelink)
+                                If LCase(value) Like "*posting has been deleted*" Then
+                                    mainchannel.RemoveChild(x(i))
+                                    mainchannel.ChildNodes(4).InnerText = FormatDateTime(Now(), vbLongDate)
+                                End If
+                            End Using
+                        End If
+                    Next i
+                    x = Nothing
+                    mainchannel = Nothing
+                    channels = Nothing
+
+                    PushUpdatedXML(doc, sftp, file.Name)
+                Catch ex As Exception
+                    Debug.Print("error in removing old leads")
+                End Try
+            End If
+        Next file
+    End Sub
+
     Public Shared Function FeedAlreadyExists(category As String, type As String, sftp As SftpClient, sftpDirectory As String, city As String)
         Dim files As IEnumerable(Of Sftp.SftpFile) = sftp.ListDirectory(sftpDirectory)
         If LCase(type) Like "*hvs*" Then type = "stale"
         If LCase(type) Like "*obo*" Then type = "best"
         For Each file As Sftp.SftpFile In files
-            If file.Name Like "*.xml*" AndAlso LCase(file.Name) Like "*" & LCase(city) & "*" AndAlso LCase(file.Name) Like "*" & LCase(type) & "*" Then
-                If category = "phone" Then
-                    If LCase(file.Name) Like "*phone*" Then
-                        files = Nothing
-                        Return True
-                    End If
-                Else
-                    files = Nothing
-                    Return True
-                End If
+            If file.Name Like "*.xml*" _
+            AndAlso LCase(file.Name) Like "*" & LCase(city) & "*" _
+            AndAlso LCase(file.Name) Like "*" & LCase(category) & "*" _
+            AndAlso LCase(file.Name) Like "*" & LCase(type) & "*" Then
+                files = Nothing
+                Return True
             End If
         Next
         files = Nothing
         Return False
     End Function
 
-    Public Shared Function AlreadyInRSSFeed(id As String, type As String, sftp As SftpClient, sftpDirectory As String, city As String, sftpURL As String)
+    Public Shared Function AlreadyInRSSFeed(id As String, type As String, sftp As SftpClient, sftpDirectory As String, city As String, sftpURL As String, category As String)
         If LCase(type) Like "*hvs*" Then
             type = "stale"
         End If
@@ -36,7 +79,10 @@ Public Class RSSHelpers
         End If
         Dim files As IEnumerable(Of Sftp.SftpFile) = sftp.ListDirectory(sftpDirectory)
         For Each file As Sftp.SftpFile In files
-            If file.Name Like "*.xml*" AndAlso LCase(file.Name) Like "*" & LCase(city) & "*" AndAlso LCase(file.Name) Like "*" & LCase(type) & "*" Then
+            If file.Name Like "*.xml*" _
+            AndAlso LCase(file.Name) Like "*" & LCase(city) & "*" _
+            AndAlso LCase(file.Name) Like "*" & LCase(category) & "*" _
+            AndAlso LCase(file.Name) Like "*" & LCase(type) & "*" Then
                 Using wc As New WebClient
                     Dim value As String = wc.DownloadString("http://" & sftpURL & "/leads/" & file.Name)
                     If value.Contains(id) Then
@@ -77,6 +123,14 @@ Public Class RSSHelpers
         sftp.UploadFile(xmlStream, Path.GetFileName(rss.FileName))
     End Sub
 
+    Public Shared Sub PushUpdatedXML(doc As XmlDocument, sftp As SftpClient, url As String)
+        Dim xmlStream As New MemoryStream
+        doc.Save(xmlStream)
+        xmlStream.Position = 0
+        sftp.BufferSize = 4 * 1024
+        sftp.UploadFile(xmlStream, Path.GetFileName(url))
+    End Sub
+
     Public Shared Sub WriteRSSItem(ByRef document As XmlDocument,
         searchTerm As String,
         link As String,
@@ -93,13 +147,14 @@ Public Class RSSHelpers
         profit As Decimal,
         profitMargin As Decimal,
         isOBO As Boolean,
-        Optional postImageURL As String = Globals.wwwRoot & "/img/PlaceholderBook.png")
+        Optional postImageURL As String = Globals.wwwRoot & "/img/phoneph.png")
 
-        'First check we haven't already created a chnanel, as there should only be one in the feed
+        'First check we haven't already created a channel, as there should only be one in the feed
         Dim channels = document.GetElementsByTagName("channel")
         If channels.Count = 0 Then Throw New ArgumentException("Please create a channel first by calling CreateChannel")
 
         Dim mainchannel = channels(0)
+        mainchannel.ChildNodes(4).InnerText = FormatDateTime(Now(), vbLongDate)
 
         'Create an item
         Dim thisitem = document.CreateElement("item")
@@ -117,7 +172,7 @@ Public Class RSSHelpers
         thisitem.AppendChild(addCustomNode("profit", profit, document))
         thisitem.AppendChild(addCustomNode("profitMargin", profitMargin, document))
         thisitem.AppendChild(addCustomNode("postImage", postImageURL, document))
-        thisitem.AppendChild(addCustomNode("phoneImage", "/img/phoneph.png", document))
+        thisitem.AppendChild(addCustomNode("itemImage", "/img/phoneph.png", document))
         thisitem.AppendChild(CreateTextElement("description", Description, document))
 
         'Append the element

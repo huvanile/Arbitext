@@ -8,11 +8,10 @@ Imports System.IO
 Public Class SearchHelpers
     Private Shared _checkedPostsAndPhones As List(Of Post)      'list of posts checked with all of the books included
 
-
     Public Shared Sub allQuerySearch()
         _checkedPostsAndPhones = New List(Of Post)
         Console.ForegroundColor = ConsoleColor.DarkGreen
-        Console.WriteLine("Starting...")
+        Console.WriteLine("Starting phones search...")
         Console.ResetColor()
         'oneQuerySearch(TldUrl & "/search/sss?query=cell%20phone")
         'oneQuerySearch(TldUrl & "/search/sss?query=cellphone")
@@ -23,6 +22,7 @@ Public Class SearchHelpers
         oneQuerySearch(TldUrl & "/search/moa")
         Console.WriteLine("Done!")
     End Sub
+
 
     Private Shared Sub oneQuerySearch(searchURL As String)
         Dim postAndPhones As Post                                    'this is a fully populated post object, including the books
@@ -163,7 +163,7 @@ Public Class SearchHelpers
 
             If proceed Then
                 Debug.Print(p.ID, " ", resultType, post.URL)
-                If Not AlreadyInRSSFeed(p.ID, resultType, Sftp, SftpDirectory, City, SftpURL) Then
+                If Not AlreadyInRSSFeed(p.ID, resultType, Sftp, SftpDirectory, City, SftpURL, "phone") Then
                     Console.ForegroundColor = ConsoleColor.Yellow
                     Console.WriteLine(" NOT YET IN THE FEEDS- ADDING!")
                     Console.ResetColor()
@@ -172,6 +172,7 @@ Public Class SearchHelpers
                         rssFeed = New RSSFeed(title, wwwRoot & "showfeed.php?feed=" & replaceSpacesWithTwenty(Path.GetFileName(outfile)), desc, resultType, outfile)
                     Else
                         rssFeed = New RSSFeed(wwwRoot & "leads/" & replaceSpacesWithTwenty(outfile))
+
                     End If
 
 

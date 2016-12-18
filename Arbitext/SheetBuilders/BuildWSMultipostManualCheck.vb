@@ -40,7 +40,7 @@ Public Class BuildWSMultipostManualCheck
             .Range("g4").Value2 = "Total profit"
             .Range("h4").FormulaLocal = "=h3-h2"
             .Range("g6").Value2 = "Combined min asking price for desired profit"
-            .Range("h6").FormulaLocal = "=h3-" & ThisAddIn.MinTolerableProfit
+            .Range("h6").FormulaLocal = "=h3-15"
             .Range("g7").Value2 = "Highest profit single buy in this post" : .Range("h7").Value2 = 0
             rowValues(.Range("c3:d7"))
             rowValues(.Range("h2:h4"))

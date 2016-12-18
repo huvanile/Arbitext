@@ -2,6 +2,7 @@
 Imports ArbitextClassLibrary
 Imports ArbitextClassLibrary.CraigslistHelpers
 Imports System.Threading
+Imports ArbitextClassLibrary.Globals
 
 Public Class MultiplePostsAnalysis
     Dim _checkedPostsNotBooks As List(Of Post)      'list of posts checked before populating the post object with the accompanying books
@@ -10,7 +11,7 @@ Public Class MultiplePostsAnalysis
 #Region "constructors"
 
     Sub New()
-        ThisAddIn.TldUrl = "http://" & ThisAddIn.City & ".craigslist.org"
+        TldUrl = "http://" & City & ".craigslist.org"
         _checkedPostsNotBooks = New List(Of Post)
         _checkedPostsAndBooks = New List(Of Post)
         ThisAddIn.t1 = New Thread(AddressOf allQuerySearch)
@@ -38,31 +39,31 @@ Public Class MultiplePostsAnalysis
             Dim searchURL As String = ""
 
 
-            searchURL = ThisAddIn.TldUrl & "/search/sss?query=isbn"
+            searchURL = TldUrl & "/search/sss?query=isbn"
             oneQuerySearch(searchURL)
 
             If ThisAddIn.Proceed Then
-                searchURL = ThisAddIn.TldUrl & "/search/sss?query=textbook"
+                searchURL = TldUrl & "/search/sss?query=textbook"
                 oneQuerySearch(searchURL)
             End If
 
             If ThisAddIn.Proceed Then
-                searchURL = ThisAddIn.TldUrl & "/search/bka?query=college"
+                searchURL = TldUrl & "/search/bka?query=college"
                 oneQuerySearch(searchURL)
             End If
 
             If ThisAddIn.Proceed Then
-                searchURL = ThisAddIn.TldUrl & "/search/bka?query=university"
+                searchURL = TldUrl & "/search/bka?query=university"
                 oneQuerySearch(searchURL)
             End If
 
             If ThisAddIn.Proceed Then
-                searchURL = ThisAddIn.TldUrl & "/search/bka?query=text"
+                searchURL = TldUrl & "/search/bka?query=text"
                 oneQuerySearch(searchURL)
             End If
 
             If ThisAddIn.Proceed Then
-                searchURL = ThisAddIn.TldUrl & "/search/bka?query=978"
+                searchURL = TldUrl & "/search/bka?query=978"
                 oneQuerySearch(searchURL)
             End If
 
@@ -90,7 +91,7 @@ Public Class MultiplePostsAnalysis
         'set or reset global variables
         searchPage = wc.DownloadString(searchURL)
         If Not searchPage Like "*Nothing found for that search*" Then
-            Do While InStr(startPos, searchPage, ThisAddIn.ResultHook) > 0
+            Do While InStr(startPos, searchPage, ResultHook) > 0
                 Ribbon1.tpnAuto.UpdateLblNumberSafe("On Result Number " & _checkedPostsNotBooks.Count + 1)
                 Ribbon1.tpnAuto.UpdateLblStatusSafe("Cursory examination of post " & getLinkFromCLSearchResults(searchPage, startPos) & ", will ignore if out of town")
 
@@ -98,7 +99,7 @@ Public Class MultiplePostsAnalysis
                 If Not getLinkFromCLSearchResults(searchPage, startPos) Like "*http*" And Not getLinkFromCLSearchResults(searchPage, startPos) Like "*.org*" Then 'this prevents it from showing "nearby results"
                     Ribbon1.tpnAuto.UpdateLblStatusSafe("Learning more about post " & vbCrLf & getLinkFromCLSearchResults(searchPage, startPos))
 
-                    postNotBooks = New Post(ThisAddIn.TldUrl & getLinkFromCLSearchResults(searchPage, startPos), False)
+                    postNotBooks = New Post(TldUrl & getLinkFromCLSearchResults(searchPage, startPos), False)
 
                     'ThisAddIn.AppExcel.StatusBar = "Currently on result number " & _checkedPosts.Count & " (old, in trash, or otherwise skipped: " & SearchSession.SkippedResultCount & ") (keepers: " & SearchSession.KeeperCount & ") (maybes: " & SearchSession.NegCount & ") [MULTIPOSTS: " & SearchSession.MultiCount & "]"
                     Ribbon1.tpnAuto.UpdateLblStatusSafe("Considering writing result to workbook")
@@ -146,7 +147,7 @@ Public Class MultiplePostsAnalysis
                 End If
 
                 'do the pagination
-                startPos = InStr(startPos, searchPage, ThisAddIn.ResultHook) + 100
+                startPos = InStr(startPos, searchPage, ResultHook) + 100
                 If _checkedPostsNotBooks.Count Mod 100 = 0 Then
                     If InStr(1, searchURL, "&") = 0 Then
                         updatedSearchURL = searchURL & "?s=" & _checkedPostsNotBooks.Count
@@ -159,7 +160,7 @@ Public Class MultiplePostsAnalysis
 
             Loop
         Else
-            MsgBox("Nothing found for the search:" & vbCrLf & vbCrLf & searchURL, vbInformation, ThisAddIn.Title)
+            MsgBox("Nothing found for the search:" & vbCrLf & vbCrLf & searchURL, vbInformation, Title)
         End If
         wc = Nothing
         Exit Sub
@@ -248,19 +249,11 @@ maxReached:
     End Sub
 
     Sub HandleWinner(post As Post, book As Book, r As Integer)
-        If ThisAddIn.OnWinnersOK Then
-            PushbulletHelpers.sendPushbulletNote(ThisAddIn.Title, "Textbook Winner Found: " & book.Title)
-            EmailHelpers.sendSilentNotification(EmailHelpers.emailBodyString(post, book).ToString, "Textbook Winner Found: " & book.Title)
-        End If
         SoundHelpers.PlayWAV("money")
         ThisAddIn.AppExcel.Range("a" & r & ":n" & r).Interior.ColorIndex = 35
     End Sub
 
     Sub HandleMaybe(post As Post, book As Book, r As Integer)
-        If ThisAddIn.OnMaybesOK Then
-            PushbulletHelpers.sendPushbulletNote(ThisAddIn.Title, "Possible Textbook Lead Found: " & book.Title)
-            EmailHelpers.sendSilentNotification(EmailHelpers.emailBodyString(post, book).ToString, "Possible Textbook Lead Found: " & book.Title)
-        End If
         ThisAddIn.AppExcel.Range("a" & r & ":n" & r).Interior.ColorIndex = 6
     End Sub
 

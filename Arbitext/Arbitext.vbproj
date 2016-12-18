@@ -265,6 +265,7 @@
     <Compile Include="My Project\AssemblyInfo.vb" />
     <EmbeddedResource Include="Controls\TpnAuto.resx">
       <DependentUpon>TpnAuto.vb</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
@@ -319,7 +320,7 @@
     <ManifestKeyFile>Arbitext_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>A0AC214F976687C56E88D6F5B91228446656880E</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>DD65AB7AC5B21176EB3542C6F9D74B08C08FD397</ManifestCertificateThumbprint>
   </PropertyGroup>
   <!-- Include the build rules for a Visual Basic project. -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />

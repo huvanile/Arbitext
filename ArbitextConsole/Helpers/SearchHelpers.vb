@@ -128,16 +128,16 @@ Public Class SearchHelpers
                     Console.ResetColor()
                     resultType = "Winners"
                     desc = "Profitable book deals (winners) in the " & theCity & " area."
-                    title = theCity & " Winners"
-                    outfile = theCity & " Winners.xml"
+                    title = theCity & " Winners- Books"
+                    outfile = title & ".xml"
                 ElseIf b.IsMaybe() Then
                     Console.ForegroundColor = ConsoleColor.Cyan
                     Console.Write("MAYBE MAYBE MAYBE!")
                     Console.ResetColor()
                     resultType = "Maybes"
                     desc = "Potentially profitable book deals (maybes) in the " & theCity & " area."
-                    title = theCity & " Maybes"
-                    outfile = theCity & " Maybes.xml"
+                    title = theCity & " Maybes- Books"
+                    outfile = title & ".xml"
                 ElseIf b.IsHVSB() Then
                     Console.ForegroundColor = ConsoleColor.Magenta
                     Console.Write("VALUABLE STALE BOOK!")
@@ -172,7 +172,7 @@ Public Class SearchHelpers
 
             If proceed Then
 
-                If Not AlreadyInRSSFeed(b.ID, resultType, Sftp, SftpDirectory, City, SftpURL) Then
+                If Not AlreadyInRSSFeed(b.ID, resultType, Sftp, SftpDirectory, City, SftpURL, "book") Then
                     Console.ForegroundColor = ConsoleColor.Yellow
                     Console.WriteLine(" NOT YET IN THE FEEDS- ADDING!")
                     Console.ResetColor()

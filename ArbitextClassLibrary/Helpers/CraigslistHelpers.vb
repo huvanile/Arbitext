@@ -153,6 +153,13 @@ Public Class CraigslistHelpers
 
         End If
 
+        'check if nothing was found check for the word "asking"
+        If Not IsNumeric(m) Then
+            If InStr(1, LCase(str), "asking ") <> 0 Then
+                i = InStr(1, LCase(str), "asking ") + 7
+                m = clean(Mid(str, i, 6), False, True, True, True, True, False)
+            End If
+        End If
 
         If Right(m, 1) = "." Then
             m = Left(m, Len(m) - 1) 'added 12/4/16

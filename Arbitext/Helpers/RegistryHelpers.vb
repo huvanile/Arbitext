@@ -1,4 +1,5 @@
 ﻿Imports Microsoft.Win32
+Imports ArbitextClassLibrary.Globals
 
 Public Class RegistryHelpers
     Public Const RegistryFolder As String = "HKEY_CURRENT_USER\SOFTWARE\ARBITEXT\"
@@ -42,7 +43,7 @@ Public Class RegistryHelpers
                 Then My.Computer.Registry.SetValue(RegistryFolder, "City", "Dallas")
 
         Catch exAll As Exception
-            MsgBox("An error has occurred when pulling in the Arbitext add-in's default preferences.  Error message:" & vbCrLf & vbCrLf & exAll.Message, vbCritical, ThisAddIn.Title)
+            MsgBox("An error has occurred when pulling in the Arbitext add-in's default preferences.  Error message:" & vbCrLf & vbCrLf & exAll.Message, vbCritical, Title)
         End Try
     End Sub
 
@@ -52,11 +53,10 @@ Public Class RegistryHelpers
     Public Shared Sub loadVariablesFromRegistry()
         Try
 
-            ThisAddIn.MinTolerableProfit = My.Computer.Registry.GetValue(RegistryFolder, "MinTolerableProfit", Nothing)
-            ThisAddIn.City = My.Computer.Registry.GetValue(RegistryFolder, "City", Nothing)
+            City = My.Computer.Registry.GetValue(RegistryFolder, "City", Nothing)
 
         Catch exAll As Exception
-            MsgBox("An error has occurred when getting the bot's preferences.  Please close and reopen this bot and try again.", vbCritical, ThisAddIn.Title)
+            MsgBox("An error has occurred when getting the bot's preferences.  Please close and reopen this bot and try again.", vbCritical, Title)
         End Try
     End Sub
 
@@ -67,11 +67,10 @@ Public Class RegistryHelpers
         Try
 
             'textboxes
-            ThisAddIn.frmPrefs.txtMinProfit.Text = ThisAddIn.MinTolerableProfit
-            ThisAddIn.frmPrefs.txtCity.Text = ThisAddIn.City
+            ThisAddIn.frmPrefs.txtCity.Text = City
 
         Catch exAll As Exception
-            MsgBox("An error has occurred when loading the bot's preferences.  Please close and reopen this bot and try again.", vbCritical, ThisAddIn.Title)
+            MsgBox("An error has occurred when loading the bot's preferences.  Please close and reopen this bot and try again.", vbCritical, Title)
         End Try
     End Sub
 
@@ -89,7 +88,7 @@ Public Class RegistryHelpers
             End With
 
         Catch exAll As Exception
-            MsgBox("An error has occurred when saving the bot's preferences.  Please close and reopen this bot and try again.", vbCritical, ThisAddIn.Title)
+            MsgBox("An error has occurred when saving the bot's preferences.  Please close and reopen this bot and try again.", vbCritical, Title)
         End Try
 
     End Sub

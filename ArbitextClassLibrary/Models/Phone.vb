@@ -67,7 +67,7 @@ Public Class Phone
         Get
             Dim tmp As New StringBuilder
             tmp.Append(Year(_parentPostDate) & Month(_parentPostDate) & Day(_parentPostDate) & Hour(_parentPostDate) & Minute(_parentPostDate))
-            tmp.Append(Trim(_searchterm))
+            tmp.Append(Len(Trim(_searchterm)))
             tmp.Append(Trim(AskingPrice))
             Return tmp.ToString
         End Get

@@ -1,9 +1,11 @@
-﻿Public Class TpnAuto
+﻿Imports ArbitextClassLibrary.Globals
+
+Public Class TpnAuto
     Delegate Sub setLabelSafeCallback([theText] As String)
     Delegate Sub visibleLblSafeCallback([theText] As String)
 
     Private Sub btnCancel_Click(sender As Object, e As EventArgs) Handles btnCancel.Click
-        If MsgBox("Quit current search?", vbYesNoCancel, ThisAddIn.Title) = vbYes Then
+        If MsgBox("Quit current search?", vbYesNoCancel, Title) = vbYes Then
             If Not IsNothing(ThisAddIn.t1) Then
                 ThisAddIn.t1.Abort()
                 ThisAddIn.t1 = Nothing
@@ -134,7 +136,7 @@
     End Sub
 
     Private Sub TpnAuto_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        txtCity.Text = ThisAddIn.City
+        txtCity.Text = City
     End Sub
 
 #End Region
